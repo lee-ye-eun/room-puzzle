@@ -27,6 +27,7 @@
     --board-ink:#111111;
     --board-line:#BDBDBD;
     --board-hover:#E6E6E6;
+    --board-mark:#C4C4C4;
     --font-display:'IBM Plex Serif', Georgia, serif;
     --font-body:'IBM Plex Sans KR','IBM Plex Sans',system-ui,sans-serif;
     --font-mono:'IBM Plex Mono',ui-monospace,monospace;
@@ -50,6 +51,7 @@
       --board-paper:#EDEDED;
       --board-line:#8A8A8A;
       --board-hover:#D0D0D0;
+      --board-mark:#B3B3B3;
     }
   }
   :root[data-theme="dark"]{
@@ -70,6 +72,7 @@
     --board-paper:#EDEDED;
     --board-line:#8A8A8A;
     --board-hover:#D0D0D0;
+    --board-mark:#B3B3B3;
   }
 
   body{
@@ -225,6 +228,7 @@
     font-weight:600;
   }
   .tool-buttons{ display:flex; gap:8px; justify-content:center; }
+  .tool-buttons + .tool-buttons{ flex-basis:100%; margin-top:-6px; }
   #submitActions{ margin-top:18px; }
   #resultBanner{ margin-bottom:14px; }
   #historyActions{ margin:18px 0 10px; }
@@ -345,6 +349,12 @@
   .fill-down{ bottom:0;left:0;right:0;height:50%; }
   .fill-left{ top:0;left:0;bottom:0;width:50%; }
   .fill-right{ top:0;right:0;bottom:0;width:50%; }
+  /* quarter-cell solving marks: light gray notes, never counted as doors */
+  .mark{ position:absolute; width:50%; height:50%; background:var(--board-mark); }
+  .mark-q-tl{ top:0; left:0; }
+  .mark-q-tr{ top:0; right:0; }
+  .mark-q-bl{ bottom:0; left:0; }
+  .mark-q-br{ bottom:0; right:0; }
 
   .actions{
     display:flex;
@@ -456,6 +466,7 @@
     #resultBanner{ margin-bottom:0; }
     .tool-title{ font-size:16px; }
     .tool-buttons{ gap:6px; width:100%; justify-content:space-between; }
+    .tool-buttons + .tool-buttons{ justify-content:center; }
     .tool-btn{ flex:1; max-width:56px; height:48px; }
     .lang-btn{ padding:5px 7px; }
     .tool-hint{ font-size:11px; }
@@ -526,6 +537,20 @@
         </button>
         <button class="tool-btn eraser-btn" data-dir="erase" onclick="selectTool('erase')" data-i18n-title="toolErase">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16.2 3.8l4 4a1.5 1.5 0 0 1 0 2.1L11 19H7l-3.2-3.2a1.5 1.5 0 0 1 0-2.1l10.3-9.9a1.5 1.5 0 0 1 2.1 0z"/><path d="M9 9l6 6"/><path d="M11 19h9"/></svg>
+        </button>
+      </div>
+      <div class="tool-buttons">
+        <button class="tool-btn" data-dir="q-tl" onclick="selectTool('q-tl')" data-i18n-title="tool_q_tl">
+          <span class="tool-swatch"><span class="mark mark-q-tl"></span></span>
+        </button>
+        <button class="tool-btn" data-dir="q-tr" onclick="selectTool('q-tr')" data-i18n-title="tool_q_tr">
+          <span class="tool-swatch"><span class="mark mark-q-tr"></span></span>
+        </button>
+        <button class="tool-btn" data-dir="q-bl" onclick="selectTool('q-bl')" data-i18n-title="tool_q_bl">
+          <span class="tool-swatch"><span class="mark mark-q-bl"></span></span>
+        </button>
+        <button class="tool-btn" data-dir="q-br" onclick="selectTool('q-br')" data-i18n-title="tool_q_br">
+          <span class="tool-swatch"><span class="mark mark-q-br"></span></span>
         </button>
       </div>
       <span id="toolHint" class="tool-hint" data-i18n="toolHint"></span>
@@ -1527,12 +1552,14 @@
         '<li>룸 배치는 바꿀 수 없다.</li>' +
         '<li><strong>룸의 숫자값</strong>은 상하좌우로 <strong>맞닿은 문의 면적</strong>과 같아야 한다.</li>' +
         '<li>모든 <strong>문</strong>은 반드시 하나 이상의 <strong>룸과 닿아있어야</strong> 한다.</li>' +
-        '<li>모든 <strong>문은 다른 문과 닿을 수 없다.</strong></li>',
+        '<li>모든 <strong>문은 다른 문과 닿을 수 없다.</strong></li>' +
+        '<li>모든 빈칸에는 문이 들어가야 한다.</li>',
       controlsTitle: '조작법',
       controlsBody:
         '<li>빈칸을 클릭하면 <strong>위 → 아래 → 왼쪽 → 오른쪽 → 빈칸</strong> 순서로 문의 방향이 바뀐다.</li>' +
         '<li>상단의 문 선택 도구를 이용해 특정 방향의 문을 놓을 수 있다. 지우개를 누르면 선택한 칸의 문을 지울 수 있다.</li>' +
-        '<li>칸을 <strong>우클릭 또는 길게 클릭하면 잠긴다.</strong> 잠긴 칸은 배치가 바뀌지 않는다. 다시 잠금을 시도하면 잠금이 풀린다.</li>',
+        '<li>칸을 <strong>우클릭 또는 길게 클릭하면 잠긴다.</strong> 잠긴 칸은 배치가 바뀌지 않는다. 다시 잠금을 시도하면 잠금이 풀린다.</li>' +
+        '<li>회색으로 된 칸은 풀이를 위한 표기용 칸으로, \'문\'이 아니다.</li>',
       sizeTitle: '퍼즐 크기 선택',
       loadingTitle: '퍼즐 생성 중…',
       loadingBody: '숫자 배치와 유일해 검증을 진행하고 있어요.',
@@ -1540,6 +1567,10 @@
       tool_down: '아래쪽 문',
       tool_left: '왼쪽 문',
       tool_right: '오른쪽 문',
+      tool_q_tl: '좌상단 표시 (1/4칸, 답안에 포함되지 않음)',
+      tool_q_tr: '우상단 표시 (1/4칸, 답안에 포함되지 않음)',
+      tool_q_bl: '좌하단 표시 (1/4칸, 답안에 포함되지 않음)',
+      tool_q_br: '우하단 표시 (1/4칸, 답안에 포함되지 않음)',
       toolLock: '잠금 모드: 켜면 누른 칸이 잠기거나 풀립니다',
       toolErase: '지우개: 누른 칸의 문을 지웁니다',
       toolHint: '클릭 시 문 방향: 위 → 아래 → 왼쪽 → 오른쪽 → 빈칸\n우클릭 or 길게 클릭: 잠금',
@@ -1562,12 +1593,14 @@
         '<li>Rooms are fixed and cannot be changed.</li>' +
         '<li><strong>A room\'s number</strong> must equal the total <strong>door area touching it</strong> above, below, left, and right.</li>' +
         '<li>Every <strong>door</strong> must <strong>touch at least one room</strong>.</li>' +
-        '<li><strong>Doors cannot touch other doors.</strong></li>',
+        '<li><strong>Doors cannot touch other doors.</strong></li>' +
+        '<li>Every empty cell must contain a door.</li>',
       controlsTitle: 'How to play',
       controlsBody:
         '<li>Click an empty cell to cycle the door direction: <strong>Up → Down → Left → Right → Empty</strong>.</li>' +
         '<li>Use the door tools at the top to place a door facing a specific direction. Pick the eraser to clear the door in a cell you click.</li>' +
-        '<li><strong>Right-click or long-press a cell to lock it.</strong> A locked cell can\'t be changed. Lock it again to unlock.</li>',
+        '<li><strong>Right-click or long-press a cell to lock it.</strong> A locked cell can\'t be changed. Lock it again to unlock.</li>' +
+        '<li>Gray marks are notes for solving, not doors.</li>',
       sizeTitle: 'Choose puzzle size',
       loadingTitle: 'Generating puzzle…',
       loadingBody: 'Placing numbers and verifying the puzzle.',
@@ -1575,6 +1608,10 @@
       tool_down: 'Door facing down',
       tool_left: 'Door facing left',
       tool_right: 'Door facing right',
+      tool_q_tl: 'Top-left mark (quarter cell, not part of the answer)',
+      tool_q_tr: 'Top-right mark (quarter cell, not part of the answer)',
+      tool_q_bl: 'Bottom-left mark (quarter cell, not part of the answer)',
+      tool_q_br: 'Bottom-right mark (quarter cell, not part of the answer)',
       toolLock: 'Lock mode: tap a cell to lock or unlock it',
       toolErase: 'Eraser: clears the door in a clicked cell',
       toolHint: 'Click to set door: Up → Down → Left → Right → Empty\nRight-click or long-press: lock',
@@ -1615,11 +1652,11 @@
     phase: 'start',      // 'start' | 'loading' | 'game'
     size: null,
     puzzle: null,
-    playerState: [],     // per-cell 'blank'|'up'|'down'|'left'|'right' (only meaningful for player cells)
+    playerState: [],     // per-cell 'blank'|'up'|'down'|'left'|'right', or a 'q-*' solving mark (player cells only)
     lockedCells: [],      // per-cell boolean — a locked player cell ignores left-click/tool edits
     submittedState: null,
     viewMode: 'play',     // 'play' | 'result' (after submitting: the submitted placement)
-    selectedTool: null,   // null | 'up' | 'down' | 'left' | 'right' | 'erase'
+    selectedTool: null,   // null | 'up' | 'down' | 'left' | 'right' | 'q-tl' | 'q-tr' | 'q-bl' | 'q-br' | 'erase'
     lockMode: false,      // when on, a tap/click toggles the cell's lock instead of editing it
                           // (the touch-screen stand-in for right-click); exclusive with selectedTool
     history: [],          // stack of {playerState, lockedCells} snapshots taken right before
@@ -1718,7 +1755,8 @@
     if(state.selectedTool){
       state.playerState[index] = (cur === state.selectedTool) ? 'blank' : state.selectedTool;
     } else {
-      state.playerState[index] = DIR_ORDER[(DIR_ORDER.indexOf(cur) + 1) % DIR_ORDER.length];
+      // a quarter mark isn't part of the door cycle, so cycling from one starts like a blank
+      state.playerState[index] = DIR_ORDER[(Math.max(0, DIR_ORDER.indexOf(cur)) + 1) % DIR_ORDER.length];
     }
     render();
   }
@@ -1744,11 +1782,14 @@
   // player cell, a number cell whose neighbors don't sum to its value (rule 1), a half-block
   // whose black half touches no number cell (rule 2), and both half-blocks of every pair
   // whose black halves touch (rule 3). An empty set means the placement is correct.
+  function isMark(v){ return typeof v === 'string' && v.startsWith('q-'); }
+
   function findViolations(){
     const n = state.size;
     const total = n * n;
     const cells = state.puzzle.cells;
-    const kind = cells.map((c, i) => c.type === 'player' ? state.playerState[i] : 'number');
+    // quarter marks are solving notes only, so a marked cell is graded as blank
+    const kind = cells.map((c, i) => c.type !== 'player' ? 'number' : isMark(state.playerState[i]) ? 'blank' : state.playerState[i]);
     const color = cells.map((c, i) => c.type === 'player' && kind[i] !== 'blank' ? 'blue' : 'green');
     const bad = new Set();
 
@@ -1892,7 +1933,7 @@
 
         if(dir && dir !== 'blank'){
           const fill = document.createElement('span');
-          fill.className = 'fill fill-' + dir;
+          fill.className = isMark(dir) ? 'mark mark-' + dir : 'fill fill-' + dir;
           div.appendChild(fill);
         }
         if(interactive){
