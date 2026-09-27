@@ -4,7 +4,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:wght@500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
 <style>
-  /* Black & white theme. The only colour kept is red, reserved for locks and rule violations. */
+  /* Black & white theme. The only colours kept are red (locks, rule violations) and blue
+     (the "correct" result banner). */
   :root{
     --paper:#FFFFFF;
     --paper-raised:#F6F6F6;
@@ -17,6 +18,8 @@
     --muted:#6E6E6E;
     --danger:#D32F2F;
     --danger-soft:#FDE8E8;
+    --correct:#1E5BD8;
+    --correct-soft:#E7EEFC;
     --fixed:#5C5C5C;
     /* the board itself stays black-on-white in both modes, so a half-block's "black part"
        is always literally black */
@@ -41,6 +44,8 @@
       --muted:#9A9A9A;
       --danger:#FF5C5C;
       --danger-soft:#3A1A1A;
+      --correct:#6EA0FF;
+      --correct-soft:#15213A;
       --fixed:#6A6A6A;
       --board-paper:#EDEDED;
       --board-line:#8A8A8A;
@@ -59,6 +64,8 @@
     --muted:#9A9A9A;
     --danger:#FF5C5C;
     --danger-soft:#3A1A1A;
+    --correct:#6EA0FF;
+    --correct-soft:#15213A;
     --fixed:#6A6A6A;
     --board-paper:#EDEDED;
     --board-line:#8A8A8A;
@@ -140,7 +147,8 @@
   .legend li::marker{ color:var(--ink); font-weight:600; }
   /* ---- start screen ---- */
   .start-card{
-    padding:4px 0 8px;
+    border-bottom:1px solid var(--line);
+    padding:4px 0 20px;
     display:flex;
     flex-direction:column;
     align-items:center;
@@ -189,9 +197,9 @@
     border:1.5px solid transparent;
   }
   .result-banner.correct{
-    color:var(--accent-strong);
-    background:var(--accent-soft);
-    border-color:var(--accent);
+    color:var(--correct);
+    background:var(--correct-soft);
+    border-color:var(--correct);
   }
   .result-banner.incorrect{
     color:var(--danger);
@@ -437,7 +445,7 @@
     .legend{ padding:0 0 14px; font-size:12px; }
     .info-cards{ gap:14px; }
 
-    .start-card{ padding:4px 0; }
+    .start-card{ padding:4px 0 14px; }
     .size-btn{ width:60px; height:60px; }
 
     #gameScreen{ display:flex; flex-direction:column; gap:10px; }
@@ -1540,8 +1548,8 @@
       submit: '답안 제출',
       restart: '재시작',
       toolTitle: '도구 선택',
-      resultCorrect: '정답입니다',
-      resultIncorrect: '오답입니다',
+      resultCorrect: '정답!',
+      resultIncorrect: '오답',
       cellLock: '우클릭(길게 누르기)하면 이 칸을 잠급니다',
       cellUnlock: '우클릭(길게 누르기)하면 잠금이 풀립니다'
     },
@@ -1575,7 +1583,7 @@
       submit: 'Submit',
       restart: 'Restart',
       toolTitle: 'Tools',
-      resultCorrect: 'Correct',
+      resultCorrect: 'Correct!',
       resultIncorrect: 'Incorrect',
       cellLock: 'Right-click (long-press) to lock this cell',
       cellUnlock: 'Right-click (long-press) to unlock'
