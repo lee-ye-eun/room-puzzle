@@ -250,68 +250,6 @@
     flex-basis:100%;
   }
 
-  .mini-board{
-    display:grid;
-    width:150px;
-    aspect-ratio:1/1;
-    border:2px solid var(--ink);
-    border-radius:3px;
-    overflow:hidden;
-    background:var(--line);
-    gap:1px;
-  }
-  .mini-cell{
-    position:relative;
-    background:var(--paper);
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-family:var(--font-mono);
-    font-size:8px;
-    font-weight:600;
-  }
-  .mini-cell.fixed{
-    background:var(--danger);
-    color:#fff;
-  }
-  .mini-cell.full{ background:var(--ink); }
-  .mini-cell.forced-blue{ background:var(--fixed); }
-  .mini-cell.forced-green{ background:var(--accent); color:#fff; }
-  .mini-cell .fill{ position:absolute; background:var(--ink); }
-  .mini-cell.just-revealed{
-    box-shadow:0 0 0 2px var(--accent-strong) inset, 0 0 0 4px var(--accent-soft) inset;
-    z-index:1;
-  }
-
-  .bfs-stage-wrap{
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    gap:10px;
-    padding-top:10px;
-    border-top:1px dashed var(--line-soft);
-    width:100%;
-  }
-  .bfs-stage-header{
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    gap:10px;
-    flex-wrap:wrap;
-  }
-  .stage-board{
-    width:min(72vw,260px);
-  }
-  .stage-board .mini-cell{ font-size:11px; }
-  .bfs-stage-hint{
-    margin:0;
-    color:var(--muted);
-    font-size:12px;
-    max-width:440px;
-    text-align:center;
-    line-height:1.5;
-  }
-
   .board-wrap{
     display:flex;
     justify-content:center;
@@ -416,13 +354,6 @@
     cursor:default;
   }
 
-  footer.note{
-    text-align:center;
-    font-size:11.5px;
-    color:var(--muted);
-    line-height:1.6;
-  }
-
   [hidden]{ display:none!important; }
 </style>
 
@@ -454,32 +385,6 @@
       <button class="size-btn" data-size="7" onclick="startGame(7)">7×7</button>
       <button class="size-btn" data-size="9" onclick="startGame(9)">9×9</button>
       <button class="size-btn" data-size="15" onclick="startGame(15)">15×15</button>
-    </div>
-  </section>
-
-  <section id="bfsSection" class="start-card">
-    <h2>BFS 테스트</h2>
-    <p style="margin:0;color:var(--muted);font-size:12.5px;">실제 게임에서 쓰는 퍼즐 생성 로직(generatePuzzleAttempt)을 그대로 한 번 실행해, 그 결과가 만들어진 과정을 단계별로 재생합니다. 구역마다 심는 "유일칸"(빨강)과 그로부터 강제되는 칸(파랑)·계산되는 칸(초록)뿐 아니라, 그 뒤로 이어지는 자유 반칸 배치와 새 숫자 칸 심기, 마지막 벽 접촉 보정까지 — 실제 생성기가 거친 순서 그대로 볼 수 있습니다.</p>
-    <div class="size-grid">
-      <button class="size-btn" onclick="runBfsTest(5)">5×5</button>
-      <button class="size-btn" onclick="runBfsTest(7)">7×7</button>
-      <button class="size-btn" onclick="runBfsTest(9)">9×9</button>
-    </div>
-    <div id="bfsStatus" style="font-size:12.5px;color:var(--muted);"></div>
-
-    <div id="bfsStageWrap" class="bfs-stage-wrap" hidden>
-      <div class="bfs-stage-header">
-        <span class="tool-label">단계별 진행 시뮬레이션</span>
-        <span id="bfsStageLabel" class="status-pill" style="border-style:dashed;"></span>
-      </div>
-      <div id="bfsStageBoard"></div>
-      <div class="actions">
-        <button id="bfsStagePrevBtn" class="btn secondary" onclick="bfsStagePrev()">이전 단계</button>
-        <button id="bfsStageNextBtn" class="btn secondary" onclick="bfsStageNext()">다음 단계</button>
-        <button id="bfsStageAllBtn" class="btn secondary" onclick="bfsStageAll()">전체 보기</button>
-        <button id="bfsStageResetBtn" class="btn danger-outline" onclick="bfsStageFullReset()">초기화</button>
-      </div>
-      <p class="bfs-stage-hint">빨강(유일칸, 0단계)에서 시작해, 실제 생성기가 칸을 하나씩 확정해 나간 순서 그대로 재생합니다. 파랑은 기존 숫자 칸이 강제한 반칸이고, 초록은 이웃이 모두 확정되어 계산만으로 나온 숫자 칸입니다. 초록까지의 전파가 멈추면, 실제 생성기가 숫자 칸에 닿은 미확정 칸에 반칸을 자유롭게 골라 놓거나(다시 전파가 이어짐) 더 놓을 자리가 없으면 새 숫자 칸을 심는 단계가 이어서 나타나며, 이 과정이 보드 전체가 채워질 때까지 반복됩니다. 그 뒤로 벽에 닿지 못한 반칸이 있다면, 마지막으로 그 칸을 숫자 칸으로 바꾸는 보정 단계가 한 번 더 나타날 수 있습니다. "이전 단계/다음 단계"로 한 단계씩, "전체 보기"로 끝까지 확인할 수 있고, "초기화"를 누르면 같은 결과를 처음(0단계)부터 다시 살펴봅니다.</p>
     </div>
   </section>
 
@@ -522,7 +427,6 @@
     </div>
   </section>
 
-  <footer class="note">실험 버전: 숫자 칸은 0을 제외한 1~4만 사용합니다. 4개 구역마다 정확히 1개씩 유일칸(꼭짓점 2·모서리 3·안쪽 4, 이웃 배치가 단 하나로만 정해지는 칸)을 심습니다 — 유일칸은 이 최초 배치 단계에서만 나오고, 그 이후 새로 심거나 계산되는 숫자 칸은 자기 칸의 인접 칸 개수와 값이 같아지는(=유일칸과 똑같아 보이는) 경우를 항상 배제합니다. 이렇게 심은 유일칸에서 BFS로 확정 영역을 넓힌 뒤, 그 다음부터는 벽(숫자 칸) 접촉이나 합계는 당장 따지지 않고 반칸끼리만 서로 닿지 않는지만 확인하며 채워나갑니다 — 이미 확정된 반칸들과 이웃이 가장 많이 겹쳐 자유도가 가장 적은 칸부터 우선 처리해, 나중에서야 "사방이 막혀 문으로도 룸으로도 만들 수 없는" 칸이 튀어나오는 상황을 미리 줄입니다. 그러다 절반 정도 진행될 때마다, 또는 더 이상 이어붙일 자리가 없으면, 기존 숫자 칸 하나를 나이트(체스 말) 이동 거리만큼 떨어진 빈 칸에 새 숫자 칸으로 심어(그 이웃 칸들의 방향까지 같은 자리에서 함께 확정) 벽을 고르게 흩뿌립니다 — 이렇게 벽을 계속 보충해두지 않으면, 나중에 벽에서 너무 멀어진 반칸들이 우연히 정직한 숫자로 맞아떨어질 확률이 지나치게 낮아져 생성 자체가 거의 항상 실패합니다. 매 배치 직후에는 그 자리가 여전히 정직한 결과로 이어질 수 있는지, 반칸끼리 닿지는 않았는지를 확인해, 문제가 생기면 그 배치만 되돌리고 다른 후보를 시도합니다. 한 자리에서 시도할 수 있는 모든 후보가 다 막히면, 그제서야 무작위로 몇 수를 되돌아가는 게 아니라 그 막힘의 원인이 된 바로 그 이전 결정 지점까지 정확히 되짚어가서 그 결정의 다른 후보를 이어서 시도합니다(진짜 백트래킹). 보드 전체가 채워지고 나면, 벽에 끝내 닿지 못한 반칸이 있는지 찾아 그 칸을 숫자 칸으로 바꾸는 보정을 거치고(그 칸이 다른 숫자 칸에 기여하던 값은 원래 0이었으므로 다른 칸에는 영향이 없습니다), 모든 숫자 칸이 실제 인접 반칸의 합과 정확히 일치하는지, 모든 반칸이 벽(숫자 칸 쪽을 향한 검은 부분)에 닿아 있는지, 그리고 어떤 두 반칸도 검은 부분끼리 닿아 있지 않은지 최종 검증하고, 그래도 어긋나면 처음부터 다시 생성합니다.</footer>
 </div>
 
 <script>
@@ -1667,144 +1571,6 @@
         tryGreen(j);
       });
     }
-  }
-
-  // Staged rendering for the BFS test's board: reveals a cell once the real generator would
-  // actually have resolved it by this point (forced.step[i] <= revealStep) — cells sharing a
-  // step all appear together, and the CURRENT wave gets a highlighted ring so the
-  // propagation front is visible as it advances. A cell the final wall-touch repair pass
-  // later turns from a half-block into a number clue keeps showing its half-block (from
-  // forced.preRepair*) for every stage before that repair actually happens, and only flips
-  // to the number clue (forced.final*) once the dedicated repair stage is reached — exactly
-  // when the real algorithm makes that change, not before.
-  function renderStagedMiniBoard(n, forced, revealStep){
-    const board = document.createElement('div');
-    board.className = 'mini-board stage-board';
-    board.style.gridTemplateColumns = `repeat(${n}, minmax(0, 1fr))`;
-    board.style.gridTemplateRows = `repeat(${n}, minmax(0, 1fr))`;
-
-    const inRepairStage = forced.repairStep !== -1 && revealStep >= forced.repairStep;
-
-    for(let i = 0; i < n * n; i++){
-      const div = document.createElement('div');
-      const known = forced.step[i] !== -1 && forced.step[i] <= revealStep;
-      const useFinal = inRepairStage && forced.repairedSet.has(i);
-      const color = !known ? 'none' : (useFinal ? forced.finalColor[i] : forced.preRepairColor[i]);
-      const knownKind = useFinal ? forced.finalKnownKind[i] : forced.preRepairKnownKind[i];
-      const knownValue = useFinal ? forced.finalKnownValue[i] : forced.preRepairKnownValue[i];
-
-      if(color === 'red'){
-        div.className = 'mini-cell fixed';
-        div.textContent = knownValue;
-      } else if(color === 'green'){
-        div.className = 'mini-cell forced-green';
-        div.textContent = knownValue;
-      } else if(color === 'blue'){
-        div.className = 'mini-cell forced-blue';
-        const fill = document.createElement('span');
-        fill.className = 'fill fill-' + knownKind;
-        div.appendChild(fill);
-      } else {
-        div.className = 'mini-cell';
-      }
-
-      const justRevealed = forced.repairStep !== -1 && revealStep === forced.repairStep
-        ? forced.repairedSet.has(i)
-        : known && forced.step[i] === revealStep;
-      if(justRevealed) div.classList.add('just-revealed');
-
-      board.appendChild(div);
-    }
-    return board;
-  }
-
-  // Current staged replay shown in the BFS test section: {n, forced, revealStep}, or null
-  // before any test has run. `forced` is exactly what generatePuzzleAttempt(n, true) returns
-  // — the real generator's own result, run once and replayed — so every stage shown here is
-  // a stage the actual puzzle generator actually went through, never a separate simulation
-  // of it. `revealStep` is how many of those stages are currently shown; the prev/next/all
-  // controls just move this pointer and re-render.
-  let bfsStageState = null;
-
-  function renderBfsStageBoard(){
-    const wrap = document.getElementById('bfsStageWrap');
-    const boardHost = document.getElementById('bfsStageBoard');
-    const label = document.getElementById('bfsStageLabel');
-    if(!bfsStageState){
-      wrap.hidden = true;
-      boardHost.innerHTML = '';
-      return;
-    }
-    wrap.hidden = false;
-    const {n, forced, revealStep} = bfsStageState;
-    const totalStages = forced.totalStages;
-    const isRepairStage = forced.repairStep !== -1 && revealStep === forced.repairStep;
-    label.textContent = totalStages === 0
-      ? '전파 없음'
-      : `단계 ${revealStep + 1} / ${totalStages}` + (isRepairStage ? ' · 벽 접촉 보정' : '');
-
-    boardHost.innerHTML = '';
-    boardHost.appendChild(renderStagedMiniBoard(n, forced, revealStep));
-
-    document.getElementById('bfsStagePrevBtn').disabled = revealStep <= 0;
-    const atEnd = revealStep >= totalStages - 1;
-    document.getElementById('bfsStageNextBtn').disabled = atEnd;
-    document.getElementById('bfsStageAllBtn').disabled = atEnd;
-  }
-
-  function bfsStagePrev(){
-    if(!bfsStageState) return;
-    bfsStageState.revealStep = Math.max(0, bfsStageState.revealStep - 1);
-    renderBfsStageBoard();
-  }
-  function bfsStageNext(){
-    if(!bfsStageState) return;
-    const maxStep = bfsStageState.forced.totalStages - 1;
-    bfsStageState.revealStep = Math.min(maxStep, bfsStageState.revealStep + 1);
-    renderBfsStageBoard();
-  }
-  function bfsStageAll(){
-    if(!bfsStageState) return;
-    bfsStageState.revealStep = Math.max(0, bfsStageState.forced.totalStages - 1);
-    renderBfsStageBoard();
-  }
-  // Rewinds the stepper back to stage 0 on the SAME generated puzzle — no regeneration,
-  // just moves revealStep back to the start so the same run can be replayed again.
-  function bfsStageFullReset(){
-    if(!bfsStageState) return;
-    bfsStageState.revealStep = 0;
-    renderBfsStageBoard();
-  }
-
-  // Runs the REAL puzzle generator (generatePuzzleAttempt with trace=true — the exact same
-  // function generatePuzzle uses for actual gameplay) and stages its result for step-by-step
-  // playback: unique-cell seeding, the red→blue→green closure, every freely-chosen
-  // half-block placement and freshly-planted clue the main loop makes (each with its own
-  // closure cascade), and the final wall-touch repair — all in the order the generator
-  // actually produced them. Retries on a discarded attempt exactly like generatePuzzle does;
-  // only the final successful attempt is shown, and failed attempts leave nothing behind.
-  function runBfsTest(n){
-    const statusEl = document.getElementById('bfsStatus');
-    statusEl.textContent = '생성 중…';
-    bfsStageState = null;
-    renderBfsStageBoard();
-    setTimeout(() => {
-      let result = null;
-      for(let attempt = 0; attempt < 8000; attempt++){
-        result = generatePuzzleAttempt(n, true);
-        if(result) break;
-      }
-      if(!result){
-        statusEl.textContent = '퍼즐 생성에 반복적으로 실패했습니다. 다시 시도해 주세요.';
-        return;
-      }
-
-      bfsStageState = {n, forced: result, revealStep: 0};
-      renderBfsStageBoard();
-
-      const clueCount = result.preRepairColor.filter(c => c === 'red').length;
-      statusEl.textContent = `${n}×${n} 격자: 유일칸(빨강) ${clueCount}개로 시작해 총 ${result.totalStages}단계에 걸쳐 실제 생성 로직 그대로 칸이 확정됩니다. "다음 단계"를 눌러 하나씩 살펴보세요.`;
-    }, 20);
   }
 
   let state = {
