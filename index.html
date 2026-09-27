@@ -179,29 +179,9 @@
   }
 
   /* ---- game screen ---- */
-  .status-row{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:12px;
-    flex-wrap:wrap;
-  }
-  .status-pill{
-    font-family:var(--font-mono);
-    font-size:11px;
-    letter-spacing:.06em;
-    text-transform:uppercase;
-    padding:5px 10px;
-    border-radius:999px;
-    border:1px solid var(--line);
-    color:var(--muted);
-  }
-  .status-pill.mode-play{ color:var(--accent-strong); border-color:var(--accent); }
-  .status-pill.mode-result{ color:var(--ink); }
-
   .result-banner{
     text-align:center;
-    font-family:var(--font-display);
+    font-family:var(--font-body);
     font-weight:600;
     font-size:20px;
     padding:12px 16px;
@@ -229,7 +209,16 @@
     border-bottom:1px solid var(--line);
     padding:4px 0 16px;
   }
+  .tool-title{
+    flex-basis:100%;
+    margin:0;
+    font-family:var(--font-display);
+    font-size:18px;
+    font-weight:600;
+  }
   .tool-buttons{ display:flex; gap:8px; justify-content:center; }
+  #submitActions{ margin-top:18px; }
+  #resultBanner{ margin-bottom:14px; }
   #historyActions{ margin:18px 0 10px; }
   .btn.icon-btn{
     width:48px;
@@ -455,6 +444,9 @@
     .tool-palette{ padding:4px 0 12px; gap:8px 10px; }
     #historyActions{ margin:6px 0 0; }
     #historyActions .btn{ flex:none; width:56px; padding:0; }
+    #submitActions{ margin-top:6px; }
+    #resultBanner{ margin-bottom:0; }
+    .tool-title{ font-size:16px; }
     .tool-buttons{ gap:6px; width:100%; justify-content:space-between; }
     .tool-btn{ flex:1; max-width:56px; height:48px; }
     .lang-btn{ padding:5px 7px; }
@@ -505,12 +497,9 @@
   </section>
 
   <section id="gameScreen" hidden>
-    <div class="status-row">
-      <span id="statusPill" class="status-pill mode-play">플레이 중</span>
-      <span id="sizeLabel" class="status-pill" style="border-style:dashed;"></span>
-    </div>
     <div id="resultBanner" class="result-banner" hidden></div>
     <div id="toolPalette" class="tool-palette">
+      <h2 class="tool-title" data-i18n="toolTitle">도구 선택</h2>
       <div class="tool-buttons">
         <button class="tool-btn" data-dir="up" onclick="selectTool('up')" data-i18n-title="tool_up">
           <span class="tool-swatch"><span class="fill fill-up"></span></span>
@@ -544,7 +533,7 @@
     <div class="board-wrap">
       <div id="board" class="board"></div>
     </div>
-    <div class="actions">
+    <div id="submitActions" class="actions">
       <button id="submitBtn" class="btn" onclick="submitAnswer()" data-i18n="submit">답안 제출</button>
       <button id="restartBtn" class="btn danger-outline" onclick="restart()" hidden data-i18n="restart">재시작</button>
     </div>
@@ -1531,10 +1520,9 @@
       redo: '다시 실행',
       submit: '답안 제출',
       restart: '재시작',
-      statusPlay: '플레이 중',
-      statusResult: '제출한 배치',
-      resultCorrect: '정답입니다!',
-      resultIncorrect: '오답입니다 — 규칙에 어긋난 칸을 빨간색으로 표시했습니다',
+      toolTitle: '도구 선택',
+      resultCorrect: '정답입니다',
+      resultIncorrect: '오답입니다',
       cellLock: '우클릭(길게 누르기)하면 이 칸을 잠급니다',
       cellUnlock: '우클릭(길게 누르기)하면 잠금이 풀립니다'
     },
@@ -1567,10 +1555,9 @@
       redo: 'Redo',
       submit: 'Submit',
       restart: 'Restart',
-      statusPlay: 'Playing',
-      statusResult: 'Your submission',
-      resultCorrect: 'Correct!',
-      resultIncorrect: 'Incorrect — cells that break a rule are marked in red',
+      toolTitle: 'Tools',
+      resultCorrect: 'Correct',
+      resultIncorrect: 'Incorrect',
       cellLock: 'Right-click (long-press) to lock this cell',
       cellUnlock: 'Right-click (long-press) to unlock'
     }
@@ -1832,13 +1819,6 @@
     gameScreen.hidden = state.phase !== 'game';
 
     if(state.phase !== 'game') return;
-
-    document.getElementById('sizeLabel').textContent = state.size + '×' + state.size;
-
-    const pill = document.getElementById('statusPill');
-    pill.classList.remove('mode-play','mode-result');
-    if(state.viewMode === 'play'){ pill.textContent = t('statusPlay'); pill.classList.add('mode-play'); }
-    else { pill.textContent = t('statusResult'); pill.classList.add('mode-result'); }
 
     const submitted = state.submittedState !== null;
     document.getElementById('submitBtn').hidden = submitted;
