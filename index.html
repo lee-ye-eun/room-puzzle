@@ -4,7 +4,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:wght@500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
 <style>
-  /* Black & white theme. The only colour kept is red, reserved for locks and rule violations. */
+  /* Black & white theme. The only colours kept are red (locks, rule violations) and blue
+     (the "correct" result banner). */
   :root{
     --paper:#FFFFFF;
     --paper-raised:#F6F6F6;
@@ -17,6 +18,8 @@
     --muted:#6E6E6E;
     --danger:#D32F2F;
     --danger-soft:#FDE8E8;
+    --correct:#1E5BD8;
+    --correct-soft:#E7EEFC;
     --fixed:#5C5C5C;
     /* the board itself stays black-on-white in both modes, so a half-block's "black part"
        is always literally black */
@@ -41,6 +44,8 @@
       --muted:#9A9A9A;
       --danger:#FF5C5C;
       --danger-soft:#3A1A1A;
+      --correct:#6EA0FF;
+      --correct-soft:#15213A;
       --fixed:#6A6A6A;
       --board-paper:#EDEDED;
       --board-line:#8A8A8A;
@@ -59,6 +64,8 @@
     --muted:#9A9A9A;
     --danger:#FF5C5C;
     --danger-soft:#3A1A1A;
+    --correct:#6EA0FF;
+    --correct-soft:#15213A;
     --fixed:#6A6A6A;
     --board-paper:#EDEDED;
     --board-line:#8A8A8A;
@@ -140,7 +147,8 @@
   .legend li::marker{ color:var(--ink); font-weight:600; }
   /* ---- start screen ---- */
   .start-card{
-    padding:4px 0 8px;
+    border-bottom:1px solid var(--line);
+    padding:4px 0 20px;
     display:flex;
     flex-direction:column;
     align-items:center;
@@ -189,9 +197,9 @@
     border:1.5px solid transparent;
   }
   .result-banner.correct{
-    color:var(--accent-strong);
-    background:var(--accent-soft);
-    border-color:var(--accent);
+    color:var(--correct);
+    background:var(--correct-soft);
+    border-color:var(--correct);
   }
   .result-banner.incorrect{
     color:var(--danger);
@@ -437,7 +445,7 @@
     .legend{ padding:0 0 14px; font-size:12px; }
     .info-cards{ gap:14px; }
 
-    .start-card{ padding:4px 0; }
+    .start-card{ padding:4px 0 14px; }
     .size-btn{ width:60px; height:60px; }
 
     #gameScreen{ display:flex; flex-direction:column; gap:10px; }
@@ -694,7 +702,7 @@
     return idxs;
   }
 
-  // Picks exactly one "unique cell" per zone — a position whose value (its degree: 4
+  // Picks one (on large boards sometimes two) "unique cell" per zone — a position whose value (its degree: 4
   // interior / 3 edge / 2 corner; 0 is no longer allowed anywhere) has exactly one possible
   // neighbor arrangement. This is the ONLY place a clue is ever allowed to show that
   // unambiguous degree-value pattern — every later clue placement in generatePuzzleAttempt
@@ -708,6 +716,9 @@
   // corrupting its value. Only decides WHICH cells are clues and what they show — not any
   // actual orientations, so this alone is also what the BFS test tool uses to check just the
   // seeding step in isolation.
+  const LARGE_BOARD_MIN = 15;
+  const MAX_UNIQUE_CELLS_LARGE = 7;
+
   function placeUniqueCells(n){
     const total = n * n;
     const isClue = new Array(total).fill(false);
@@ -732,11 +743,27 @@
       return true;
     }
 
-    // always a 4-way (2×2) split, regardless of grid size — exactly 4 zones, exactly one
-    // unique cell seeded per zone (a zone with no room left for its own pick just goes
-    // without — see placeOneIn's early return).
-    const zones = shuffled(computeZones(n, 2));
-    zones.forEach(zone => placeOneIn(cellsInZone(n, zone)));
+    // always a 4-way (2×2) split, regardless of grid size — one unique cell seeded per zone
+    // (a zone with no room left for its own pick just goes without — see placeOneIn's early
+    // return). Large boards (15×15 and up) additionally get 0–3 extra unique cells, each in
+    // a different zone, so every zone holds 1–2 and the whole board at most 7. On those
+    // boards the odd-sized zones overlap on the middle row/column, so seeds stay off that
+    // shared strip — otherwise one zone could end up holding a neighbor's picks too.
+    const large = n >= LARGE_BOARD_MIN;
+    const allZones = computeZones(n, 2);
+    const zoneCells = new Map(allZones.map(zone => {
+      let cells = cellsInZone(n, zone);
+      if(large){
+        cells = cells.filter(i => allZones.filter(z => cellsInZone(n, z).includes(i)).length === 1);
+      }
+      return [zone, cells];
+    }));
+    const zones = shuffled(allZones);
+    zones.forEach(zone => placeOneIn(zoneCells.get(zone)));
+    if(large){
+      const extra = Math.floor(Math.random() * (MAX_UNIQUE_CELLS_LARGE - zones.length + 1));
+      zones.slice(0, extra).forEach(zone => placeOneIn(zoneCells.get(zone)));
+    }
 
     return {isClue, clueValue};
   }
@@ -1521,8 +1548,8 @@
       submit: '답안 제출',
       restart: '재시작',
       toolTitle: '도구 선택',
-      resultCorrect: '정답입니다',
-      resultIncorrect: '오답입니다',
+      resultCorrect: '정답!',
+      resultIncorrect: '오답',
       cellLock: '우클릭(길게 누르기)하면 이 칸을 잠급니다',
       cellUnlock: '우클릭(길게 누르기)하면 잠금이 풀립니다'
     },
@@ -1556,7 +1583,7 @@
       submit: 'Submit',
       restart: 'Restart',
       toolTitle: 'Tools',
-      resultCorrect: 'Correct',
+      resultCorrect: 'Correct!',
       resultIncorrect: 'Incorrect',
       cellLock: 'Right-click (long-press) to lock this cell',
       cellUnlock: 'Right-click (long-press) to unlock'
