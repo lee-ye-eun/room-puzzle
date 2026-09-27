@@ -120,21 +120,19 @@
     margin:0;
   }
 
+  /* Sections are flat and divided by a single rule, like the title header. */
   .legend{
-    background:var(--paper-raised);
-    border:1px solid var(--line-soft);
-    border-radius:10px;
-    padding:14px 16px;
+    border-bottom:1px solid var(--line);
+    padding:0 0 20px;
     font-size:12.5px;
     line-height:1.6;
     color:var(--muted);
   }
   .legend strong{ color:var(--ink); font-weight:600; }
   .info-cards{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:12px;
-    align-items:start;
+    display:flex;
+    flex-direction:column;
+    gap:20px;
   }
   .legend ol, .legend ul{
     margin:0;
@@ -146,10 +144,7 @@
   .legend li::marker{ color:var(--ink); font-weight:600; }
   /* ---- start screen ---- */
   .start-card{
-    background:var(--paper-raised);
-    border:1px solid var(--line-soft);
-    border-radius:14px;
-    padding:28px 22px;
+    padding:4px 0 8px;
     display:flex;
     flex-direction:column;
     align-items:center;
@@ -233,10 +228,8 @@
     align-items:center;
     gap:14px;
     flex-wrap:wrap;
-    background:var(--paper-raised);
-    border:1px solid var(--line-soft);
-    border-radius:10px;
-    padding:12px 16px;
+    border-bottom:1px solid var(--line);
+    padding:4px 0 16px;
   }
   .tool-buttons{ display:flex; gap:8px; }
   .tool-btn{
@@ -444,14 +437,14 @@
     }
     .page{ gap:14px; }
     header.top{ padding-bottom:12px; }
-    .legend{ padding:12px 14px; font-size:12px; }
-    .info-cards{ grid-template-columns:1fr; gap:10px; }
+    .legend{ padding:0 0 14px; font-size:12px; }
+    .info-cards{ gap:14px; }
 
-    .start-card{ padding:20px 14px; }
+    .start-card{ padding:4px 0; }
     .size-btn{ width:60px; height:60px; }
 
     #gameScreen{ display:flex; flex-direction:column; gap:10px; }
-    .tool-palette{ padding:10px 12px; gap:8px 10px; justify-content:space-between; }
+    .tool-palette{ padding:4px 0 12px; gap:8px 10px; justify-content:space-between; }
     .tool-buttons{ gap:6px; width:100%; justify-content:space-between; }
     .tool-btn{ flex:1; max-width:56px; height:48px; }
     .title-row{ gap:8px; }
