@@ -1848,23 +1848,24 @@
   const LONG_PRESS_SLOP = 10;
   let longPress = null;          // {index, x, y, timer} while a touch is held on a cell
   let suppressNextClick = false; // the click that ends a long-press must not also edit the cell
-  let lastPointerType = 'mouse';
 
   // Drag painting: with a tool (door, mark, eraser) or lock mode on, pressing on a cell and
   // dragging across others applies that tool to every cell passed over. Painting always SETS
   // (a cell already holding the same door/mark, or already locked, stays as it is) rather
   // than toggling the way a single click does; locked cells are never changed except by the
-  // lock tool, which just locks everything it passes. A press that never leaves its first
-  // cell stays an ordinary click. One drag = one undo step.
-  let drag = null;               // {start, last, painted} while a tool-press is held on the board
+  // lock tool, which just locks everything it passes. A right-button drag (mouse) locks the
+  // same way whatever tool is selected. A press that never leaves its first cell stays an
+  // ordinary click / right-click. One drag = one undo step.
+  let drag = null;               // {start, last, painted, lock, rightClick} while a press is held on the board
+  let rightDragJustEnded = false; // swallows the context menu Windows opens after a right-drag
 
   function paintingActive(){
     return state.phase === 'game' && state.viewMode === 'play' && (state.lockMode || !!state.selectedTool);
   }
 
-  function paintCell(index){
+  function paintCell(index, lock){
     if(state.puzzle.cells[index].type !== 'player') return;
-    if(state.lockMode){ state.lockedCells[index] = true; return; }
+    if(lock){ state.lockedCells[index] = true; return; }
     if(state.lockedCells[index]) return;
     state.playerState[index] = state.selectedTool === 'erase' ? 'blank' : state.selectedTool;
   }
@@ -1882,27 +1883,37 @@
     if(!drag.painted){
       cancelLongPress();
       recordHistory();
-      paintCell(drag.start);
+      paintCell(drag.start, drag.lock);
       drag.painted = true;
     }
     drag.last = index;
-    paintCell(index);
+    paintCell(index, drag.lock);
     render();
   });
   function endDrag(){
     if(drag && drag.painted) suppressNextClick = true; // the click ending a drag isn't a click
+    if(drag && drag.rightClick){
+      if(drag.painted) rightDragJustEnded = true;
+      else handleCellRightClick(drag.start); // a plain right-click still toggles the lock
+    }
     drag = null;
   }
+  document.addEventListener('contextmenu', (e) => {
+    if(rightDragJustEnded){ e.preventDefault(); rightDragJustEnded = false; }
+  });
   document.addEventListener('pointerup', endDrag);
   document.addEventListener('pointercancel', () => { drag = null; });
 
   // Wired to every board cell (rooms included), so a drag can start anywhere on the board.
   function startDrag(e, index){
-    lastPointerType = e.pointerType;
     suppressNextClick = false;
+    rightDragJustEnded = false;
     drag = null;
-    if(e.button === 0 && paintingActive()){
-      drag = {start: index, last: index, painted: false};
+    const playing = state.phase === 'game' && state.viewMode === 'play';
+    if(playing && e.button === 2 && e.pointerType !== 'touch'){
+      drag = {start: index, last: index, painted: false, lock: true, rightClick: true};
+    } else if(e.button === 0 && paintingActive()){
+      drag = {start: index, last: index, painted: false, lock: state.lockMode, rightClick: false};
       // touch pointers are captured by the pressed cell; release so moves hit-test normally
       if(e.target.releasePointerCapture) e.target.releasePointerCapture(e.pointerId);
     }
@@ -1933,10 +1944,11 @@
     if(suppressNextClick){ suppressNextClick = false; return; }
     handleCellClick(index);
   }
-  function onCellContextMenu(e, index){
+  // The lock toggle itself happens on pointerup (see endDrag) so a right-button press can
+  // turn into a drag; touch long-press is handled by its timer. Here we only keep the
+  // browser's menu from opening over the board.
+  function onCellContextMenu(e){
     e.preventDefault();
-    if(lastPointerType === 'touch') return; // long-press already handled by the timer
-    handleCellRightClick(index);
   }
 
   function render(){
@@ -2004,11 +2016,14 @@
         if(interactive){
           div.onpointerdown = (e) => onCellPointerDown(e, i);
           div.onclick = () => onCellClick(i);
-          div.oncontextmenu = (e) => onCellContextMenu(e, i);
+          div.oncontextmenu = onCellContextMenu;
           div.title = t(locked ? 'cellUnlock' : 'cellLock');
         }
       }
-      if(state.viewMode === 'play' && cell.type !== 'player') div.onpointerdown = (e) => startDrag(e, i);
+      if(state.viewMode === 'play' && cell.type !== 'player'){
+        div.onpointerdown = (e) => startDrag(e, i);
+        div.oncontextmenu = onCellContextMenu;
+      }
       board.appendChild(div);
     });
   }
