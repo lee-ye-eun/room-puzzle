@@ -227,8 +227,9 @@
     font-size:18px;
     font-weight:600;
   }
+  /* tool rows: doors (4) / solving marks (4) / lock + eraser (2), each centered */
+  .tool-rows{ flex-basis:100%; display:flex; flex-direction:column; align-items:center; gap:8px; }
   .tool-buttons{ display:flex; gap:8px; justify-content:center; }
-  .tool-buttons + .tool-buttons{ flex-basis:100%; margin-top:-6px; }
   #submitActions{ margin-top:18px; }
   #resultBanner{ margin-bottom:14px; }
   #historyActions{ margin:18px 0 10px; }
@@ -408,6 +409,7 @@
 
   /* ---- touch ---- */
   button, .board{ touch-action:manipulation; }
+  .board.painting{ touch-action:none; }
   .board{
     -webkit-user-select:none;
     user-select:none;
@@ -465,9 +467,9 @@
     #submitActions{ margin-top:6px; }
     #resultBanner{ margin-bottom:0; }
     .tool-title{ font-size:16px; }
-    .tool-buttons{ gap:6px; width:100%; justify-content:space-between; }
-    .tool-buttons + .tool-buttons{ justify-content:center; }
-    .tool-btn{ flex:1; max-width:56px; height:48px; }
+    .tool-rows{ gap:6px; }
+    .tool-buttons{ gap:6px; }
+    .tool-btn{ width:52px; height:48px; }
     .lang-btn{ padding:5px 7px; }
     .tool-hint{ font-size:11px; }
 
@@ -519,39 +521,43 @@
     <div id="resultBanner" class="result-banner" hidden></div>
     <div id="toolPalette" class="tool-palette">
       <h2 class="tool-title" data-i18n="toolTitle">도구 선택</h2>
-      <div class="tool-buttons">
-        <button class="tool-btn" data-dir="up" onclick="selectTool('up')" data-i18n-title="tool_up">
-          <span class="tool-swatch"><span class="fill fill-up"></span></span>
-        </button>
-        <button class="tool-btn" data-dir="down" onclick="selectTool('down')" data-i18n-title="tool_down">
-          <span class="tool-swatch"><span class="fill fill-down"></span></span>
-        </button>
-        <button class="tool-btn" data-dir="left" onclick="selectTool('left')" data-i18n-title="tool_left">
-          <span class="tool-swatch"><span class="fill fill-left"></span></span>
-        </button>
-        <button class="tool-btn" data-dir="right" onclick="selectTool('right')" data-i18n-title="tool_right">
-          <span class="tool-swatch"><span class="fill fill-right"></span></span>
-        </button>
-        <button id="lockModeBtn" class="tool-btn lock-btn" onclick="toggleLockMode()" data-i18n-title="toolLock">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>
-        </button>
-        <button class="tool-btn eraser-btn" data-dir="erase" onclick="selectTool('erase')" data-i18n-title="toolErase">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16.2 3.8l4 4a1.5 1.5 0 0 1 0 2.1L11 19H7l-3.2-3.2a1.5 1.5 0 0 1 0-2.1l10.3-9.9a1.5 1.5 0 0 1 2.1 0z"/><path d="M9 9l6 6"/><path d="M11 19h9"/></svg>
-        </button>
-      </div>
-      <div class="tool-buttons">
-        <button class="tool-btn" data-dir="q-tl" onclick="selectTool('q-tl')" data-i18n-title="tool_q_tl">
-          <span class="tool-swatch"><span class="mark mark-q-tl"></span></span>
-        </button>
-        <button class="tool-btn" data-dir="q-tr" onclick="selectTool('q-tr')" data-i18n-title="tool_q_tr">
-          <span class="tool-swatch"><span class="mark mark-q-tr"></span></span>
-        </button>
-        <button class="tool-btn" data-dir="q-bl" onclick="selectTool('q-bl')" data-i18n-title="tool_q_bl">
-          <span class="tool-swatch"><span class="mark mark-q-bl"></span></span>
-        </button>
-        <button class="tool-btn" data-dir="q-br" onclick="selectTool('q-br')" data-i18n-title="tool_q_br">
-          <span class="tool-swatch"><span class="mark mark-q-br"></span></span>
-        </button>
+      <div class="tool-rows">
+        <div class="tool-buttons">
+          <button class="tool-btn" data-dir="up" onclick="selectTool('up')" data-i18n-title="tool_up">
+            <span class="tool-swatch"><span class="fill fill-up"></span></span>
+          </button>
+          <button class="tool-btn" data-dir="down" onclick="selectTool('down')" data-i18n-title="tool_down">
+            <span class="tool-swatch"><span class="fill fill-down"></span></span>
+          </button>
+          <button class="tool-btn" data-dir="left" onclick="selectTool('left')" data-i18n-title="tool_left">
+            <span class="tool-swatch"><span class="fill fill-left"></span></span>
+          </button>
+          <button class="tool-btn" data-dir="right" onclick="selectTool('right')" data-i18n-title="tool_right">
+            <span class="tool-swatch"><span class="fill fill-right"></span></span>
+          </button>
+        </div>
+        <div class="tool-buttons">
+          <button class="tool-btn" data-dir="q-tl" onclick="selectTool('q-tl')" data-i18n-title="tool_q_tl">
+            <span class="tool-swatch"><span class="mark mark-q-tl"></span></span>
+          </button>
+          <button class="tool-btn" data-dir="q-tr" onclick="selectTool('q-tr')" data-i18n-title="tool_q_tr">
+            <span class="tool-swatch"><span class="mark mark-q-tr"></span></span>
+          </button>
+          <button class="tool-btn" data-dir="q-bl" onclick="selectTool('q-bl')" data-i18n-title="tool_q_bl">
+            <span class="tool-swatch"><span class="mark mark-q-bl"></span></span>
+          </button>
+          <button class="tool-btn" data-dir="q-br" onclick="selectTool('q-br')" data-i18n-title="tool_q_br">
+            <span class="tool-swatch"><span class="mark mark-q-br"></span></span>
+          </button>
+        </div>
+        <div class="tool-buttons">
+          <button id="lockModeBtn" class="tool-btn lock-btn" onclick="toggleLockMode()" data-i18n-title="toolLock">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>
+          </button>
+          <button class="tool-btn eraser-btn" data-dir="erase" onclick="selectTool('erase')" data-i18n-title="toolErase">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16.2 3.8l4 4a1.5 1.5 0 0 1 0 2.1L11 19H7l-3.2-3.2a1.5 1.5 0 0 1 0-2.1l10.3-9.9a1.5 1.5 0 0 1 2.1 0z"/><path d="M9 9l6 6"/><path d="M11 19h9"/></svg>
+          </button>
+        </div>
       </div>
       <span id="toolHint" class="tool-hint" data-i18n="toolHint"></span>
     </div>
@@ -1844,9 +1850,66 @@
   let suppressNextClick = false; // the click that ends a long-press must not also edit the cell
   let lastPointerType = 'mouse';
 
-  function onCellPointerDown(e, index){
+  // Drag painting: with a tool (door, mark, eraser) or lock mode on, pressing on a cell and
+  // dragging across others applies that tool to every cell passed over. Painting always SETS
+  // (a cell already holding the same door/mark, or already locked, stays as it is) rather
+  // than toggling the way a single click does; locked cells are never changed except by the
+  // lock tool, which just locks everything it passes. A press that never leaves its first
+  // cell stays an ordinary click. One drag = one undo step.
+  let drag = null;               // {start, last, painted} while a tool-press is held on the board
+
+  function paintingActive(){
+    return state.phase === 'game' && state.viewMode === 'play' && (state.lockMode || !!state.selectedTool);
+  }
+
+  function paintCell(index){
+    if(state.puzzle.cells[index].type !== 'player') return;
+    if(state.lockMode){ state.lockedCells[index] = true; return; }
+    if(state.lockedCells[index]) return;
+    state.playerState[index] = state.selectedTool === 'erase' ? 'blank' : state.selectedTool;
+  }
+
+  function cellIndexAt(x, y){
+    const el = document.elementFromPoint(x, y);
+    const cellEl = el && el.closest && el.closest('#board .cell');
+    return cellEl ? Number(cellEl.dataset.index) : -1;
+  }
+
+  document.addEventListener('pointermove', (e) => {
+    if(!drag) return;
+    const index = cellIndexAt(e.clientX, e.clientY);
+    if(index < 0 || index === drag.last) return;
+    if(!drag.painted){
+      cancelLongPress();
+      recordHistory();
+      paintCell(drag.start);
+      drag.painted = true;
+    }
+    drag.last = index;
+    paintCell(index);
+    render();
+  });
+  function endDrag(){
+    if(drag && drag.painted) suppressNextClick = true; // the click ending a drag isn't a click
+    drag = null;
+  }
+  document.addEventListener('pointerup', endDrag);
+  document.addEventListener('pointercancel', () => { drag = null; });
+
+  // Wired to every board cell (rooms included), so a drag can start anywhere on the board.
+  function startDrag(e, index){
     lastPointerType = e.pointerType;
     suppressNextClick = false;
+    drag = null;
+    if(e.button === 0 && paintingActive()){
+      drag = {start: index, last: index, painted: false};
+      // touch pointers are captured by the pressed cell; release so moves hit-test normally
+      if(e.target.releasePointerCapture) e.target.releasePointerCapture(e.pointerId);
+    }
+  }
+
+  function onCellPointerDown(e, index){
+    startDrag(e, index);
     if(e.pointerType !== 'touch') return;
     cancelLongPress();
     const timer = setTimeout(() => {
@@ -1912,10 +1975,12 @@
     board.style.gridTemplateColumns = `repeat(${state.size}, minmax(0, 1fr))`;
     board.style.gridTemplateRows = `repeat(${state.size}, minmax(0, 1fr))`;
     board.style.setProperty('--n', state.size);
+    board.classList.toggle('painting', paintingActive());
     board.innerHTML = '';
 
     state.puzzle.cells.forEach((cell, i) => {
       const div = document.createElement('div');
+      div.dataset.index = i;
 
       if(cell.type === 'number'){
         div.className = 'cell fixed-number' + (state.violations.has(i) ? ' violation' : '');
@@ -1943,6 +2008,7 @@
           div.title = t(locked ? 'cellUnlock' : 'cellLock');
         }
       }
+      if(state.viewMode === 'play' && cell.type !== 'player') div.onpointerdown = (e) => startDrag(e, i);
       board.appendChild(div);
     });
   }
