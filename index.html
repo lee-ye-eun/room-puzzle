@@ -1,55 +1,68 @@
 <!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
-<title>하프블록 퍼즐</title>
+<title>Room Puzzle</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:wght@500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
 <style>
+  /* Black & white theme. The only colour kept is red, reserved for locks and rule violations. */
   :root{
-    --paper:#EEEBE2;
-    --paper-raised:#F7F5EE;
-    --ink:#201F1C;
-    --line:#C7C1B2;
-    --line-soft:#DAD5C7;
-    --accent:#3C6E64;
-    --accent-strong:#2A5049;
-    --accent-soft:#DCEAE6;
-    --muted:#7A7469;
-    --danger:#9B4A3E;
-    --danger-soft:#F3E1DC;
-    --fixed:#2F5FA8;
+    --paper:#FFFFFF;
+    --paper-raised:#F6F6F6;
+    --ink:#111111;
+    --line:#BDBDBD;
+    --line-soft:#E2E2E2;
+    --accent:#111111;
+    --accent-strong:#000000;
+    --accent-soft:#EBEBEB;
+    --muted:#6E6E6E;
+    --danger:#D32F2F;
+    --danger-soft:#FDE8E8;
+    --fixed:#5C5C5C;
+    /* the board itself stays black-on-white in both modes, so a half-block's "black part"
+       is always literally black */
+    --board-paper:#FFFFFF;
+    --board-ink:#111111;
+    --board-line:#BDBDBD;
+    --board-hover:#E6E6E6;
     --font-display:'IBM Plex Serif', Georgia, serif;
     --font-body:'IBM Plex Sans KR','IBM Plex Sans',system-ui,sans-serif;
     --font-mono:'IBM Plex Mono',ui-monospace,monospace;
   }
   @media (prefers-color-scheme: dark){
     :root:not([data-theme="light"]){
-      --paper:#17181A;
-      --paper-raised:#1E2022;
-      --ink:#ECE9E1;
-      --line:#3C3B37;
-      --line-soft:#2A2A27;
-      --accent:#6FBDAF;
-      --accent-strong:#8FD2C5;
-      --accent-soft:#1D2C29;
-      --muted:#8C877C;
-      --danger:#D98A7B;
-      --danger-soft:#3A2621;
-      --fixed:#7EB3EA;
+      --paper:#0E0E0E;
+      --paper-raised:#1A1A1A;
+      --ink:#F2F2F2;
+      --line:#474747;
+      --line-soft:#2B2B2B;
+      --accent:#F2F2F2;
+      --accent-strong:#FFFFFF;
+      --accent-soft:#2A2A2A;
+      --muted:#9A9A9A;
+      --danger:#FF5C5C;
+      --danger-soft:#3A1A1A;
+      --fixed:#6A6A6A;
+      --board-paper:#EDEDED;
+      --board-line:#8A8A8A;
+      --board-hover:#D0D0D0;
     }
   }
   :root[data-theme="dark"]{
-    --paper:#17181A;
-    --paper-raised:#1E2022;
-    --ink:#ECE9E1;
-    --line:#3C3B37;
-    --line-soft:#2A2A27;
-    --accent:#6FBDAF;
-    --accent-strong:#8FD2C5;
-    --accent-soft:#1D2C29;
-    --muted:#8C877C;
-    --danger:#D98A7B;
-    --danger-soft:#3A2621;
-    --fixed:#7EB3EA;
+    --paper:#0E0E0E;
+    --paper-raised:#1A1A1A;
+    --ink:#F2F2F2;
+    --line:#474747;
+    --line-soft:#2B2B2B;
+    --accent:#F2F2F2;
+    --accent-strong:#FFFFFF;
+    --accent-soft:#2A2A2A;
+    --muted:#9A9A9A;
+    --danger:#FF5C5C;
+    --danger-soft:#3A1A1A;
+    --fixed:#6A6A6A;
+    --board-paper:#EDEDED;
+    --board-line:#8A8A8A;
+    --board-hover:#D0D0D0;
   }
 
   body{
@@ -70,74 +83,64 @@
   }
 
   header.top{
+    border-bottom:1px solid var(--line);
+    padding:8px 0 12px;
+    text-align:center;
     display:flex;
     flex-direction:column;
-    gap:4px;
-    border-bottom:1px solid var(--line);
-    padding-bottom:16px;
   }
-  header.top .eyebrow{
+  /* language toggle sits at the bottom-right corner of the title section */
+  .lang-btn{
+    align-self:flex-end;
+    margin-top:8px;
+    display:inline-flex;
+    align-items:center;
+    gap:4px;
+    padding:6px 9px;
+    border-radius:999px;
+    border:1px solid var(--line);
+    background:transparent;
+    color:var(--ink);
     font-family:var(--font-mono);
     font-size:11px;
-    letter-spacing:.12em;
-    text-transform:uppercase;
-    color:var(--accent-strong);
+    font-weight:600;
+    cursor:pointer;
   }
+  .lang-btn svg{ width:18px; height:18px; stroke:currentColor; fill:none; stroke-width:1.6; }
   header.top h1{
     font-family:var(--font-display);
     font-weight:600;
-    font-size:26px;
+    font-size:clamp(40px,10vw,56px);
+    letter-spacing:-.01em;
+    line-height:1.05;
     margin:0;
-    text-wrap:balance;
-  }
-  header.top p{
-    margin:2px 0 0;
-    color:var(--muted);
-    font-size:13.5px;
-    line-height:1.5;
   }
 
+  /* Sections are flat and divided by a single rule, like the title header. */
   .legend{
-    background:var(--paper-raised);
-    border:1px solid var(--line-soft);
-    border-radius:10px;
-    padding:14px 16px;
+    border-bottom:1px solid var(--line);
+    padding:0 0 20px;
     font-size:12.5px;
     line-height:1.6;
     color:var(--muted);
   }
   .legend strong{ color:var(--ink); font-weight:600; }
-  .legend .swatches{
+  .info-cards{
     display:flex;
-    flex-wrap:wrap;
-    gap:10px 18px;
-    margin-top:10px;
+    flex-direction:column;
+    gap:20px;
   }
-  .swatch{ display:flex; align-items:center; gap:6px; font-size:12px; color:var(--ink); }
-  .swatch-box{
-    position:relative;
-    width:20px;height:20px;
-    border:1px solid var(--line);
-    border-radius:3px;
-    background:var(--paper);
-    flex-shrink:0;
-    overflow:hidden;
+  .legend ol, .legend ul{
+    margin:0;
+    padding-left:18px;
     display:flex;
-    align-items:center;
-    justify-content:center;
-    font-family:var(--font-mono);
-    font-size:11px;
-    font-weight:600;
-    color:var(--ink);
+    flex-direction:column;
+    gap:6px;
   }
-  .swatch-box .fill{ position:absolute; background:var(--ink); }
-
+  .legend li::marker{ color:var(--ink); font-weight:600; }
   /* ---- start screen ---- */
   .start-card{
-    background:var(--paper-raised);
-    border:1px solid var(--line-soft);
-    border-radius:14px;
-    padding:28px 22px;
+    padding:4px 0 8px;
     display:flex;
     flex-direction:column;
     align-items:center;
@@ -176,29 +179,9 @@
   }
 
   /* ---- game screen ---- */
-  .status-row{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:12px;
-    flex-wrap:wrap;
-  }
-  .status-pill{
-    font-family:var(--font-mono);
-    font-size:11px;
-    letter-spacing:.06em;
-    text-transform:uppercase;
-    padding:5px 10px;
-    border-radius:999px;
-    border:1px solid var(--line);
-    color:var(--muted);
-  }
-  .status-pill.mode-play{ color:var(--accent-strong); border-color:var(--accent); }
-  .status-pill.mode-result{ color:var(--ink); }
-
   .result-banner{
     text-align:center;
-    font-family:var(--font-display);
+    font-family:var(--font-body);
     font-weight:600;
     font-size:20px;
     padding:12px 16px;
@@ -219,21 +202,33 @@
   .tool-palette{
     display:flex;
     align-items:center;
+    justify-content:center;
+    text-align:center;
     gap:14px;
     flex-wrap:wrap;
-    background:var(--paper-raised);
-    border:1px solid var(--line-soft);
-    border-radius:10px;
-    padding:12px 16px;
+    border-bottom:1px solid var(--line);
+    padding:4px 0 16px;
   }
-  .tool-label{
-    font-family:var(--font-mono);
-    font-size:11px;
-    letter-spacing:.06em;
-    text-transform:uppercase;
-    color:var(--muted);
+  .tool-title{
+    flex-basis:100%;
+    margin:0;
+    font-family:var(--font-display);
+    font-size:18px;
+    font-weight:600;
   }
-  .tool-buttons{ display:flex; gap:8px; }
+  .tool-buttons{ display:flex; gap:8px; justify-content:center; }
+  #submitActions{ margin-top:18px; }
+  #resultBanner{ margin-bottom:14px; }
+  #historyActions{ margin:18px 0 10px; }
+  .btn.icon-btn{
+    width:48px;
+    height:44px;
+    padding:0;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .icon-btn svg{ width:22px; height:22px; stroke:currentColor; fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
   .tool-btn{
     width:44px;
     height:44px;
@@ -258,45 +253,18 @@
     height:22px;
     border:1px solid var(--line);
     border-radius:3px;
-    background:var(--paper);
+    background:var(--board-paper);
     overflow:hidden;
   }
-  .tool-swatch .fill{ position:absolute; background:var(--ink); }
+  .tool-swatch .fill{ position:absolute; background:var(--board-ink); }
   .tool-btn.active .tool-swatch{ border-color:var(--accent-strong); }
-  .tool-btn.active .tool-swatch .fill{ background:var(--accent-strong); }
   .tool-hint{
+    white-space:pre-line;
+    line-height:1.6;
     font-size:11.5px;
     color:var(--muted);
     flex-basis:100%;
   }
-
-  .deduction-toggle{
-    font-family:var(--font-mono);
-    font-size:10.5px;
-    letter-spacing:.04em;
-    padding:4px 10px;
-    border-radius:999px;
-    border:1px solid var(--line);
-    background:var(--paper);
-    color:var(--muted);
-    cursor:pointer;
-    display:inline-flex;
-    align-items:center;
-    gap:5px;
-    transition:border-color .15s, background .15s, color .15s;
-  }
-  .deduction-toggle .dot{
-    width:6px; height:6px;
-    border-radius:50%;
-    background:var(--line);
-    flex-shrink:0;
-  }
-  .deduction-toggle.active{
-    border-color:var(--accent);
-    background:var(--accent-soft);
-    color:var(--accent-strong);
-  }
-  .deduction-toggle.active .dot{ background:var(--accent-strong); }
 
   .board-wrap{
     display:flex;
@@ -306,15 +274,15 @@
     display:grid;
     width:min(92vw,480px);
     aspect-ratio:1/1;
-    border:2px solid var(--ink);
+    border:2px solid var(--board-ink);
     border-radius:4px;
     overflow:hidden;
-    background:var(--line);
+    background:var(--board-line);
     gap:1px;
   }
   .cell{
     position:relative;
-    background:var(--paper);
+    background:var(--board-paper);
     display:flex;
     align-items:center;
     justify-content:center;
@@ -331,15 +299,15 @@
     background:var(--fixed);
   }
   .cell.fixed-full{
-    background:var(--ink);
+    background:var(--board-ink);
   }
   .cell.player{
-    background:var(--paper);
+    background:var(--board-paper);
     cursor:pointer;
     box-shadow:inset 0 0 0 1px transparent;
   }
   .cell.player.interactive{
-    box-shadow:inset 0 0 0 1px var(--line-soft);
+    box-shadow:inset 0 0 0 1px var(--board-hover);
   }
   .cell.player.locked{
     box-shadow:inset 0 0 0 2px var(--danger);
@@ -353,7 +321,7 @@
     background:var(--danger);
     z-index:2;
   }
-  .cell .fill{ position:absolute; background:var(--ink); }
+  .cell .fill{ position:absolute; background:var(--board-ink); }
   /* After an incorrect submission: cells that break a rule (not cells that merely differ from
      the generator's own answer) are marked red. */
   .cell.fixed-number.violation{
@@ -414,12 +382,10 @@
   @media (hover:hover){
     .size-btn:hover{ border-color:var(--accent); background:var(--accent-soft); }
     .tool-btn:hover{ border-color:var(--accent); }
-    .deduction-toggle:hover{ border-color:var(--accent); }
-    .cell.player.interactive:hover{ background:var(--accent-soft); }
-    .cell.player.interactive:hover .fill{ background:var(--accent-strong); }
-    .cell.player.locked:hover{ background:var(--paper); }
-    .cell.player.locked:hover .fill{ background:var(--ink); }
+    .cell.player.interactive:hover{ background:var(--board-hover); }
+    .cell.player.locked:hover{ background:var(--board-paper); }
     .btn:hover{ opacity:.85; }
+    .lang-btn:hover{ border-color:var(--ink); }
   }
 
   /* ---- touch ---- */
@@ -450,8 +416,9 @@
     transition:transform .15s;
   }
   details.legend[open] > summary::before{ transform:rotate(90deg); }
-  details.legend[open] > summary{ margin-bottom:8px; }
+  details.legend[open] > summary{ margin-bottom:10px; }
 
+  .eraser-btn svg{ width:20px; height:20px; stroke:var(--ink); fill:none; stroke-width:2; stroke-linejoin:round; stroke-linecap:round; }
   .lock-btn svg{ width:20px; height:20px; stroke:var(--ink); fill:none; stroke-width:2; }
   .lock-btn.active svg{ stroke:var(--danger); }
   .tool-btn.lock-btn.active{
@@ -466,22 +433,23 @@
       padding:14px 12px calc(28px + env(safe-area-inset-bottom,0px));
     }
     .page{ gap:14px; }
-    header.top{ padding-bottom:10px; }
-    header.top .eyebrow{ font-size:10px; letter-spacing:.08em; }
-    header.top h1{ font-size:22px; }
-    header.top p{ font-size:12.5px; }
-    .legend{ padding:12px 14px; font-size:12px; }
+    header.top{ padding-bottom:12px; }
+    .legend{ padding:0 0 14px; font-size:12px; }
+    .info-cards{ gap:14px; }
 
-    /* while a puzzle is on screen, keep the board close to the top */
-    body[data-phase="game"] header.top p{ display:none; }
-
-    .start-card{ padding:20px 14px; }
+    .start-card{ padding:4px 0; }
     .size-btn{ width:60px; height:60px; }
 
     #gameScreen{ display:flex; flex-direction:column; gap:10px; }
-    .tool-palette{ padding:10px 12px; gap:8px 10px; justify-content:space-between; }
+    .tool-palette{ padding:4px 0 12px; gap:8px 10px; }
+    #historyActions{ margin:6px 0 0; }
+    #historyActions .btn{ flex:none; width:56px; padding:0; }
+    #submitActions{ margin-top:6px; }
+    #resultBanner{ margin-bottom:0; }
+    .tool-title{ font-size:16px; }
     .tool-buttons{ gap:6px; width:100%; justify-content:space-between; }
     .tool-btn{ flex:1; max-width:56px; height:48px; }
+    .lang-btn{ padding:5px 7px; }
     .tool-hint{ font-size:11px; }
 
     .board{ --board-w:calc(100vw - 24px); width:var(--board-w); max-width:480px; }
@@ -494,28 +462,27 @@
 
 <div class="page">
   <header class="top">
-    <div class="eyebrow">Black &amp; White Logic Puzzle · 매 판 새로 생성</div>
-    <h1>하프블록 퍼즐</h1>
-    <p>숫자 칸은 상하좌우로 맞닿은 검정 블록의 개수를 나타냅니다. 반칸 블록은 절반만 검게 채워져, 방향이 다른 두 칸이 합쳐져야 숫자 1이 완성되기도 합니다. 반칸 블록은 반드시 숫자 칸에 닿아야 하고, 반칸 블록끼리는 서로 닿을 수 없습니다.</p>
+    <h1>Room Puzzle</h1>
+    <button id="langBtn" class="lang-btn" onclick="toggleLang()" data-i18n-title="langTitle">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a14 14 0 0 1 0 18"/><path d="M12 3a14 14 0 0 0 0 18"/></svg>
+      <span data-i18n="langLabel">EN</span>
+    </button>
   </header>
 
-  <details id="legend" class="legend" open>
-    <summary>규칙 · 조작법</summary>
-    칸을 클릭하면 <strong>위 → 아래 → 왼쪽 → 오른쪽 → 빈칸</strong> 순서로 바뀝니다. <strong>파란색 숫자 칸은 고정으로 제공된 칸</strong>으로 플레이어가 바꿀 수 없고, 그 외의 칸만 조작할 수 있습니다. 게임 화면 상단의 블록 선택 도구를 고르면 클릭 한 번에 그 블록을 바로 놓을 수 있고, 같은 블록이 이미 있는 칸을 누르면 지워집니다. <strong>칸을 우클릭하면 지금 놓인 모양이 잠겨</strong>(빨간 점 표시) 좌클릭이나 도구로도 바뀌지 않고, 다시 우클릭하면 잠금이 풀립니다. <strong>모바일에서는 칸을 길게 누르거나, 자물쇠 버튼(잠금 모드)을 켠 뒤 탭해서</strong> 잠그고 풀 수 있습니다. <strong>반칸을 잠그면 그 반칸이 맞닿은 숫자 칸의 표시 숫자가 그만큼 줄어들어</strong> 아직 채워야 할 양을 바로 확인할 수 있습니다(잠그지 않은 반칸은 반영되지 않습니다).
-    <div style="margin-top:10px;">
-      <strong>규칙</strong> — ① 숫자 칸의 값은 상하좌우로 맞닿은 반칸 블록의 검은 부분 개수(반칸끼리 합쳐져 1을 이루기도 함)와 같아야 합니다. ② 모든 반칸 블록은 검은 부분이 실제로 어느 숫자 칸을 향해야 합니다(격자 벽이나 다른 반칸 블록에 닿는 것은 인정되지 않습니다). ③ 어떤 두 반칸 블록도 검은 부분끼리 서로 닿을 수 없습니다.
-    </div>
-    <div class="swatches">
-      <div class="swatch"><span class="swatch-box"><span class="fill fill-up"></span></span>위쪽 반</div>
-      <div class="swatch"><span class="swatch-box"><span class="fill fill-down"></span></span>아래쪽 반</div>
-      <div class="swatch"><span class="swatch-box"><span class="fill fill-left"></span></span>왼쪽 반</div>
-      <div class="swatch"><span class="swatch-box"><span class="fill fill-right"></span></span>오른쪽 반</div>
-      <div class="swatch"><span class="swatch-box" style="background:var(--fixed);color:#fff">4</span>숫자 칸(고정)</div>
-    </div>
-  </details>
+  <div class="info-cards">
+    <details id="rulesCard" class="legend" open>
+      <summary data-i18n="rulesTitle">규칙</summary>
+      <ol data-i18n="rulesBody"></ol>
+    </details>
+
+    <details id="controlsCard" class="legend" open>
+      <summary data-i18n="controlsTitle">조작법</summary>
+      <ul data-i18n="controlsBody"></ul>
+    </details>
+  </div>
 
   <section id="startScreen" class="start-card">
-    <h2>격자 크기를 선택하세요</h2>
+    <h2 data-i18n="sizeTitle">퍼즐 크기 선택</h2>
     <div class="size-grid">
       <button class="size-btn" data-size="5" onclick="startGame(5)">5×5</button>
       <button class="size-btn" data-size="7" onclick="startGame(7)">7×7</button>
@@ -525,50 +492,50 @@
   </section>
 
   <section id="loadingScreen" class="start-card" hidden>
-    <h2>퍼즐 생성 중…</h2>
-    <p style="margin:0;color:var(--muted);font-size:13px;">숫자 배치와 유일해 검증을 진행하고 있어요.</p>
+    <h2 data-i18n="loadingTitle">퍼즐 생성 중…</h2>
+    <p style="margin:0;color:var(--muted);font-size:13px;" data-i18n="loadingBody">숫자 배치와 유일해 검증을 진행하고 있어요.</p>
   </section>
 
   <section id="gameScreen" hidden>
-    <div class="status-row">
-      <span id="statusPill" class="status-pill mode-play">플레이 중</span>
-      <span id="sizeLabel" class="status-pill" style="border-style:dashed;"></span>
-    </div>
     <div id="resultBanner" class="result-banner" hidden></div>
     <div id="toolPalette" class="tool-palette">
-      <span class="tool-label">놓을 블록 선택</span>
-      <button id="deductionToggleBtn" class="deduction-toggle" onclick="toggleDeduction()" title="켜면 잠근 반칸만큼 숫자 칸의 표시 숫자가 줄어듭니다">
-        <span class="dot"></span>잠금 시 숫자 감소
-      </button>
+      <h2 class="tool-title" data-i18n="toolTitle">도구 선택</h2>
       <div class="tool-buttons">
-        <button class="tool-btn" data-dir="up" onclick="selectTool('up')" title="위쪽 반">
+        <button class="tool-btn" data-dir="up" onclick="selectTool('up')" data-i18n-title="tool_up">
           <span class="tool-swatch"><span class="fill fill-up"></span></span>
         </button>
-        <button class="tool-btn" data-dir="down" onclick="selectTool('down')" title="아래쪽 반">
+        <button class="tool-btn" data-dir="down" onclick="selectTool('down')" data-i18n-title="tool_down">
           <span class="tool-swatch"><span class="fill fill-down"></span></span>
         </button>
-        <button class="tool-btn" data-dir="left" onclick="selectTool('left')" title="왼쪽 반">
+        <button class="tool-btn" data-dir="left" onclick="selectTool('left')" data-i18n-title="tool_left">
           <span class="tool-swatch"><span class="fill fill-left"></span></span>
         </button>
-        <button class="tool-btn" data-dir="right" onclick="selectTool('right')" title="오른쪽 반">
+        <button class="tool-btn" data-dir="right" onclick="selectTool('right')" data-i18n-title="tool_right">
           <span class="tool-swatch"><span class="fill fill-right"></span></span>
         </button>
-        <button id="lockModeBtn" class="tool-btn lock-btn" onclick="toggleLockMode()" title="잠금 모드: 켜면 탭한 칸이 잠기거나 풀립니다">
+        <button id="lockModeBtn" class="tool-btn lock-btn" onclick="toggleLockMode()" data-i18n-title="toolLock">
           <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>
         </button>
+        <button class="tool-btn eraser-btn" data-dir="erase" onclick="selectTool('erase')" data-i18n-title="toolErase">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16.2 3.8l4 4a1.5 1.5 0 0 1 0 2.1L11 19H7l-3.2-3.2a1.5 1.5 0 0 1 0-2.1l10.3-9.9a1.5 1.5 0 0 1 2.1 0z"/><path d="M9 9l6 6"/><path d="M11 19h9"/></svg>
+        </button>
       </div>
-      <span id="toolHint" class="tool-hint"></span>
+      <span id="toolHint" class="tool-hint" data-i18n="toolHint"></span>
     </div>
     <div id="historyActions" class="actions">
-      <button id="undoBtn" class="btn secondary" onclick="undo()" title="실행 취소 (Ctrl+Z)">실행 취소</button>
-      <button id="redoBtn" class="btn secondary" onclick="redo()" title="다시 실행">다시 실행</button>
+      <button id="undoBtn" class="btn secondary icon-btn" onclick="undo()" data-i18n-title="undoTitle">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 14L4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg>
+      </button>
+      <button id="redoBtn" class="btn secondary icon-btn" onclick="redo()" data-i18n-title="redo">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 14l5-5-5-5"/><path d="M20 9H9.5a5.5 5.5 0 0 0 0 11H13"/></svg>
+      </button>
     </div>
     <div class="board-wrap">
       <div id="board" class="board"></div>
     </div>
-    <div class="actions">
-      <button id="submitBtn" class="btn" onclick="submitAnswer()">답안 제출</button>
-      <button id="restartBtn" class="btn danger-outline" onclick="restart()" hidden>재시작</button>
+    <div id="submitActions" class="actions">
+      <button id="submitBtn" class="btn" onclick="submitAnswer()" data-i18n="submit">답안 제출</button>
+      <button id="restartBtn" class="btn danger-outline" onclick="restart()" hidden data-i18n="restart">재시작</button>
     </div>
   </section>
 
@@ -1520,6 +1487,103 @@
     }
   }
 
+  // ---- language (Korean / English) ----
+  // Static text is tagged with data-i18n (innerHTML) / data-i18n-title (title attribute) and
+  // filled from STRINGS by applyLang(); render() pulls its dynamic strings through t().
+  const STRINGS = {
+    ko: {
+      langLabel: 'EN',
+      langTitle: 'English',
+      rulesTitle: '규칙',
+      rulesBody:
+        '<li>숫자가 적힌 칸은 <strong>\'룸\'</strong>, 설치할 수 있는 검정 반칸은 <strong>\'문\'</strong>이다.</li>' +
+        '<li>룸 배치는 바꿀 수 없다.</li>' +
+        '<li><strong>룸의 숫자값</strong>은 상하좌우로 <strong>맞닿은 문의 면적</strong>과 같아야 한다.</li>' +
+        '<li>모든 <strong>문</strong>은 반드시 하나 이상의 <strong>룸과 닿아있어야</strong> 한다.</li>' +
+        '<li>모든 <strong>문은 다른 문과 닿을 수 없다.</strong></li>',
+      controlsTitle: '조작법',
+      controlsBody:
+        '<li>빈칸을 클릭하면 <strong>위 → 아래 → 왼쪽 → 오른쪽 → 빈칸</strong> 순서로 문의 방향이 바뀐다.</li>' +
+        '<li>상단의 문 선택 도구를 이용해 특정 방향의 문을 놓을 수 있다. 지우개를 누르면 선택한 칸의 문을 지울 수 있다.</li>' +
+        '<li>칸을 <strong>우클릭 또는 길게 클릭하면 잠긴다.</strong> 잠긴 칸은 배치가 바뀌지 않는다. 다시 잠금을 시도하면 잠금이 풀린다.</li>',
+      sizeTitle: '퍼즐 크기 선택',
+      loadingTitle: '퍼즐 생성 중…',
+      loadingBody: '숫자 배치와 유일해 검증을 진행하고 있어요.',
+      tool_up: '위쪽 문',
+      tool_down: '아래쪽 문',
+      tool_left: '왼쪽 문',
+      tool_right: '오른쪽 문',
+      toolLock: '잠금 모드: 켜면 누른 칸이 잠기거나 풀립니다',
+      toolErase: '지우개: 누른 칸의 문을 지웁니다',
+      toolHint: '클릭 시 문 방향: 위 → 아래 → 왼쪽 → 오른쪽 → 빈칸\n우클릭 or 길게 클릭: 잠금',
+      undoTitle: '실행 취소 (Ctrl+Z)',
+      redo: '다시 실행',
+      submit: '답안 제출',
+      restart: '재시작',
+      toolTitle: '도구 선택',
+      resultCorrect: '정답입니다',
+      resultIncorrect: '오답입니다',
+      cellLock: '우클릭(길게 누르기)하면 이 칸을 잠급니다',
+      cellUnlock: '우클릭(길게 누르기)하면 잠금이 풀립니다'
+    },
+    en: {
+      langLabel: '한',
+      langTitle: '한국어',
+      rulesTitle: 'Rules',
+      rulesBody:
+        '<li>A cell with a number is a <strong>Room</strong>; a black half-cell you place is a <strong>Door</strong>.</li>' +
+        '<li>Rooms are fixed and cannot be changed.</li>' +
+        '<li>A room\'s number must equal the total <strong>door area</strong> touching it above, below, left, and right.</li>' +
+        '<li>Every door must <strong>touch at least one room</strong>.</li>' +
+        '<li><strong>Doors cannot touch other doors.</strong></li>',
+      controlsTitle: 'How to play',
+      controlsBody:
+        '<li>Click an empty cell to cycle the door direction: <strong>Up → Down → Left → Right → Empty</strong>.</li>' +
+        '<li>Use the door tools at the top to place a door facing a specific direction. Pick the eraser to clear the door in a cell you click.</li>' +
+        '<li><strong>Right-click or long-press a cell to lock it.</strong> A locked cell can\'t be changed. Lock it again to unlock.</li>',
+      sizeTitle: 'Choose puzzle size',
+      loadingTitle: 'Generating puzzle…',
+      loadingBody: 'Placing numbers and verifying the puzzle.',
+      tool_up: 'Door facing up',
+      tool_down: 'Door facing down',
+      tool_left: 'Door facing left',
+      tool_right: 'Door facing right',
+      toolLock: 'Lock mode: tap a cell to lock or unlock it',
+      toolErase: 'Eraser: clears the door in a clicked cell',
+      toolHint: 'Click to set door: Up → Down → Left → Right → Empty\nRight-click or long-press: lock',
+      undoTitle: 'Undo (Ctrl+Z)',
+      redo: 'Redo',
+      submit: 'Submit',
+      restart: 'Restart',
+      toolTitle: 'Tools',
+      resultCorrect: 'Correct',
+      resultIncorrect: 'Incorrect',
+      cellLock: 'Right-click (long-press) to lock this cell',
+      cellUnlock: 'Right-click (long-press) to unlock'
+    }
+  };
+  const LANG_KEY = 'roomPuzzle.lang';
+  let lang = 'ko';
+  try { if(localStorage.getItem(LANG_KEY) === 'en') lang = 'en'; } catch(e){}
+
+  function t(key){ return STRINGS[lang][key]; }
+
+  function applyLang(){
+    document.documentElement.lang = lang;
+    document.querySelectorAll('[data-i18n]').forEach(el => { el.innerHTML = t(el.dataset.i18n); });
+    document.querySelectorAll('[data-i18n-title]').forEach(el => {
+      el.title = t(el.dataset.i18nTitle);
+      el.setAttribute('aria-label', el.title);
+    });
+  }
+
+  function toggleLang(){
+    lang = lang === 'ko' ? 'en' : 'ko';
+    try { localStorage.setItem(LANG_KEY, lang); } catch(e){}
+    applyLang();
+    render();
+  }
+
   let state = {
     phase: 'start',      // 'start' | 'loading' | 'game'
     size: null,
@@ -1528,12 +1592,9 @@
     lockedCells: [],      // per-cell boolean — a locked player cell ignores left-click/tool edits
     submittedState: null,
     viewMode: 'play',     // 'play' | 'result' (after submitting: the submitted placement)
-    selectedTool: null,   // null | 'up' | 'down' | 'left' | 'right'
+    selectedTool: null,   // null | 'up' | 'down' | 'left' | 'right' | 'erase'
     lockMode: false,      // when on, a tap/click toggles the cell's lock instead of editing it
                           // (the touch-screen stand-in for right-click); exclusive with selectedTool
-    deductionEnabled: true, // when on, a number cell's display counts down as its locked
-                            // neighbors are decided (remainingClueValue); when off, it always
-                            // shows the puzzle's original value. Persists across restarts.
     history: [],          // stack of {playerState, lockedCells} snapshots taken right before
                            // each edit, for undo
     future: [],            // snapshots popped off `history` by undo, for redo — cleared by
@@ -1612,20 +1673,21 @@
     render();
   }
 
-  function toggleDeduction(){
-    if(state.phase !== 'game' || state.viewMode !== 'play') return;
-    state.deductionEnabled = !state.deductionEnabled;
-    render();
-  }
-
   function handleCellClick(index){
     if(state.phase !== 'game' || state.viewMode !== 'play') return;
     const cell = state.puzzle.cells[index];
     if(cell.type !== 'player') return;
     if(state.lockMode){ handleCellRightClick(index); return; }
     if(state.lockedCells[index]) return;
-    recordHistory();
     const cur = state.playerState[index];
+    if(state.selectedTool === 'erase'){
+      if(cur === 'blank') return;
+      recordHistory();
+      state.playerState[index] = 'blank';
+      render();
+      return;
+    }
+    recordHistory();
     if(state.selectedTool){
       state.playerState[index] = (cur === state.selectedTool) ? 'blank' : state.selectedTool;
     } else {
@@ -1704,23 +1766,6 @@
     render();
   }
 
-  // A number tile's displayed value counts down as the player LOCKS in neighboring
-  // half-blocks (right-click) — each locked neighbor's current orientation contributes
-  // exactly what it would toward this clue if it turned out correct (same `contribution`
-  // math the generator itself uses), subtracted from the printed value. Unlocked guesses
-  // don't count, since the player hasn't committed to them yet. Purely a display aid: the
-  // underlying cell.value (and win condition) never changes.
-  function remainingClueValue(i){
-    let remaining = state.puzzle.cells[i].value;
-    neighborsOf(state.size, i).forEach(({idx: j, dir}) => {
-      if(!state.lockedCells[j]) return;
-      const orientation = state.playerState[j];
-      if(!orientation || orientation === 'blank') return;
-      remaining -= contribution(orientation, dir);
-    });
-    return Number.isInteger(remaining) ? String(remaining) : remaining.toFixed(1);
-  }
-
   // Touch long-press = right-click (lock toggle). Android also fires `contextmenu` on a
   // long-press, and iOS never does, so a touch gesture is handled here alone and the
   // matching contextmenu/click that may follow it is swallowed. The board is rebuilt on
@@ -1775,13 +1820,6 @@
 
     if(state.phase !== 'game') return;
 
-    document.getElementById('sizeLabel').textContent = state.size + '×' + state.size;
-
-    const pill = document.getElementById('statusPill');
-    pill.classList.remove('mode-play','mode-result');
-    if(state.viewMode === 'play'){ pill.textContent = '플레이 중'; pill.classList.add('mode-play'); }
-    else { pill.textContent = '제출한 배치'; pill.classList.add('mode-result'); }
-
     const submitted = state.submittedState !== null;
     document.getElementById('submitBtn').hidden = submitted;
     document.getElementById('restartBtn').hidden = !submitted;
@@ -1789,7 +1827,7 @@
     const resultBanner = document.getElementById('resultBanner');
     resultBanner.hidden = !submitted;
     if(submitted){
-      resultBanner.textContent = state.submissionCorrect ? '정답입니다!' : '오답입니다 — 규칙에 어긋난 칸을 빨간색으로 표시했습니다';
+      resultBanner.textContent = t(state.submissionCorrect ? 'resultCorrect' : 'resultIncorrect');
       resultBanner.className = 'result-banner ' + (state.submissionCorrect ? 'correct' : 'incorrect');
     }
 
@@ -1797,16 +1835,10 @@
     document.querySelectorAll('.tool-btn').forEach(btn => {
       btn.classList.toggle('active', state.selectedTool === btn.dataset.dir);
     });
-    document.getElementById('deductionToggleBtn').classList.toggle('active', state.deductionEnabled);
     document.getElementById('historyActions').hidden = state.viewMode !== 'play';
     document.getElementById('undoBtn').disabled = state.history.length === 0;
     document.getElementById('redoBtn').disabled = state.future.length === 0;
     document.getElementById('lockModeBtn').classList.toggle('active', state.lockMode);
-    document.getElementById('toolHint').textContent = state.lockMode
-      ? '잠금 모드: 칸을 누르면 잠기고, 다시 누르면 풀립니다. 자물쇠를 다시 누르면 꺼집니다.'
-      : state.selectedTool
-      ? '선택한 블록을 칸에 클릭하면 바로 놓입니다. 같은 블록이 있는 칸을 다시 누르면 지워집니다.'
-      : '블록을 선택하지 않으면 클릭할 때마다 위→아래→왼쪽→오른쪽→빈칸 순서로 바뀝니다. 길게 누르거나 우클릭하면 잠급니다.';
 
     const board = document.getElementById('board');
     board.style.gridTemplateColumns = `repeat(${state.size}, minmax(0, 1fr))`;
@@ -1819,7 +1851,7 @@
 
       if(cell.type === 'number'){
         div.className = 'cell fixed-number' + (state.violations.has(i) ? ' violation' : '');
-        div.textContent = state.viewMode === 'play' && state.deductionEnabled ? remainingClueValue(i) : cell.value;
+        div.textContent = cell.value;
       } else if(cell.type === 'full'){
         div.className = 'cell fixed-full';
       } else if(cell.type === 'empty'){
@@ -1840,8 +1872,7 @@
           div.onpointerdown = (e) => onCellPointerDown(e, i);
           div.onclick = () => onCellClick(i);
           div.oncontextmenu = (e) => onCellContextMenu(e, i);
-          if(locked) div.title = '우클릭(길게 누르기)하면 잠금이 풀립니다';
-          else div.title = '우클릭(길게 누르기)하면 이 칸을 잠급니다';
+          div.title = t(locked ? 'cellUnlock' : 'cellLock');
         }
       }
       board.appendChild(div);
@@ -1850,8 +1881,10 @@
 
   // Phones start with the rules folded so the size picker is visible without scrolling.
   if(window.matchMedia('(max-width:600px)').matches){
-    document.getElementById('legend').open = false;
+    document.getElementById('rulesCard').open = false;
+    document.getElementById('controlsCard').open = false;
   }
+  applyLang();
   render();
 </script>
 
