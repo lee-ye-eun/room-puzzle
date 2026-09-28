@@ -1834,9 +1834,7 @@
       toolTitle: '도구 선택',
       toolToggle: '도구 펼치기/접기',
       resultCorrect: '정답!',
-      resultIncorrect: '오답',
-      cellLock: '우클릭(길게 누르기)하면 이 칸을 잠급니다',
-      cellUnlock: '우클릭(길게 누르기)하면 잠금이 풀립니다'
+      resultIncorrect: '오답'
     },
     en: {
       settingsOpen: 'Settings',
@@ -1892,9 +1890,7 @@
       toolTitle: 'Tools',
       toolToggle: 'Show/hide tools',
       resultCorrect: 'Correct!',
-      resultIncorrect: 'Incorrect',
-      cellLock: 'Right-click (long-press) to lock this cell',
-      cellUnlock: 'Right-click (long-press) to unlock'
+      resultIncorrect: 'Incorrect'
     }
   };
   const LANG_KEY = 'roomPuzzle.lang';
@@ -1938,6 +1934,104 @@
     renderSettings();
   }
   function changeSound(delta){ setSound(soundLevel + delta); }
+
+  // ---- sound effects ----
+  // A soft "click" (달칵) like pressing a real button: synthesized with Web Audio, no files.
+  // It's two short taps — the press and, a moment later, a quieter release — each a burst
+  // of band-passed noise (the plastic "tick") over a brief low sine (the body "thud").
+  // Volume follows the settings bar (0 = silent, 5 = full).
+  let audioCtx = null;
+  function getAudioCtx(){
+    if(!audioCtx){
+      const Ctx = window.AudioContext || window.webkitAudioContext;
+      if(!Ctx) return null;
+      audioCtx = new Ctx();
+    }
+    if(audioCtx.state === 'suspended') audioCtx.resume();
+    return audioCtx;
+  }
+
+  function scheduleTap(ctx, dest, t, {tone, freq, gain, length}){
+    const noiseLen = Math.ceil(ctx.sampleRate * length);
+    const buf = ctx.createBuffer(1, noiseLen, ctx.sampleRate);
+    const data = buf.getChannelData(0);
+    for(let i = 0; i < noiseLen; i++) data[i] = Math.random() * 2 - 1;
+    const noise = ctx.createBufferSource();
+    noise.buffer = buf;
+    const band = ctx.createBiquadFilter();
+    band.type = 'bandpass';
+    band.frequency.value = freq;
+    band.Q.value = 1.2;
+    const noiseGain = ctx.createGain();
+    noiseGain.gain.setValueAtTime(0.0001, t);
+    noiseGain.gain.exponentialRampToValueAtTime(gain, t + 0.001);
+    noiseGain.gain.exponentialRampToValueAtTime(0.0001, t + length);
+    noise.connect(band).connect(noiseGain).connect(dest);
+    noise.start(t);
+    noise.stop(t + length);
+
+    const osc = ctx.createOscillator();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(tone, t);
+    osc.frequency.exponentialRampToValueAtTime(tone * 0.6, t + length * 1.5);
+    const oscGain = ctx.createGain();
+    oscGain.gain.setValueAtTime(0.0001, t);
+    oscGain.gain.exponentialRampToValueAtTime(gain * 0.9, t + 0.002);
+    oscGain.gain.exponentialRampToValueAtTime(0.0001, t + length * 1.5);
+    osc.connect(oscGain).connect(dest);
+    osc.start(t);
+    osc.stop(t + length * 1.5);
+  }
+
+  function scheduleClick(ctx, dest, t){
+    scheduleTap(ctx, dest, t,        {tone: 220, freq: 2600, gain: 0.9, length: 0.022}); // press: 달
+    scheduleTap(ctx, dest, t + 0.05, {tone: 170, freq: 1900, gain: 0.5, length: 0.018}); // release: 칵
+  }
+
+  // One soft bell-like note: a sine plus a quieter octave partial, quick attack, gentle decay.
+  function scheduleNote(ctx, dest, t, freq, {gain = 0.5, length = 0.5, type = 'sine'} = {}){
+    [[1, 1], [2, 0.25]].forEach(([mult, level]) => {
+      const osc = ctx.createOscillator();
+      osc.type = type;
+      osc.frequency.setValueAtTime(freq * mult, t);
+      const g = ctx.createGain();
+      g.gain.setValueAtTime(0.0001, t);
+      g.gain.exponentialRampToValueAtTime(gain * level, t + 0.012);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + length);
+      osc.connect(g).connect(dest);
+      osc.start(t);
+      osc.stop(t + length + 0.02);
+    });
+  }
+
+  // correct: a bright rising three-note chime (C6 → E6 → G6, then a held C7)
+  function scheduleCorrect(ctx, dest, t){
+    scheduleNote(ctx, dest, t,        1046.5, {gain: 0.45, length: 0.35});
+    scheduleNote(ctx, dest, t + 0.09, 1318.5, {gain: 0.45, length: 0.35});
+    scheduleNote(ctx, dest, t + 0.18, 1568.0, {gain: 0.45, length: 0.4});
+    scheduleNote(ctx, dest, t + 0.27, 2093.0, {gain: 0.4,  length: 0.7});
+  }
+
+  // incorrect: a soft, low two-note fall (A3 → F3) — clearly "not quite", without a harsh buzz
+  function scheduleIncorrect(ctx, dest, t){
+    scheduleNote(ctx, dest, t,        220.0, {gain: 0.6, length: 0.28, type: 'triangle'});
+    scheduleNote(ctx, dest, t + 0.2,  174.6, {gain: 0.6, length: 0.5,  type: 'triangle'});
+  }
+
+  function playSound(schedule, delay = 0){
+    if(soundLevel <= 0) return;
+    const ctx = getAudioCtx();
+    if(!ctx) return;
+    const master = ctx.createGain();
+    const v = soundLevel / SOUND_MAX;
+    master.gain.value = 0.35 * Math.pow(v, 1.5); // perceptual-ish curve, so low steps stay quiet
+    master.connect(ctx.destination);
+    schedule(ctx, master, ctx.currentTime + 0.005 + delay);
+  }
+
+  function playClick(){ playSound(scheduleClick); }
+  // played on submit, just after the submit button's own click
+  function playResult(correct){ playSound(correct ? scheduleCorrect : scheduleIncorrect, 0.12); }
 
   const THEME_KEY = 'roomPuzzle.theme';
   const THEMES = ['light', 'dark', 'wood'];
@@ -2077,6 +2171,12 @@
     render();
   }
 
+  // Every button on the page clicks when pressed (tools, undo/redo, submit, restart, puzzle
+  // sizes, settings…). Board cells aren't buttons, so placing doors and marks stays silent.
+  document.addEventListener('click', (e) => {
+    if(e.target.closest && e.target.closest('button')) playClick();
+  });
+
   function selectTool(dir){
     if(state.phase !== 'game' || state.viewMode !== 'play') return;
     state.selectedTool = (state.selectedTool === dir) ? null : dir;
@@ -2170,6 +2270,7 @@
     state.viewMode = 'result';
     state.violations = findViolations();
     state.submissionCorrect = state.violations.size === 0;
+    playResult(state.submissionCorrect);
     render();
   }
 
@@ -2381,7 +2482,6 @@
           div.onpointerdown = (e) => onCellPointerDown(e, i);
           div.onclick = () => onCellClick(i);
           div.oncontextmenu = onCellContextMenu;
-          div.title = t(locked ? 'cellUnlock' : 'cellLock');
         }
       }
       if(state.viewMode === 'play' && cell.type !== 'player'){
