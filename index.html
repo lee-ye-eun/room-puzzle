@@ -2,7 +2,11 @@
 <title>Room Puzzle</title>
 <script>
   // apply the saved theme before anything paints, so there's no flash of the default one
-  try { document.documentElement.dataset.theme = localStorage.getItem('roomPuzzle.theme') || 'light'; }
+  try {
+    const saved = localStorage.getItem('roomPuzzle.theme');
+    const known = ['light', 'dark', 'ivory', 'med', 'rococo', 'cyber'];
+    document.documentElement.dataset.theme = known.includes(saved) ? saved : 'light';
+  }
   catch(e){ document.documentElement.dataset.theme = 'light'; }
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -13,7 +17,6 @@
      light (기본) — black & white; the only colours kept are red (locks, rule violations)
        and blue (the "correct" result banner)
      dark (다크) — the same, inverted around the board
-     wood (나무) — warm paper and brown doors
      With no data-theme at all the page follows the system light/dark preference. */
   :root{
     --paper:#FFFFFF;
@@ -86,27 +89,172 @@
     --board-mark:#B3B3B3;
     --board-frame:#8A8A8A;
   }
-  :root[data-theme="wood"]{
-    --paper:#F5EDE0;
-    --paper-raised:#EEE3D1;
-    --ink:#3E2C1F;
-    --line:#CDB99C;
-    --line-soft:#E2D4BE;
-    --accent:#7B4A26;
-    --accent-strong:#5C3519;
-    --accent-soft:#E8D9C2;
-    --muted:#8A7461;
-    --danger:#C0392B;
-    --danger-soft:#F6DED8;
-    --correct:#2E6F8E;
-    --correct-soft:#DCEBF1;
-    --fixed:#6F7F5E;
-    --board-paper:#FBF6EC;
-    --board-ink:#7B4A26;
-    --board-line:#D3C0A3;
-    --board-hover:#EFE3CF;
-    --board-mark:#D9C6A8;
-    --title-door:#7B4A26;
+  /* rococo: pastel pink, ivory and gold, with a gilded double frame round the board */
+  :root[data-theme="rococo"]{
+    --paper:#FBEAF0;
+    --paper-raised:#F7DDE6;
+    --ink:#5B2E3C;
+    --line:#E3AF26;
+    --line-soft:#F1D6DF;
+    --accent:#D69C0E;
+    --accent-strong:#AE7C06;
+    --accent-soft:#FBEBC2;
+    --muted:#9A6C7C;
+    --danger:#D32F2F;
+    --danger-soft:#FBDADA;
+    --correct:#C98F08;
+    --correct-soft:#FBEFCC;
+    --fixed:#F2C12E;
+    --fixed-text:#5B2E3C;
+    --board-paper:#FFFBF2;
+    --board-ink:#EC9DB8;
+    --board-line:#F0DCA8;
+    --board-hover:#FDF1F4;
+    --board-mark:#F1DCC4;
+    --board-frame:#D69C0E;
+    --title-door:#EC9DB8;
+  }
+  :root[data-theme="rococo"] .board{ box-shadow:0 0 0 4px var(--paper), 0 0 0 5.5px #E3AF26; }
+  /* ivory (shown as "모던 / Modern"): a clean interior of ivory walls and soft beige */
+  :root[data-theme="ivory"]{
+    --paper:#FBF8F1;
+    --paper-raised:#F4EEE3;
+    --ink:#4A4038;
+    --line:#DCCFBB;
+    --line-soft:#ECE4D6;
+    --accent:#8C7760;
+    --accent-strong:#6E5C49;
+    --accent-soft:#EFE7DA;
+    --muted:#9A8D7E;
+    --danger:#C8553D;
+    --danger-soft:#F8E4DE;
+    --correct:#5B7F95;
+    --correct-soft:#E6EEF2;
+    --fixed:#D3C3A8;
+    --fixed-text:#4A4038;
+    --board-paper:#FFFDF8;
+    --board-ink:#8C7760;
+    --board-line:#E3D8C6;
+    --board-hover:#F3ECE0;
+    --board-mark:#E6DDCE;
+    --board-frame:#BFAE95;
+    --title-door:#8C7760;
+  }
+  /* mediterranean: whitewashed walls, aegean blue, sun-bleached stone */
+  :root[data-theme="med"]{
+    --paper:#FBFAF6;
+    --paper-raised:#F1EDE4;
+    --ink:#1D355A;
+    --line:#C5D3E4;
+    --line-soft:#E6ECF3;
+    --accent:#1E5AA8;
+    --accent-strong:#154684;
+    --accent-soft:#E3ECF7;
+    --muted:#6D7F99;
+    --danger:#D23B2E;
+    --danger-soft:#FBE3DF;
+    --correct:#1E5AA8;
+    --correct-soft:#E3ECF7;
+    --fixed:#CFC5B2;
+    --fixed-text:#1D355A;
+    --board-paper:#FFFFFF;
+    --board-ink:#1E5AA8;
+    --board-line:#DCD4C4;
+    --board-hover:#EEF3F9;
+    --board-mark:#E2DBCD;
+    --board-frame:#1E5AA8;
+    --title-door:#1E5AA8;
+  }
+  /* cyberpunk: black base, neon light, brushed metal */
+  :root[data-theme="cyber"]{
+    color-scheme:dark;
+    --paper:#07070D;
+    --paper-raised:#10111B;
+    --ink:#E4F6FF;
+    --line:#3A4058;
+    --line-soft:#1A1D2B;
+    --accent:#00E5FF;
+    --accent-strong:#5CF2FF;
+    --accent-soft:#0B2530;
+    --muted:#8C95AD;
+    --danger:#FF2E4D;
+    --danger-soft:#3A0B16;
+    --correct:#39FF88;
+    --correct-soft:#0B2A18;
+    --fixed:#262B3B;
+    --fixed-text:#FF3CD8;
+    --board-paper:#12141F;
+    --board-ink:#00E5FF;
+    --board-line:#2C3246;
+    --board-hover:#1C2030;
+    --board-mark:#3A4260;
+    --board-frame:#FF3CD8;
+    --title-door:#00E5FF;
+  }
+  :root[data-theme="cyber"] .board{ box-shadow:0 0 14px rgba(255,60,216,.55), 0 0 30px rgba(0,229,255,.18); }
+
+  /* ---- special themes: decorative page backgrounds (fixed layers behind the content) ---- */
+  :root[data-theme="med"] body::before,
+  :root[data-theme="rococo"] body::before,
+  :root[data-theme="cyber"] body::before{
+    content:'';
+    position:fixed;
+    inset:0;
+    z-index:-1;
+    pointer-events:none;
+  }
+  /* mediterranean: morning sun and sea waves along the bottom */
+  :root[data-theme="med"] body::before{
+    background:
+      radial-gradient(circle at 88% 6%, rgba(255,205,100,.38), rgba(255,205,100,0) 26%),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='80' viewBox='0 0 240 80'%3E%3Cpath d='M0 30 Q30 12 60 30 T120 30 T180 30 T240 30 V80 H0Z' fill='%231E5AA8' fill-opacity='.10'/%3E%3Cpath d='M0 48 Q30 32 60 48 T120 48 T180 48 T240 48 V80 H0Z' fill='%231E5AA8' fill-opacity='.14'/%3E%3C/svg%3E") repeat-x left bottom / 240px 80px,
+      linear-gradient(#FBFAF6 0%, #F4F7FB 60%, #E4EEF9 100%);
+  }
+  /* rococo: gilded lattice ornament over soft pink glows */
+  :root[data-theme="rococo"] body::before{
+    background:
+      radial-gradient(ellipse at 15% 10%, rgba(255,255,255,.75), rgba(255,255,255,0) 40%),
+      radial-gradient(ellipse at 85% 90%, rgba(236,157,184,.35), rgba(236,157,184,0) 45%),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Cg fill='none' stroke='%23D69C0E' stroke-opacity='.28' stroke-width='1.1'%3E%3Cpath d='M32 2 L62 32 L32 62 L2 32 Z'/%3E%3Cpath d='M32 22c4 4 4 6 0 10c-4-4-4-6 0-10zM32 42c4-4 4-6 0-10c-4 4-4 6 0 10zM22 32c4-4 6-4 10 0c-4 4-6 4-10 0zM42 32c-4-4-6-4-10 0c4 4 6 4 10 0z'/%3E%3C/g%3E%3Ccircle cx='32' cy='32' r='1.6' fill='%23D69C0E' fill-opacity='.35'/%3E%3Ccircle cx='0' cy='0' r='2' fill='%23EC9DB8' fill-opacity='.45'/%3E%3Ccircle cx='64' cy='0' r='2' fill='%23EC9DB8' fill-opacity='.45'/%3E%3Ccircle cx='0' cy='64' r='2' fill='%23EC9DB8' fill-opacity='.45'/%3E%3Ccircle cx='64' cy='64' r='2' fill='%23EC9DB8' fill-opacity='.45'/%3E%3C/svg%3E") repeat center / 64px 64px,
+      #FBEAF0;
+  }
+  /* cyberpunk: neon horizon glow and a receding grid floor, plus faint scanlines on top */
+  :root[data-theme="cyber"] body::before{
+    background:
+      radial-gradient(ellipse at 50% 100%, rgba(255,60,216,.28), rgba(255,60,216,0) 55%),
+      radial-gradient(ellipse at 50% 0%, rgba(0,229,255,.12), rgba(0,229,255,0) 45%),
+      #07070D;
+  }
+  :root[data-theme="cyber"] body::after{
+    content:'';
+    position:fixed;
+    left:-50%;
+    right:-50%;
+    top:55vh;
+    height:60vh;
+    z-index:-1;
+    pointer-events:none;
+    background-image:
+      linear-gradient(rgba(0,229,255,.5) 1.5px, transparent 1.5px),
+      linear-gradient(90deg, rgba(255,60,216,.45) 1.5px, transparent 1.5px);
+    background-size:56px 56px;
+    transform:perspective(260px) rotateX(60deg);
+    transform-origin:50% 0;
+    -webkit-mask-image:linear-gradient(transparent, #000 35%);
+    mask-image:linear-gradient(transparent, #000 35%);
+    animation:cyber-grid 3s linear infinite;
+  }
+  :root[data-theme="cyber"] .page::after{
+    content:'';
+    position:fixed;
+    inset:0;
+    z-index:60;
+    pointer-events:none;
+    background:repeating-linear-gradient(rgba(255,255,255,.025) 0 1px, transparent 1px 3px);
+  }
+  @keyframes cyber-grid{ to{ background-position:0 56px, 0 0; } }
+  @media (prefers-reduced-motion: reduce){
+    :root[data-theme="cyber"] body::after{ animation:none; }
   }
 
   body{
@@ -217,7 +365,7 @@
   .stepper{ gap:8px; }
   /* theme picker: each option is a square board cell with a right-half door in that
      theme's own colours (fixed, so they look the same whatever theme is active) */
-  .theme-options{ display:inline-flex; gap:10px; }
+  .theme-options{ display:grid; grid-template-columns:repeat(3, 34px); gap:10px; }
   .theme-swatch{
     position:relative;
     width:34px;
@@ -233,8 +381,14 @@
   .theme-swatch-light span{ background:#111111; }
   .theme-swatch-dark{ background:#0E0E0E; border-color:#474747; }
   .theme-swatch-dark span{ background:#EDEDED; }
-  .theme-swatch-wood{ background:#FBF6EC; }
-  .theme-swatch-wood span{ background:#7B4A26; }
+  .theme-swatch-rococo{ background:#FFFBF2; border-color:#E3AF26; border-width:2px; }
+  .theme-swatch-rococo span{ background:#EC9DB8; }
+  .theme-swatch-ivory{ background:#FFFDF8; border-color:#DCCFBB; }
+  .theme-swatch-ivory span{ background:#8C7760; }
+  .theme-swatch-med{ background:#FFFFFF; border-color:#C5D3E4; }
+  .theme-swatch-med span{ background:#1E5AA8; }
+  .theme-swatch-cyber{ background:#12141F; border-color:#FF3CD8; box-shadow:0 0 6px rgba(255,60,216,.6); }
+  .theme-swatch-cyber span{ background:#00E5FF; }
   .theme-swatch[aria-checked="true"]{ outline:2.5px solid var(--ink); outline-offset:2px; }
   .setting-row select{
     font:inherit;
@@ -459,7 +613,7 @@
   }
   .cell.fixed-number{
     background:var(--fixed);
-    color:#fff;
+    color:var(--fixed-text, #fff);
   }
   .cell.fixed-empty{
     background:var(--fixed);
@@ -491,6 +645,7 @@
   /* After an incorrect submission: cells that break a rule (not cells that merely differ from
      the generator's own answer) are marked red. */
   .cell.fixed-number.violation{
+    color:#fff;
     background:var(--danger);
     box-shadow:inset 0 0 0 3px var(--danger-soft);
   }
@@ -691,7 +846,10 @@
         <span class="theme-options" role="radiogroup" aria-labelledby="themeLabel">
           <button class="theme-swatch theme-swatch-light" role="radio" data-theme-value="light" onclick="setTheme('light')" data-i18n-title="themeDefault"><span></span></button>
           <button class="theme-swatch theme-swatch-dark" role="radio" data-theme-value="dark" onclick="setTheme('dark')" data-i18n-title="themeDark"><span></span></button>
-          <button class="theme-swatch theme-swatch-wood" role="radio" data-theme-value="wood" onclick="setTheme('wood')" data-i18n-title="themeWood"><span></span></button>
+          <button class="theme-swatch theme-swatch-ivory" role="radio" data-theme-value="ivory" onclick="setTheme('ivory')" data-i18n-title="themeIvory"><span></span></button>
+          <button class="theme-swatch theme-swatch-med" role="radio" data-theme-value="med" onclick="setTheme('med')" data-i18n-title="themeMed"><span></span></button>
+          <button class="theme-swatch theme-swatch-rococo" role="radio" data-theme-value="rococo" onclick="setTheme('rococo')" data-i18n-title="themeRococo"><span></span></button>
+          <button class="theme-swatch theme-swatch-cyber" role="radio" data-theme-value="cyber" onclick="setTheme('cyber')" data-i18n-title="themeCyber"><span></span></button>
         </span>
       </div>
     </div>
@@ -1803,7 +1961,10 @@
       settingTheme: '테마',
       themeDefault: '기본',
       themeDark: '다크',
-      themeWood: '나무',
+      themeRococo: '로코코',
+      themeMed: '지중해',
+      themeCyber: '사이버펑크',
+      themeIvory: '모던',
       rulesTitle: '규칙',
       rulesBody:
         '<li>숫자가 적힌 칸은 <strong>\'룸\'</strong>, 설치할 수 있는 검정 반칸은 <strong>\'문\'</strong>이다.</li>' +
@@ -1859,7 +2020,10 @@
       settingTheme: 'Theme',
       themeDefault: 'Default',
       themeDark: 'Dark',
-      themeWood: 'Wood',
+      themeRococo: 'Rococo',
+      themeMed: 'Mediterranean',
+      themeCyber: 'Cyberpunk',
+      themeIvory: 'Modern',
       rulesTitle: 'Rules',
       rulesBody:
         '<li>A cell with a number is a <strong>Room</strong>; a black half-cell you place is a <strong>Door</strong>.</li>' +
@@ -1915,7 +2079,10 @@
       settingTheme: "テーマ",
       themeDefault: "標準",
       themeDark: "ダーク",
-      themeWood: "木目",
+      themeRococo: "ロココ",
+      themeMed: "地中海",
+      themeCyber: "サイバーパンク",
+      themeIvory: "モダン",
       rulesTitle: "ルール",
       rulesBody: "<li>数字が書かれたマスは<strong>「ルーム」</strong>、置くことのできる黒い半マスは<strong>「ドア」</strong>です。</li><li>ルームの配置は変えられません。</li><li><strong>ルームの数字</strong>は、上下左右に<strong>接しているドアの面積</strong>の合計と同じでなければなりません。</li><li>すべての<strong>ドア</strong>は、必ず1つ以上の<strong>ルームに接していなければなりません</strong>。</li><li><strong>ドア同士は接することができません。</strong></li><li>すべての空きマスにドアを置かなければなりません。</li>",
       controlsTitle: "操作方法",
@@ -1961,7 +2128,10 @@
       settingTheme: "主题",
       themeDefault: "默认",
       themeDark: "深色",
-      themeWood: "木纹",
+      themeRococo: "洛可可",
+      themeMed: "地中海",
+      themeCyber: "赛博朋克",
+      themeIvory: "现代",
       rulesTitle: "规则",
       rulesBody: "<li>写有数字的格子是<strong>“房间”</strong>，可以放置的黑色半格是<strong>“门”</strong>。</li><li>房间的位置不能改变。</li><li><strong>房间的数字</strong>必须等于其上下左右<strong>相邻门的面积</strong>之和。</li><li>每一扇<strong>门</strong>都必须<strong>至少与一个房间相邻</strong>。</li><li><strong>门与门不能相邻。</strong></li><li>所有空格都必须放入门。</li>",
       controlsTitle: "操作方法",
@@ -2007,7 +2177,10 @@
       settingTheme: "主題",
       themeDefault: "預設",
       themeDark: "深色",
-      themeWood: "木紋",
+      themeRococo: "洛可可",
+      themeMed: "地中海",
+      themeCyber: "賽博龐克",
+      themeIvory: "現代",
       rulesTitle: "規則",
       rulesBody: "<li>寫有數字的格子是<strong>「房間」</strong>，可以放置的黑色半格是<strong>「門」</strong>。</li><li>房間的位置不能改變。</li><li><strong>房間的數字</strong>必須等於其上下左右<strong>相鄰門的面積</strong>總和。</li><li>每一扇<strong>門</strong>都必須<strong>至少與一個房間相鄰</strong>。</li><li><strong>門與門不能相鄰。</strong></li><li>所有空格都必須放入門。</li>",
       controlsTitle: "操作方式",
@@ -2053,7 +2226,10 @@
       settingTheme: "Tema",
       themeDefault: "Predeterminado",
       themeDark: "Oscuro",
-      themeWood: "Madera",
+      themeRococo: "Rococó",
+      themeMed: "Mediterráneo",
+      themeCyber: "Ciberpunk",
+      themeIvory: "Moderno",
       rulesTitle: "Reglas",
       rulesBody: "<li>Una casilla con número es una <strong>Habitación</strong>; una media casilla negra que colocas es una <strong>Puerta</strong>.</li><li>Las habitaciones son fijas y no se pueden cambiar.</li><li><strong>El número de una habitación</strong> debe ser igual al <strong>área total de puertas que la tocan</strong> arriba, abajo, a la izquierda y a la derecha.</li><li>Cada <strong>puerta</strong> debe <strong>tocar al menos una habitación</strong>.</li><li><strong>Las puertas no pueden tocar otras puertas.</strong></li><li>Todas las casillas vacías deben contener una puerta.</li>",
       controlsTitle: "Cómo jugar",
@@ -2099,7 +2275,10 @@
       settingTheme: "Thème",
       themeDefault: "Par défaut",
       themeDark: "Sombre",
-      themeWood: "Bois",
+      themeRococo: "Rococo",
+      themeMed: "Méditerranée",
+      themeCyber: "Cyberpunk",
+      themeIvory: "Moderne",
       rulesTitle: "Règles",
       rulesBody: "<li>Une case avec un nombre est une <strong>Pièce</strong> ; une demi-case noire que vous placez est une <strong>Porte</strong>.</li><li>Les pièces sont fixes et ne peuvent pas être modifiées.</li><li><strong>Le nombre d’une pièce</strong> doit être égal à la <strong>surface totale des portes qui la touchent</strong> en haut, en bas, à gauche et à droite.</li><li>Chaque <strong>porte</strong> doit <strong>toucher au moins une pièce</strong>.</li><li><strong>Les portes ne peuvent pas se toucher entre elles.</strong></li><li>Chaque case vide doit contenir une porte.</li>",
       controlsTitle: "Comment jouer",
@@ -2145,7 +2324,10 @@
       settingTheme: "Design",
       themeDefault: "Standard",
       themeDark: "Dunkel",
-      themeWood: "Holz",
+      themeRococo: "Rokoko",
+      themeMed: "Mediterran",
+      themeCyber: "Cyberpunk",
+      themeIvory: "Modern",
       rulesTitle: "Regeln",
       rulesBody: "<li>Ein Feld mit einer Zahl ist ein <strong>Raum</strong>; ein schwarzes Halbfeld, das du setzt, ist eine <strong>Tür</strong>.</li><li>Räume sind fest und können nicht verändert werden.</li><li><strong>Die Zahl eines Raums</strong> muss der <strong>Gesamtfläche der angrenzenden Türen</strong> oben, unten, links und rechts entsprechen.</li><li>Jede <strong>Tür</strong> muss <strong>mindestens einen Raum berühren</strong>.</li><li><strong>Türen dürfen andere Türen nicht berühren.</strong></li><li>Jedes leere Feld muss eine Tür enthalten.</li>",
       controlsTitle: "Spielanleitung",
@@ -2191,7 +2373,10 @@
       settingTheme: "Tema",
       themeDefault: "Padrão",
       themeDark: "Escuro",
-      themeWood: "Madeira",
+      themeRococo: "Rococó",
+      themeMed: "Mediterrâneo",
+      themeCyber: "Cyberpunk",
+      themeIvory: "Moderno",
       rulesTitle: "Regras",
       rulesBody: "<li>Uma casa com número é um <strong>Quarto</strong>; uma meia casa preta que você coloca é uma <strong>Porta</strong>.</li><li>Os quartos são fixos e não podem ser alterados.</li><li><strong>O número de um quarto</strong> deve ser igual à <strong>área total de portas que o tocam</strong> acima, abaixo, à esquerda e à direita.</li><li>Toda <strong>porta</strong> deve <strong>tocar pelo menos um quarto</strong>.</li><li><strong>Portas não podem tocar outras portas.</strong></li><li>Toda casa vazia deve conter uma porta.</li>",
       controlsTitle: "Como jogar",
@@ -2237,7 +2422,10 @@
       settingTheme: "Тема",
       themeDefault: "Стандартная",
       themeDark: "Тёмная",
-      themeWood: "Дерево",
+      themeRococo: "Рококо",
+      themeMed: "Средиземноморье",
+      themeCyber: "Киберпанк",
+      themeIvory: "Модерн",
       rulesTitle: "Правила",
       rulesBody: "<li>Клетка с числом — это <strong>Комната</strong>; чёрная полуклетка, которую вы ставите, — это <strong>Дверь</strong>.</li><li>Комнаты зафиксированы, их нельзя изменить.</li><li><strong>Число комнаты</strong> должно быть равно <strong>общей площади дверей, касающихся её</strong> сверху, снизу, слева и справа.</li><li>Каждая <strong>дверь</strong> должна <strong>касаться хотя бы одной комнаты</strong>.</li><li><strong>Двери не могут касаться друг друга.</strong></li><li>В каждой пустой клетке должна быть дверь.</li>",
       controlsTitle: "Как играть",
@@ -2283,7 +2471,10 @@
       settingTheme: "Tema",
       themeDefault: "Predefinito",
       themeDark: "Scuro",
-      themeWood: "Legno",
+      themeRococo: "Rococò",
+      themeMed: "Mediterraneo",
+      themeCyber: "Cyberpunk",
+      themeIvory: "Moderno",
       rulesTitle: "Regole",
       rulesBody: "<li>Una casella con un numero è una <strong>Stanza</strong>; una mezza casella nera che posizioni è una <strong>Porta</strong>.</li><li>Le stanze sono fisse e non si possono modificare.</li><li><strong>Il numero di una stanza</strong> deve essere uguale all’<strong>area totale delle porte che la toccano</strong> sopra, sotto, a sinistra e a destra.</li><li>Ogni <strong>porta</strong> deve <strong>toccare almeno una stanza</strong>.</li><li><strong>Le porte non possono toccare altre porte.</strong></li><li>Ogni casella vuota deve contenere una porta.</li>",
       controlsTitle: "Come si gioca",
@@ -2329,7 +2520,10 @@
       settingTheme: "Giao diện",
       themeDefault: "Mặc định",
       themeDark: "Tối",
-      themeWood: "Gỗ",
+      themeRococo: "Rococo",
+      themeMed: "Địa Trung Hải",
+      themeCyber: "Cyberpunk",
+      themeIvory: "Hiện đại",
       rulesTitle: "Luật chơi",
       rulesBody: "<li>Ô có số là <strong>Phòng</strong>; nửa ô màu đen bạn đặt vào là <strong>Cửa</strong>.</li><li>Vị trí các phòng cố định, không thể thay đổi.</li><li><strong>Số của một phòng</strong> phải bằng <strong>tổng diện tích cửa chạm vào nó</strong> ở trên, dưới, trái và phải.</li><li>Mỗi <strong>cửa</strong> phải <strong>chạm vào ít nhất một phòng</strong>.</li><li><strong>Các cửa không được chạm vào nhau.</strong></li><li>Mọi ô trống đều phải có cửa.</li>",
       controlsTitle: "Cách chơi",
@@ -2375,7 +2569,10 @@
       settingTheme: "Tema",
       themeDefault: "Bawaan",
       themeDark: "Gelap",
-      themeWood: "Kayu",
+      themeRococo: "Rokoko",
+      themeMed: "Mediterania",
+      themeCyber: "Cyberpunk",
+      themeIvory: "Modern",
       rulesTitle: "Aturan",
       rulesBody: "<li>Kotak bernomor adalah <strong>Ruangan</strong>; setengah kotak hitam yang kamu pasang adalah <strong>Pintu</strong>.</li><li>Posisi ruangan tetap dan tidak bisa diubah.</li><li><strong>Angka sebuah ruangan</strong> harus sama dengan <strong>total luas pintu yang menyentuhnya</strong> di atas, bawah, kiri, dan kanan.</li><li>Setiap <strong>pintu</strong> harus <strong>menyentuh setidaknya satu ruangan</strong>.</li><li><strong>Pintu tidak boleh menyentuh pintu lain.</strong></li><li>Setiap kotak kosong harus berisi pintu.</li>",
       controlsTitle: "Cara bermain",
@@ -2421,7 +2618,10 @@
       settingTheme: "ธีม",
       themeDefault: "ค่าเริ่มต้น",
       themeDark: "มืด",
-      themeWood: "ไม้",
+      themeRococo: "โรโกโก",
+      themeMed: "เมดิเตอร์เรเนียน",
+      themeCyber: "ไซเบอร์พังก์",
+      themeIvory: "โมเดิร์น",
       rulesTitle: "กติกา",
       rulesBody: "<li>ช่องที่มีตัวเลขคือ <strong>ห้อง</strong> ส่วนครึ่งช่องสีดำที่คุณวางคือ <strong>ประตู</strong></li><li>ตำแหน่งของห้องคงที่และเปลี่ยนไม่ได้</li><li><strong>ตัวเลขของห้อง</strong>ต้องเท่ากับ<strong>พื้นที่รวมของประตูที่แตะห้องนั้น</strong>ทั้งด้านบน ล่าง ซ้าย และขวา</li><li><strong>ประตู</strong>ทุกบานต้อง<strong>แตะห้องอย่างน้อยหนึ่งห้อง</strong></li><li><strong>ประตูแตะกับประตูอื่นไม่ได้</strong></li><li>ทุกช่องว่างต้องมีประตู</li>",
       controlsTitle: "วิธีเล่น",
@@ -2600,7 +2800,7 @@
   function playResult(correct){ playSound(correct ? scheduleCorrect : scheduleIncorrect, 0.12); }
 
   const THEME_KEY = 'roomPuzzle.theme';
-  const THEMES = ['light', 'dark', 'wood'];
+  const THEMES = ['light', 'dark', 'ivory', 'med', 'rococo', 'cyber'];
   function currentTheme(){
     const v = document.documentElement.dataset.theme;
     return THEMES.includes(v) ? v : 'light';
