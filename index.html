@@ -460,6 +460,29 @@
     flex-wrap:wrap;
     justify-content:center;
   }
+  .records-table{
+    width:100%;
+    max-width:360px;
+    border-collapse:collapse;
+    table-layout:fixed;
+    font-family:var(--font-mono);
+    font-size:13px;
+    color:var(--ink);
+  }
+  .records-table th,
+  .records-table td{
+    padding:8px 4px;
+    border-bottom:1px solid var(--line);
+    text-align:center;
+    vertical-align:top;
+  }
+  .records-table th{ font-weight:600; }
+  .records-table tr:last-child td{ border-bottom:none; }
+  .records-table td + td,
+  .records-table th + th{ border-left:1px solid var(--line); }
+  .records-table .clear-count{ font-size:16px; font-weight:600; }
+  .records-table .best-times p{ margin:0 0 4px; font-size:12px; font-variant-numeric:tabular-nums; }
+  .records-table .best-times p:last-child{ margin-bottom:0; }
   .size-btn{
     font-family:var(--font-mono);
     font-size:15px;
@@ -904,6 +927,17 @@
       <button class="size-btn" data-size="9" onclick="startGame(9)">9×9</button>
       <button class="size-btn" data-size="15" onclick="startGame(15)">15×15</button>
     </div>
+  </section>
+
+  <section id="recordsSection" class="start-card">
+    <h2 data-i18n="recordsTitle">기록</h2>
+    <table class="records-table">
+      <thead><tr id="recordsHead"></tr></thead>
+      <tbody>
+        <tr id="recordsClears"></tr>
+        <tr id="recordsTimes" class="best-times"></tr>
+      </tbody>
+    </table>
   </section>
 
   <section id="loadingScreen" class="start-card" hidden>
@@ -2048,6 +2082,7 @@
         '<li>칸을 <strong>우클릭 또는 길게 클릭하면 잠긴다.</strong> 잠긴 칸은 배치가 바뀌지 않는다. 다시 잠금을 시도하면 잠금이 풀린다.</li>' +
         '<li>회색으로 된 칸은 풀이를 위한 표기용 칸으로, \'문\'이 아니다.</li>',
       sizeTitle: '퍼즐 크기 선택',
+      recordsTitle: '기록',
       loadingTitle: '퍼즐 생성 중…',
       loadingBody: '숫자 배치와 유일해 검증을 진행하고 있어요.',
       toolCycleDoor: '문 순환: 누를 때마다 위 → 아래 → 왼쪽 → 오른쪽 → 빈칸',
@@ -2108,6 +2143,7 @@
         '<li><strong>Right-click or long-press a cell to lock it.</strong> A locked cell can\'t be changed. Lock it again to unlock.</li>' +
         '<li>Gray marks are notes for solving, not doors.</li>',
       sizeTitle: 'Choose puzzle size',
+      recordsTitle: 'Records',
       loadingTitle: 'Generating puzzle…',
       loadingBody: 'Placing numbers and verifying the puzzle.',
       toolCycleDoor: 'Door cycle: each click goes Up → Down → Left → Right → Empty',
@@ -2158,6 +2194,7 @@
       controlsTitle: "操作方法",
       controlsBody: "<li>空きマスをクリックすると、<strong>上 → 下 → 左 → 右 → 空白</strong>の順にドアの向きが変わります。</li><li>上部のドアツールで特定の向きのドアを置けます。消しゴムを選ぶと、クリックしたマスのドアを消せます。</li><li>マスを<strong>右クリックまたは長押しするとロックされます。</strong>ロックしたマスは変わりません。もう一度ロックすると解除されます。</li><li>グレーのマスは解答用のメモで、「ドア」ではありません。</li>",
       sizeTitle: "パズルのサイズを選択",
+      recordsTitle: "記録",
       loadingTitle: "パズルを生成中…",
       loadingBody: "数字を配置し、パズルを検証しています。",
       toolCycleDoor: "ドア切替：クリックごとに 上 → 下 → 左 → 右 → 空白",
@@ -2208,6 +2245,7 @@
       controlsTitle: "操作方法",
       controlsBody: "<li>点击空格，门的方向会按<strong>上 → 下 → 左 → 右 → 空白</strong>的顺序切换。</li><li>使用上方的门工具可以放置指定方向的门。选择橡皮擦后，点击格子即可擦除其中的门。</li><li><strong>右键点击或长按格子即可锁定。</strong>锁定的格子不会被更改。再次锁定即可解锁。</li><li>灰色的格子是解题用的标记，不是“门”。</li>",
       sizeTitle: "选择谜题大小",
+      recordsTitle: "记录",
       loadingTitle: "正在生成谜题…",
       loadingBody: "正在放置数字并验证谜题。",
       toolCycleDoor: "门循环：每次点击 上 → 下 → 左 → 右 → 空白",
@@ -2258,6 +2296,7 @@
       controlsTitle: "操作方式",
       controlsBody: "<li>點擊空格，門的方向會依<strong>上 → 下 → 左 → 右 → 空白</strong>的順序切換。</li><li>使用上方的門工具可以放置指定方向的門。選擇橡皮擦後，點擊格子即可擦除其中的門。</li><li><strong>右鍵點擊或長按格子即可鎖定。</strong>鎖定的格子不會被更改。再次鎖定即可解鎖。</li><li>灰色的格子是解題用的標記，不是「門」。</li>",
       sizeTitle: "選擇謎題大小",
+      recordsTitle: "紀錄",
       loadingTitle: "正在產生謎題…",
       loadingBody: "正在放置數字並驗證謎題。",
       toolCycleDoor: "門循環：每次點擊 上 → 下 → 左 → 右 → 空白",
@@ -2308,6 +2347,7 @@
       controlsTitle: "Cómo jugar",
       controlsBody: "<li>Haz clic en una casilla vacía para cambiar la dirección de la puerta: <strong>Arriba → Abajo → Izquierda → Derecha → Vacía</strong>.</li><li>Usa las herramientas de puerta de arriba para colocar una puerta en una dirección concreta. Elige el borrador para quitar la puerta de la casilla que pulses.</li><li><strong>Haz clic derecho o mantén pulsada una casilla para bloquearla.</strong> Una casilla bloqueada no se puede cambiar. Bloquéala de nuevo para desbloquearla.</li><li>Las marcas grises son notas para resolver, no puertas.</li>",
       sizeTitle: "Elige el tamaño del puzle",
+      recordsTitle: "Récords",
       loadingTitle: "Generando puzle…",
       loadingBody: "Colocando números y verificando el puzle.",
       toolCycleDoor: "Ciclo de puerta: cada clic pasa Arriba → Abajo → Izquierda → Derecha → Vacía",
@@ -2358,6 +2398,7 @@
       controlsTitle: "Comment jouer",
       controlsBody: "<li>Cliquez sur une case vide pour changer l’orientation de la porte : <strong>Haut → Bas → Gauche → Droite → Vide</strong>.</li><li>Utilisez les outils de porte en haut pour placer une porte dans une direction précise. Choisissez la gomme pour effacer la porte de la case cliquée.</li><li><strong>Faites un clic droit ou un appui long sur une case pour la verrouiller.</strong> Une case verrouillée ne peut pas être modifiée. Verrouillez-la à nouveau pour la déverrouiller.</li><li>Les marques grises sont des notes pour résoudre, pas des portes.</li>",
       sizeTitle: "Choisissez la taille du puzzle",
+      recordsTitle: "Records",
       loadingTitle: "Génération du puzzle…",
       loadingBody: "Placement des nombres et vérification du puzzle.",
       toolCycleDoor: "Cycle de porte : chaque clic passe Haut → Bas → Gauche → Droite → Vide",
@@ -2408,6 +2449,7 @@
       controlsTitle: "Spielanleitung",
       controlsBody: "<li>Klicke auf ein leeres Feld, um die Türrichtung zu wechseln: <strong>Oben → Unten → Links → Rechts → Leer</strong>.</li><li>Mit den Türwerkzeugen oben setzt du eine Tür in eine bestimmte Richtung. Wähle den Radierer, um die Tür im angeklickten Feld zu löschen.</li><li><strong>Rechtsklick oder langes Drücken sperrt ein Feld.</strong> Ein gesperrtes Feld kann nicht verändert werden. Erneutes Sperren hebt die Sperre auf.</li><li>Graue Markierungen sind Notizen zum Lösen, keine Türen.</li>",
       sizeTitle: "Rätselgröße wählen",
+      recordsTitle: "Rekorde",
       loadingTitle: "Rätsel wird erstellt…",
       loadingBody: "Zahlen werden gesetzt und das Rätsel wird geprüft.",
       toolCycleDoor: "Tür-Wechsel: jeder Klick Oben → Unten → Links → Rechts → Leer",
@@ -2458,6 +2500,7 @@
       controlsTitle: "Como jogar",
       controlsBody: "<li>Clique em uma casa vazia para alternar a direção da porta: <strong>Cima → Baixo → Esquerda → Direita → Vazia</strong>.</li><li>Use as ferramentas de porta no topo para colocar uma porta numa direção específica. Escolha a borracha para apagar a porta da casa clicada.</li><li><strong>Clique com o botão direito ou pressione e segure uma casa para bloqueá-la.</strong> Uma casa bloqueada não pode ser alterada. Bloqueie de novo para desbloquear.</li><li>As marcas cinzas são anotações para resolver, não portas.</li>",
       sizeTitle: "Escolha o tamanho do quebra-cabeça",
+      recordsTitle: "Recordes",
       loadingTitle: "Gerando quebra-cabeça…",
       loadingBody: "Colocando números e verificando o quebra-cabeça.",
       toolCycleDoor: "Ciclo de porta: cada clique vai Cima → Baixo → Esquerda → Direita → Vazia",
@@ -2508,6 +2551,7 @@
       controlsTitle: "Как играть",
       controlsBody: "<li>Нажмите на пустую клетку, чтобы менять направление двери: <strong>Вверх → Вниз → Влево → Вправо → Пусто</strong>.</li><li>Инструменты дверей вверху ставят дверь в нужном направлении. Выберите ластик, чтобы стереть дверь в нажатой клетке.</li><li><strong>Правый клик или долгое нажатие блокирует клетку.</strong> Заблокированную клетку нельзя изменить. Повторная блокировка снимает её.</li><li>Серые отметки — это заметки для решения, а не двери.</li>",
       sizeTitle: "Выберите размер головоломки",
+      recordsTitle: "Рекорды",
       loadingTitle: "Создание головоломки…",
       loadingBody: "Расставляем числа и проверяем головоломку.",
       toolCycleDoor: "Смена двери: каждый клик Вверх → Вниз → Влево → Вправо → Пусто",
@@ -2558,6 +2602,7 @@
       controlsTitle: "Come si gioca",
       controlsBody: "<li>Fai clic su una casella vuota per cambiare la direzione della porta: <strong>Su → Giù → Sinistra → Destra → Vuota</strong>.</li><li>Usa gli strumenti porta in alto per posizionare una porta in una direzione precisa. Scegli la gomma per cancellare la porta nella casella cliccata.</li><li><strong>Fai clic destro o tieni premuta una casella per bloccarla.</strong> Una casella bloccata non si può modificare. Bloccala di nuovo per sbloccarla.</li><li>I segni grigi sono appunti per la risoluzione, non porte.</li>",
       sizeTitle: "Scegli la dimensione del puzzle",
+      recordsTitle: "Record",
       loadingTitle: "Generazione del puzzle…",
       loadingBody: "Posiziono i numeri e verifico il puzzle.",
       toolCycleDoor: "Ciclo porta: ogni clic Su → Giù → Sinistra → Destra → Vuota",
@@ -2608,6 +2653,7 @@
       controlsTitle: "Cách chơi",
       controlsBody: "<li>Nhấn vào ô trống để đổi hướng cửa: <strong>Lên → Xuống → Trái → Phải → Trống</strong>.</li><li>Dùng các công cụ cửa ở trên để đặt cửa theo hướng cụ thể. Chọn cục tẩy để xóa cửa trong ô bạn nhấn.</li><li><strong>Nhấp chuột phải hoặc nhấn giữ một ô để khóa.</strong> Ô đã khóa không thể thay đổi. Khóa lại lần nữa để mở khóa.</li><li>Các dấu màu xám là ghi chú để giải, không phải cửa.</li>",
       sizeTitle: "Chọn kích thước câu đố",
+      recordsTitle: "Kỷ lục",
       loadingTitle: "Đang tạo câu đố…",
       loadingBody: "Đang đặt số và kiểm tra câu đố.",
       toolCycleDoor: "Đổi cửa: mỗi lần nhấn Lên → Xuống → Trái → Phải → Trống",
@@ -2658,6 +2704,7 @@
       controlsTitle: "Cara bermain",
       controlsBody: "<li>Klik kotak kosong untuk mengganti arah pintu: <strong>Atas → Bawah → Kiri → Kanan → Kosong</strong>.</li><li>Gunakan alat pintu di atas untuk memasang pintu ke arah tertentu. Pilih penghapus untuk menghapus pintu di kotak yang diklik.</li><li><strong>Klik kanan atau tekan lama sebuah kotak untuk menguncinya.</strong> Kotak yang terkunci tidak bisa diubah. Kunci lagi untuk membukanya.</li><li>Tanda abu-abu adalah catatan untuk menyelesaikan, bukan pintu.</li>",
       sizeTitle: "Pilih ukuran teka-teki",
+      recordsTitle: "Rekor",
       loadingTitle: "Membuat teka-teki…",
       loadingBody: "Menempatkan angka dan memeriksa teka-teki.",
       toolCycleDoor: "Ganti pintu: setiap klik Atas → Bawah → Kiri → Kanan → Kosong",
@@ -2708,6 +2755,7 @@
       controlsTitle: "วิธีเล่น",
       controlsBody: "<li>คลิกช่องว่างเพื่อเปลี่ยนทิศประตู: <strong>บน → ล่าง → ซ้าย → ขวา → ว่าง</strong></li><li>ใช้เครื่องมือประตูด้านบนเพื่อวางประตูในทิศที่ต้องการ เลือกยางลบเพื่อลบประตูในช่องที่คลิก</li><li><strong>คลิกขวาหรือกดค้างที่ช่องเพื่อล็อก</strong> ช่องที่ล็อกแล้วจะเปลี่ยนไม่ได้ ล็อกซ้ำอีกครั้งเพื่อปลดล็อก</li><li>เครื่องหมายสีเทาเป็นโน้ตสำหรับช่วยแก้ ไม่ใช่ประตู</li>",
       sizeTitle: "เลือกขนาดปริศนา",
+      recordsTitle: "สถิติ",
       loadingTitle: "กำลังสร้างปริศนา…",
       loadingBody: "กำลังวางตัวเลขและตรวจสอบปริศนา",
       toolCycleDoor: "สลับประตู: แต่ละคลิก บน → ล่าง → ซ้าย → ขวา → ว่าง",
@@ -3156,6 +3204,58 @@
     timer.tick = null;
   }
 
+  // ---- my records: clear count + fastest RECORD_KEEP times per size, kept in this browser ----
+  // Stored as {v:1, sizes:{"5":{clears, times:[ms, fastest first]}}}; a time pushed past
+  // RECORD_KEEP is dropped for good. Storage failures (private windows etc.) never break play.
+  const RECORDS_KEY = 'roomPuzzle.records';
+  const RECORD_SIZES = [5, 7, 9, 15];
+  const RECORD_KEEP = 5;
+  function loadRecords(){
+    let saved = null;
+    try { saved = JSON.parse(localStorage.getItem(RECORDS_KEY)); } catch(e){}
+    const records = {v: 1, sizes: {}};
+    RECORD_SIZES.forEach(size => {
+      const s = saved && saved.sizes && saved.sizes[size];
+      records.sizes[size] = {
+        clears: s && Number.isFinite(s.clears) ? s.clears : 0,
+        times: s && Array.isArray(s.times) ? s.times.filter(Number.isFinite).slice(0, RECORD_KEEP) : []
+      };
+    });
+    return records;
+  }
+  function recordClear(size, ms){
+    const records = loadRecords();
+    const entry = records.sizes[size];
+    if(!entry) return;
+    entry.clears += 1;
+    entry.times = entry.times.concat(ms).sort((a, b) => a - b).slice(0, RECORD_KEEP);
+    try { localStorage.setItem(RECORDS_KEY, JSON.stringify(records)); } catch(e){}
+  }
+  function renderRecords(){
+    const records = loadRecords();
+    const head = document.getElementById('recordsHead');
+    const clears = document.getElementById('recordsClears');
+    const times = document.getElementById('recordsTimes');
+    head.innerHTML = clears.innerHTML = times.innerHTML = '';
+    RECORD_SIZES.forEach(size => {
+      const entry = records.sizes[size];
+      const th = document.createElement('th');
+      th.textContent = size + '×' + size;
+      head.appendChild(th);
+      const count = document.createElement('td');
+      count.className = 'clear-count';
+      count.textContent = entry.clears;
+      clears.appendChild(count);
+      const list = document.createElement('td');
+      entry.times.forEach((ms, i) => {
+        const p = document.createElement('p');
+        p.textContent = (i + 1) + '. ' + formatElapsed(ms);
+        list.appendChild(p);
+      });
+      times.appendChild(list);
+    });
+  }
+
   function startGame(size){
     state.phase = 'loading';
     render();
@@ -3302,8 +3402,10 @@
     state.viewMode = 'result';
     state.violations = findViolations();
     state.submissionCorrect = state.violations.size === 0;
+    const wasRunning = timer.running; // a puzzle's clear is only recorded once
     stopTimer();
     renderTimer();
+    if(state.submissionCorrect && wasRunning) recordClear(state.size, Math.round(timer.elapsed));
     playResult(state.submissionCorrect);
     render();
   }
@@ -3471,6 +3573,8 @@
     startScreen.hidden = state.phase !== 'start';
     loadingScreen.hidden = state.phase !== 'loading';
     gameScreen.hidden = state.phase !== 'game';
+    document.getElementById('recordsSection').hidden = state.phase !== 'start';
+    if(state.phase === 'start') renderRecords();
 
     if(state.phase !== 'game') return;
 
