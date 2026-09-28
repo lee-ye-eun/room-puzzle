@@ -809,17 +809,31 @@
       </button>
       <h2 id="settingsTitle" data-i18n="settingsTitle">설정</h2>
       <div class="setting-row">
-        <span class="setting-label" data-i18n="settingSound">사운드</span>
+        <span class="setting-label" data-i18n="settingBgm">BGM</span>
         <span class="stepper">
-          <button id="soundDown" onclick="changeSound(-1)" data-i18n-title="soundDown">−</button>
-          <span id="soundBar" class="sound-bar" role="meter" aria-valuemin="0" aria-valuemax="5">
-            <button class="sound-seg" onclick="setSound(1)" tabindex="-1"></button>
-            <button class="sound-seg" onclick="setSound(2)" tabindex="-1"></button>
-            <button class="sound-seg" onclick="setSound(3)" tabindex="-1"></button>
-            <button class="sound-seg" onclick="setSound(4)" tabindex="-1"></button>
-            <button class="sound-seg" onclick="setSound(5)" tabindex="-1"></button>
+          <button id="bgmDown" onclick="changeVolume('bgm', -1)" data-i18n-title="soundDown">−</button>
+          <span id="bgmBar" class="sound-bar" role="meter" aria-valuemin="0" aria-valuemax="5">
+            <button class="sound-seg" onclick="setVolume('bgm', 1)" tabindex="-1"></button>
+            <button class="sound-seg" onclick="setVolume('bgm', 2)" tabindex="-1"></button>
+            <button class="sound-seg" onclick="setVolume('bgm', 3)" tabindex="-1"></button>
+            <button class="sound-seg" onclick="setVolume('bgm', 4)" tabindex="-1"></button>
+            <button class="sound-seg" onclick="setVolume('bgm', 5)" tabindex="-1"></button>
           </span>
-          <button id="soundUp" onclick="changeSound(1)" data-i18n-title="soundUp">+</button>
+          <button id="bgmUp" onclick="changeVolume('bgm', 1)" data-i18n-title="soundUp">+</button>
+        </span>
+      </div>
+      <div class="setting-row">
+        <span class="setting-label" data-i18n="settingSfx">SFX</span>
+        <span class="stepper">
+          <button id="sfxDown" onclick="changeVolume('sfx', -1)" data-i18n-title="soundDown">−</button>
+          <span id="sfxBar" class="sound-bar" role="meter" aria-valuemin="0" aria-valuemax="5">
+            <button class="sound-seg" onclick="setVolume('sfx', 1)" tabindex="-1"></button>
+            <button class="sound-seg" onclick="setVolume('sfx', 2)" tabindex="-1"></button>
+            <button class="sound-seg" onclick="setVolume('sfx', 3)" tabindex="-1"></button>
+            <button class="sound-seg" onclick="setVolume('sfx', 4)" tabindex="-1"></button>
+            <button class="sound-seg" onclick="setVolume('sfx', 5)" tabindex="-1"></button>
+          </span>
+          <button id="sfxUp" onclick="changeVolume('sfx', 1)" data-i18n-title="soundUp">+</button>
         </span>
       </div>
       <div class="setting-row">
@@ -1988,7 +2002,8 @@
       settingsOpen: '설정',
       settingsClose: '닫기',
       settingsTitle: '설정',
-      settingSound: '사운드',
+      settingBgm: 'BGM',
+      settingSfx: 'SFX',
       soundDown: '사운드 줄이기',
       soundUp: '사운드 키우기',
       settingLang: '언어',
@@ -2047,7 +2062,8 @@
       settingsOpen: 'Settings',
       settingsClose: 'Close',
       settingsTitle: 'Settings',
-      settingSound: 'Sound',
+      settingBgm: 'BGM',
+      settingSfx: 'SFX',
       soundDown: 'Lower sound',
       soundUp: 'Raise sound',
       settingLang: 'Language',
@@ -2106,7 +2122,8 @@
       settingsOpen: "設定",
       settingsClose: "閉じる",
       settingsTitle: "設定",
-      settingSound: "サウンド",
+      settingBgm: "BGM",
+      settingSfx: "SFX",
       soundDown: "音量を下げる",
       soundUp: "音量を上げる",
       settingLang: "言語",
@@ -2155,7 +2172,8 @@
       settingsOpen: "设置",
       settingsClose: "关闭",
       settingsTitle: "设置",
-      settingSound: "声音",
+      settingBgm: "BGM",
+      settingSfx: "SFX",
       soundDown: "降低音量",
       soundUp: "提高音量",
       settingLang: "语言",
@@ -2204,7 +2222,8 @@
       settingsOpen: "設定",
       settingsClose: "關閉",
       settingsTitle: "設定",
-      settingSound: "聲音",
+      settingBgm: "BGM",
+      settingSfx: "SFX",
       soundDown: "降低音量",
       soundUp: "提高音量",
       settingLang: "語言",
@@ -2253,7 +2272,8 @@
       settingsOpen: "Ajustes",
       settingsClose: "Cerrar",
       settingsTitle: "Ajustes",
-      settingSound: "Sonido",
+      settingBgm: "BGM",
+      settingSfx: "SFX",
       soundDown: "Bajar sonido",
       soundUp: "Subir sonido",
       settingLang: "Idioma",
@@ -2302,7 +2322,8 @@
       settingsOpen: "Paramètres",
       settingsClose: "Fermer",
       settingsTitle: "Paramètres",
-      settingSound: "Son",
+      settingBgm: "BGM",
+      settingSfx: "SFX",
       soundDown: "Baisser le son",
       soundUp: "Monter le son",
       settingLang: "Langue",
@@ -2351,7 +2372,8 @@
       settingsOpen: "Einstellungen",
       settingsClose: "Schließen",
       settingsTitle: "Einstellungen",
-      settingSound: "Ton",
+      settingBgm: "BGM",
+      settingSfx: "SFX",
       soundDown: "Leiser",
       soundUp: "Lauter",
       settingLang: "Sprache",
@@ -2400,7 +2422,8 @@
       settingsOpen: "Configurações",
       settingsClose: "Fechar",
       settingsTitle: "Configurações",
-      settingSound: "Som",
+      settingBgm: "BGM",
+      settingSfx: "SFX",
       soundDown: "Diminuir som",
       soundUp: "Aumentar som",
       settingLang: "Idioma",
@@ -2449,7 +2472,8 @@
       settingsOpen: "Настройки",
       settingsClose: "Закрыть",
       settingsTitle: "Настройки",
-      settingSound: "Звук",
+      settingBgm: "BGM",
+      settingSfx: "SFX",
       soundDown: "Тише",
       soundUp: "Громче",
       settingLang: "Язык",
@@ -2498,7 +2522,8 @@
       settingsOpen: "Impostazioni",
       settingsClose: "Chiudi",
       settingsTitle: "Impostazioni",
-      settingSound: "Suono",
+      settingBgm: "BGM",
+      settingSfx: "SFX",
       soundDown: "Abbassa il suono",
       soundUp: "Alza il suono",
       settingLang: "Lingua",
@@ -2547,7 +2572,8 @@
       settingsOpen: "Cài đặt",
       settingsClose: "Đóng",
       settingsTitle: "Cài đặt",
-      settingSound: "Âm thanh",
+      settingBgm: "BGM",
+      settingSfx: "SFX",
       soundDown: "Giảm âm lượng",
       soundUp: "Tăng âm lượng",
       settingLang: "Ngôn ngữ",
@@ -2596,7 +2622,8 @@
       settingsOpen: "Pengaturan",
       settingsClose: "Tutup",
       settingsTitle: "Pengaturan",
-      settingSound: "Suara",
+      settingBgm: "BGM",
+      settingSfx: "SFX",
       soundDown: "Kecilkan suara",
       soundUp: "Besarkan suara",
       settingLang: "Bahasa",
@@ -2645,7 +2672,8 @@
       settingsOpen: "การตั้งค่า",
       settingsClose: "ปิด",
       settingsTitle: "การตั้งค่า",
-      settingSound: "เสียง",
+      settingBgm: "BGM",
+      settingSfx: "SFX",
       soundDown: "ลดเสียง",
       soundUp: "เพิ่มเสียง",
       settingLang: "ภาษา",
@@ -2716,24 +2744,40 @@
   }
 
   // ---- settings popup ----
-  // Sound is a stored 0–5 bar level (0 = mute, 5 = full volume, 3 by default); there are
-  // no sounds yet, so for now it's only remembered.
-  const SOUND_KEY = 'roomPuzzle.soundLevel';
+  // Two separate 0–5 volume bars (0 = mute, 5 = full, 3 by default): background music
+  // (the special themes' tracks) and sound effects (button clicks, correct/incorrect).
+  // A level saved by the older single "sound" bar seeds both on first load.
   const SOUND_MAX = 5;
   const SOUND_DEFAULT = 3;
-  let soundLevel = SOUND_DEFAULT;
-  try {
-    const raw = localStorage.getItem(SOUND_KEY);
-    const v = Number(raw);
-    if(raw !== null && Number.isInteger(v) && v >= 0 && v <= SOUND_MAX) soundLevel = v;
-  } catch(e){}
+  const VOLUME_KEYS = {bgm: 'roomPuzzle.bgmLevel', sfx: 'roomPuzzle.sfxLevel'};
+  const volumes = {bgm: SOUND_DEFAULT, sfx: SOUND_DEFAULT};
+  function readLevel(key){
+    try {
+      const raw = localStorage.getItem(key);
+      const v = Number(raw);
+      if(raw !== null && Number.isInteger(v) && v >= 0 && v <= SOUND_MAX) return v;
+    } catch(e){}
+    return null;
+  }
+  {
+    const legacy = readLevel('roomPuzzle.soundLevel');
+    for(const kind of ['bgm', 'sfx']){
+      const saved = readLevel(VOLUME_KEYS[kind]);
+      volumes[kind] = saved !== null ? saved : legacy !== null ? legacy : SOUND_DEFAULT;
+    }
+  }
 
-  function setSound(level){
-    soundLevel = Math.min(SOUND_MAX, Math.max(0, level));
-    try { localStorage.setItem(SOUND_KEY, String(soundLevel)); } catch(e){}
+  function setVolume(kind, level){
+    volumes[kind] = Math.min(SOUND_MAX, Math.max(0, level));
+    try { localStorage.setItem(VOLUME_KEYS[kind], String(volumes[kind])); } catch(e){}
+    if(kind === 'bgm'){
+      bgm.volume = bgmVolume();
+      if(volumes.bgm <= 0) bgm.pause();
+      else if(bgm.paused) startBgm(false);
+    }
     renderSettings();
   }
-  function changeSound(delta){ setSound(soundLevel + delta); }
+  function changeVolume(kind, delta){ setVolume(kind, volumes[kind] + delta); }
 
   // ---- sound effects ----
   // A soft "click" (달칵) like pressing a real button: synthesized with Web Audio, no files.
@@ -2819,14 +2863,91 @@
   }
 
   function playSound(schedule, delay = 0){
-    if(soundLevel <= 0) return;
+    if(volumes.sfx <= 0) return;
     const ctx = getAudioCtx();
     if(!ctx) return;
     const master = ctx.createGain();
-    const v = soundLevel / SOUND_MAX;
+    const v = volumes.sfx / SOUND_MAX;
     master.gain.value = 0.35 * Math.pow(v, 1.5); // perceptual-ish curve, so low steps stay quiet
     master.connect(ctx.destination);
     schedule(ctx, master, ctx.currentTime + 0.005 + delay);
+  }
+
+  // ---- placing on the board: one short sound per theme ----
+  function scheduleNoiseBurst(ctx, dest, t, {freq, type = 'lowpass', gain, length}){
+    const len = Math.ceil(ctx.sampleRate * length);
+    const buf = ctx.createBuffer(1, len, ctx.sampleRate);
+    const data = buf.getChannelData(0);
+    for(let i = 0; i < len; i++) data[i] = Math.random() * 2 - 1;
+    const src = ctx.createBufferSource();
+    src.buffer = buf;
+    const filter = ctx.createBiquadFilter();
+    filter.type = type;
+    filter.frequency.value = freq;
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(gain, t + 0.002);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + length);
+    src.connect(filter).connect(g).connect(dest);
+    src.start(t);
+    src.stop(t + length);
+  }
+  function scheduleSweep(ctx, dest, t, {type, from, to, gain, length, sweep = length}){
+    const osc = ctx.createOscillator();
+    osc.type = type;
+    osc.frequency.setValueAtTime(from, t);
+    osc.frequency.exponentialRampToValueAtTime(to, t + sweep);
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(gain, t + 0.003);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + length);
+    osc.connect(g).connect(dest);
+    osc.start(t);
+    osc.stop(t + length + 0.02);
+  }
+
+  // basic themes: a dull, soft "tuk" — a low falling thump with a muffled knock
+  function schedulePlaceThud(ctx, dest, t){
+    scheduleSweep(ctx, dest, t, {type: 'sine', from: 160, to: 70, gain: 0.9, length: 0.11, sweep: 0.08});
+    scheduleNoiseBurst(ctx, dest, t, {freq: 900, gain: 0.35, length: 0.03});
+  }
+  // mediterranean: a water droplet — a quick rising "plip"
+  function schedulePlaceDrop(ctx, dest, t){
+    scheduleSweep(ctx, dest, t, {type: 'sine', from: 480, to: 1500, gain: 0.55, length: 0.13, sweep: 0.05});
+    scheduleSweep(ctx, dest, t + 0.06, {type: 'sine', from: 900, to: 1800, gain: 0.12, length: 0.08, sweep: 0.03});
+  }
+  // rococo: a low music-box note — pure sine partials only (no noise, no buzzy waves):
+  // the tine's fundamental ringing long, a soft octave, and a faint high shimmer that fades fast
+  const MUSIC_BOX_NOTES = [392.0, 440.0, 523.3, 587.3, 659.3]; // G4 A4 C5 D5 E5
+  function scheduleMusicBoxNote(ctx, dest, t, freq, gain){
+    [[1, 1, 1.6], [2, 0.3, 0.7], [5.4, 0.07, 0.18]].forEach(([mult, level, decay]) => {
+      const osc = ctx.createOscillator();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq * mult, t);
+      const g = ctx.createGain();
+      g.gain.setValueAtTime(0.0001, t);
+      g.gain.exponentialRampToValueAtTime(gain * level, t + 0.006);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + decay);
+      osc.connect(g).connect(dest);
+      osc.start(t);
+      osc.stop(t + decay + 0.02);
+    });
+  }
+  function schedulePlaceMusicBox(ctx, dest, t){
+    scheduleMusicBoxNote(ctx, dest, t, MUSIC_BOX_NOTES[Math.floor(Math.random() * MUSIC_BOX_NOTES.length)], 0.62);
+  }
+  // cyberpunk: a short synthetic double blip
+  function schedulePlaceBlip(ctx, dest, t){
+    scheduleSweep(ctx, dest, t, {type: 'square', from: 1300, to: 650, gain: 0.16, length: 0.06});
+    scheduleSweep(ctx, dest, t + 0.045, {type: 'square', from: 1950, to: 1950, gain: 0.09, length: 0.04});
+  }
+  const PLACE_SOUNDS = {med: schedulePlaceDrop, rococo: schedulePlaceMusicBox, cyber: schedulePlaceBlip};
+  let lastPlaceSoundAt = 0;
+  function playPlace(){
+    const now = performance.now();
+    if(now - lastPlaceSoundAt < 45) return; // a fast drag shouldn't turn into a buzz
+    lastPlaceSoundAt = now;
+    playSound(PLACE_SOUNDS[currentTheme()] || schedulePlaceThud);
   }
 
   function playClick(){ playSound(scheduleClick); }
@@ -2841,18 +2962,71 @@
   }
   function setTheme(value){
     const theme = THEMES.includes(value) ? value : 'light';
+    const changed = theme !== currentTheme();
     document.documentElement.dataset.theme = theme;
     try { localStorage.setItem(THEME_KEY, theme); } catch(e){}
+    if(changed) startBgm(true);
     renderSettings();
   }
 
+  // ---- background music for the special themes ----
+  // Each special theme loops its own track; switching themes restarts from the beginning.
+  // Browsers only allow audio after a user gesture, so a theme restored from a previous
+  // visit starts playing on the first tap/click anywhere on the page.
+  const BGM_TRACKS = {med: 'audio/bgm-med.mp3', rococo: 'audio/bgm-rococo.mp3', cyber: 'audio/bgm-cyber.mp3'};
+  const bgm = new Audio();
+  bgm.loop = true;
+  bgm.preload = 'none';
+  let bgmTrack = null;
+
+  function bgmVolume(){
+    const v = volumes.bgm / SOUND_MAX;
+    return 0.6 * Math.pow(v, 1.5); // same perceptual curve as the effects
+  }
+
+  function startBgm(fromStart){
+    const src = BGM_TRACKS[currentTheme()] || null;
+    if(!src){
+      bgm.pause();
+      bgmTrack = null;
+      return;
+    }
+    if(src !== bgmTrack){
+      bgm.src = src;
+      bgmTrack = src;
+    } else if(fromStart){
+      bgm.currentTime = 0;
+    }
+    bgm.volume = bgmVolume();
+    if(volumes.bgm <= 0 || document.hidden){ bgm.pause(); return; }
+    const played = bgm.play();
+    if(played && played.catch) played.catch(() => {}); // blocked until a user gesture
+  }
+
+  // Start the saved theme's music on a user gesture if it isn't playing yet. Chrome only
+  // counts some events as a gesture (a touch pointerdown doesn't; its click/touchend
+  // does), so listen to all of them — a blocked attempt just waits for the next one.
+  ['pointerdown', 'touchend', 'click', 'keydown'].forEach(type => {
+    document.addEventListener(type, () => {
+      if(BGM_TRACKS[currentTheme()] && bgm.paused && volumes.bgm > 0 && !document.hidden) startBgm(false);
+    }, true);
+  });
+  // pause while the tab is in the background, pick up where it left off on return
+  document.addEventListener('visibilitychange', () => {
+    if(document.hidden) bgm.pause();
+    else startBgm(false);
+  });
+
   function renderSettings(){
-    document.querySelectorAll('#soundBar .sound-seg').forEach((seg, k) => {
-      seg.classList.toggle('on', k < soundLevel);
-    });
-    document.getElementById('soundBar').setAttribute('aria-valuenow', soundLevel);
-    document.getElementById('soundDown').disabled = soundLevel <= 0;
-    document.getElementById('soundUp').disabled = soundLevel >= SOUND_MAX;
+    for(const kind of ['bgm', 'sfx']){
+      const level = volumes[kind];
+      document.querySelectorAll(`#${kind}Bar .sound-seg`).forEach((seg, k) => {
+        seg.classList.toggle('on', k < level);
+      });
+      document.getElementById(kind + 'Bar').setAttribute('aria-valuenow', level);
+      document.getElementById(kind + 'Down').disabled = level <= 0;
+      document.getElementById(kind + 'Up').disabled = level >= SOUND_MAX;
+    }
     document.getElementById('langSelect').value = lang;
     document.querySelectorAll('.theme-swatch').forEach(btn => {
       btn.setAttribute('aria-checked', String(btn.dataset.themeValue === currentTheme()));
@@ -3002,6 +3176,7 @@
       if(cur === 'blank') return;
       recordHistory();
       state.playerState[index] = 'blank';
+      playPlace();
       render();
       return;
     }
@@ -3020,6 +3195,7 @@
     } else {
       state.playerState[index] = (cur === state.selectedTool) ? 'blank' : state.selectedTool;
     }
+    if(state.playerState[index] !== cur) playPlace();
     render();
   }
 
@@ -3142,11 +3318,14 @@
     return next === 'blank' ? cur => withoutMark(cur, kind) : cur => withMark(cur, next);
   }
 
+  // returns true when the cell's content actually changed (a lock doesn't count)
   function paintCell(index, lock, value){
-    if(state.puzzle.cells[index].type !== 'player') return;
-    if(lock){ state.lockedCells[index] = true; return; }
-    if(state.lockedCells[index]) return;
-    state.playerState[index] = value(state.playerState[index]);
+    if(state.puzzle.cells[index].type !== 'player') return false;
+    if(lock){ state.lockedCells[index] = true; return false; }
+    if(state.lockedCells[index]) return false;
+    const before = state.playerState[index];
+    state.playerState[index] = value(before);
+    return state.playerState[index] !== before;
   }
 
   function cellIndexAt(x, y){
@@ -3163,11 +3342,11 @@
       cancelLongPress();
       recordHistory();
       if(!drag.lock) drag.value = dragPaintValue(drag.start);
-      paintCell(drag.start, drag.lock, drag.value);
+      if(paintCell(drag.start, drag.lock, drag.value)) playPlace();
       drag.painted = true;
     }
     drag.last = index;
-    paintCell(index, drag.lock, drag.value);
+    if(paintCell(index, drag.lock, drag.value)) playPlace();
     render();
   });
   function endDrag(){
