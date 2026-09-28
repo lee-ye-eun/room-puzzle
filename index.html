@@ -1834,9 +1834,7 @@
       toolTitle: '도구 선택',
       toolToggle: '도구 펼치기/접기',
       resultCorrect: '정답!',
-      resultIncorrect: '오답',
-      cellLock: '우클릭(길게 누르기)하면 이 칸을 잠급니다',
-      cellUnlock: '우클릭(길게 누르기)하면 잠금이 풀립니다'
+      resultIncorrect: '오답'
     },
     en: {
       settingsOpen: 'Settings',
@@ -1892,9 +1890,7 @@
       toolTitle: 'Tools',
       toolToggle: 'Show/hide tools',
       resultCorrect: 'Correct!',
-      resultIncorrect: 'Incorrect',
-      cellLock: 'Right-click (long-press) to lock this cell',
-      cellUnlock: 'Right-click (long-press) to unlock'
+      resultIncorrect: 'Incorrect'
     }
   };
   const LANG_KEY = 'roomPuzzle.lang';
@@ -2486,7 +2482,6 @@
           div.onpointerdown = (e) => onCellPointerDown(e, i);
           div.onclick = () => onCellClick(i);
           div.oncontextmenu = onCellContextMenu;
-          div.title = t(locked ? 'cellUnlock' : 'cellLock');
         }
       }
       if(state.viewMode === 'play' && cell.type !== 'player'){
