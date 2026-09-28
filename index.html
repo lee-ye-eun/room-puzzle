@@ -193,6 +193,70 @@
   }
   :root[data-theme="cyber"] .board{ box-shadow:0 0 14px rgba(255,60,216,.55), 0 0 30px rgba(0,229,255,.18); }
 
+  /* ---- special themes: decorative page backgrounds (fixed layers behind the content) ---- */
+  :root[data-theme="med"] body::before,
+  :root[data-theme="rococo"] body::before,
+  :root[data-theme="cyber"] body::before{
+    content:'';
+    position:fixed;
+    inset:0;
+    z-index:-1;
+    pointer-events:none;
+  }
+  /* mediterranean: morning sun and sea waves along the bottom */
+  :root[data-theme="med"] body::before{
+    background:
+      radial-gradient(circle at 88% 6%, rgba(255,205,100,.38), rgba(255,205,100,0) 26%),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='80' viewBox='0 0 240 80'%3E%3Cpath d='M0 30 Q30 12 60 30 T120 30 T180 30 T240 30 V80 H0Z' fill='%231E5AA8' fill-opacity='.10'/%3E%3Cpath d='M0 48 Q30 32 60 48 T120 48 T180 48 T240 48 V80 H0Z' fill='%231E5AA8' fill-opacity='.14'/%3E%3C/svg%3E") repeat-x left bottom / 240px 80px,
+      linear-gradient(#FBFAF6 0%, #F4F7FB 60%, #E4EEF9 100%);
+  }
+  /* rococo: gilded lattice ornament over soft pink glows */
+  :root[data-theme="rococo"] body::before{
+    background:
+      radial-gradient(ellipse at 15% 10%, rgba(255,255,255,.75), rgba(255,255,255,0) 40%),
+      radial-gradient(ellipse at 85% 90%, rgba(236,157,184,.35), rgba(236,157,184,0) 45%),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Cg fill='none' stroke='%23D69C0E' stroke-opacity='.28' stroke-width='1.1'%3E%3Cpath d='M32 2 L62 32 L32 62 L2 32 Z'/%3E%3Cpath d='M32 22c4 4 4 6 0 10c-4-4-4-6 0-10zM32 42c4-4 4-6 0-10c-4 4-4 6 0 10zM22 32c4-4 6-4 10 0c-4 4-6 4-10 0zM42 32c-4-4-6-4-10 0c4 4 6 4 10 0z'/%3E%3C/g%3E%3Ccircle cx='32' cy='32' r='1.6' fill='%23D69C0E' fill-opacity='.35'/%3E%3Ccircle cx='0' cy='0' r='2' fill='%23EC9DB8' fill-opacity='.45'/%3E%3Ccircle cx='64' cy='0' r='2' fill='%23EC9DB8' fill-opacity='.45'/%3E%3Ccircle cx='0' cy='64' r='2' fill='%23EC9DB8' fill-opacity='.45'/%3E%3Ccircle cx='64' cy='64' r='2' fill='%23EC9DB8' fill-opacity='.45'/%3E%3C/svg%3E") repeat center / 64px 64px,
+      #FBEAF0;
+  }
+  /* cyberpunk: neon horizon glow and a receding grid floor, plus faint scanlines on top */
+  :root[data-theme="cyber"] body::before{
+    background:
+      radial-gradient(ellipse at 50% 100%, rgba(255,60,216,.28), rgba(255,60,216,0) 55%),
+      radial-gradient(ellipse at 50% 0%, rgba(0,229,255,.12), rgba(0,229,255,0) 45%),
+      #07070D;
+  }
+  :root[data-theme="cyber"] body::after{
+    content:'';
+    position:fixed;
+    left:-50%;
+    right:-50%;
+    top:55vh;
+    height:60vh;
+    z-index:-1;
+    pointer-events:none;
+    background-image:
+      linear-gradient(rgba(0,229,255,.5) 1.5px, transparent 1.5px),
+      linear-gradient(90deg, rgba(255,60,216,.45) 1.5px, transparent 1.5px);
+    background-size:56px 56px;
+    transform:perspective(260px) rotateX(60deg);
+    transform-origin:50% 0;
+    -webkit-mask-image:linear-gradient(transparent, #000 35%);
+    mask-image:linear-gradient(transparent, #000 35%);
+    animation:cyber-grid 3s linear infinite;
+  }
+  :root[data-theme="cyber"] .page::after{
+    content:'';
+    position:fixed;
+    inset:0;
+    z-index:60;
+    pointer-events:none;
+    background:repeating-linear-gradient(rgba(255,255,255,.025) 0 1px, transparent 1px 3px);
+  }
+  @keyframes cyber-grid{ to{ background-position:0 56px, 0 0; } }
+  @media (prefers-reduced-motion: reduce){
+    :root[data-theme="cyber"] body::after{ animation:none; }
+  }
+
   body{
     background:var(--paper);
     color:var(--ink);
