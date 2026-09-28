@@ -2,7 +2,11 @@
 <title>Room Puzzle</title>
 <script>
   // apply the saved theme before anything paints, so there's no flash of the default one
-  try { document.documentElement.dataset.theme = localStorage.getItem('roomPuzzle.theme') || 'light'; }
+  try {
+    const saved = localStorage.getItem('roomPuzzle.theme');
+    const known = ['light', 'dark', 'gothic', 'ivory', 'med', 'cyber'];
+    document.documentElement.dataset.theme = known.includes(saved) ? saved : 'light';
+  }
   catch(e){ document.documentElement.dataset.theme = 'light'; }
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -13,7 +17,6 @@
      light (기본) — black & white; the only colours kept are red (locks, rule violations)
        and blue (the "correct" result banner)
      dark (다크) — the same, inverted around the board
-     wood (나무) — warm paper and brown doors
      With no data-theme at all the page follows the system light/dark preference. */
   :root{
     --paper:#FFFFFF;
@@ -85,28 +88,6 @@
     --board-hover:#D0D0D0;
     --board-mark:#B3B3B3;
     --board-frame:#8A8A8A;
-  }
-  :root[data-theme="wood"]{
-    --paper:#F5EDE0;
-    --paper-raised:#EEE3D1;
-    --ink:#3E2C1F;
-    --line:#CDB99C;
-    --line-soft:#E2D4BE;
-    --accent:#7B4A26;
-    --accent-strong:#5C3519;
-    --accent-soft:#E8D9C2;
-    --muted:#8A7461;
-    --danger:#C0392B;
-    --danger-soft:#F6DED8;
-    --correct:#2E6F8E;
-    --correct-soft:#DCEBF1;
-    --fixed:#6F7F5E;
-    --board-paper:#FBF6EC;
-    --board-ink:#7B4A26;
-    --board-line:#D3C0A3;
-    --board-hover:#EFE3CF;
-    --board-mark:#D9C6A8;
-    --title-door:#7B4A26;
   }
   /* gothic: black stone, crimson doors, gold trim */
   :root[data-theme="gothic"]{
@@ -183,31 +164,6 @@
     --board-mark:#E2DBCD;
     --board-frame:#1E5AA8;
     --title-door:#1E5AA8;
-  }
-  /* retro: a classic handheld's four greens */
-  :root[data-theme="retro"]{
-    --paper:#9BBC0F;
-    --paper-raised:#8BAC0F;
-    --ink:#0F380F;
-    --line:#306230;
-    --line-soft:#7FA00F;
-    --accent:#0F380F;
-    --accent-strong:#0F380F;
-    --accent-soft:#8BAC0F;
-    --muted:#306230;
-    --danger:#D02B2B;
-    --danger-soft:#E7B9A2;
-    --correct:#0F380F;
-    --correct-soft:#8BAC0F;
-    --fixed:#306230;
-    --fixed-text:#C4DC6E;
-    --board-paper:#C4DC6E;
-    --board-ink:#0F380F;
-    --board-line:#306230;
-    --board-hover:#B3CF4F;
-    --board-mark:#8BAC0F;
-    --board-frame:#0F380F;
-    --title-door:#0F380F;
   }
   /* cyberpunk: black base, neon light, brushed metal */
   :root[data-theme="cyber"]{
@@ -361,16 +317,12 @@
   .theme-swatch-light span{ background:#111111; }
   .theme-swatch-dark{ background:#0E0E0E; border-color:#474747; }
   .theme-swatch-dark span{ background:#EDEDED; }
-  .theme-swatch-wood{ background:#FBF6EC; }
-  .theme-swatch-wood span{ background:#7B4A26; }
   .theme-swatch-gothic{ background:#0B0909; border-color:#C9A227; border-width:2px; }
   .theme-swatch-gothic span{ background:#A8141B; }
   .theme-swatch-ivory{ background:#FFFDF8; border-color:#DCCFBB; }
   .theme-swatch-ivory span{ background:#8C7760; }
   .theme-swatch-med{ background:#FFFFFF; border-color:#C5D3E4; }
   .theme-swatch-med span{ background:#1E5AA8; }
-  .theme-swatch-retro{ background:#C4DC6E; border-color:#306230; }
-  .theme-swatch-retro span{ background:#0F380F; }
   .theme-swatch-cyber{ background:#12141F; border-color:#FF3CD8; box-shadow:0 0 6px rgba(255,60,216,.6); }
   .theme-swatch-cyber span{ background:#00E5FF; }
   .theme-swatch[aria-checked="true"]{ outline:2.5px solid var(--ink); outline-offset:2px; }
@@ -830,11 +782,9 @@
         <span class="theme-options" role="radiogroup" aria-labelledby="themeLabel">
           <button class="theme-swatch theme-swatch-light" role="radio" data-theme-value="light" onclick="setTheme('light')" data-i18n-title="themeDefault"><span></span></button>
           <button class="theme-swatch theme-swatch-dark" role="radio" data-theme-value="dark" onclick="setTheme('dark')" data-i18n-title="themeDark"><span></span></button>
-          <button class="theme-swatch theme-swatch-wood" role="radio" data-theme-value="wood" onclick="setTheme('wood')" data-i18n-title="themeWood"><span></span></button>
           <button class="theme-swatch theme-swatch-gothic" role="radio" data-theme-value="gothic" onclick="setTheme('gothic')" data-i18n-title="themeGothic"><span></span></button>
           <button class="theme-swatch theme-swatch-ivory" role="radio" data-theme-value="ivory" onclick="setTheme('ivory')" data-i18n-title="themeIvory"><span></span></button>
           <button class="theme-swatch theme-swatch-med" role="radio" data-theme-value="med" onclick="setTheme('med')" data-i18n-title="themeMed"><span></span></button>
-          <button class="theme-swatch theme-swatch-retro" role="radio" data-theme-value="retro" onclick="setTheme('retro')" data-i18n-title="themeRetro"><span></span></button>
           <button class="theme-swatch theme-swatch-cyber" role="radio" data-theme-value="cyber" onclick="setTheme('cyber')" data-i18n-title="themeCyber"><span></span></button>
         </span>
       </div>
@@ -1947,10 +1897,8 @@
       settingTheme: '테마',
       themeDefault: '기본',
       themeDark: '다크',
-      themeWood: '나무',
       themeGothic: '고딕',
       themeMed: '지중해',
-      themeRetro: '레트로',
       themeCyber: '사이버펑크',
       themeIvory: '아이보리',
       rulesTitle: '규칙',
@@ -2008,10 +1956,8 @@
       settingTheme: 'Theme',
       themeDefault: 'Default',
       themeDark: 'Dark',
-      themeWood: 'Wood',
       themeGothic: 'Gothic',
       themeMed: 'Mediterranean',
-      themeRetro: 'Retro',
       themeCyber: 'Cyberpunk',
       themeIvory: 'Ivory',
       rulesTitle: 'Rules',
@@ -2069,10 +2015,8 @@
       settingTheme: "テーマ",
       themeDefault: "標準",
       themeDark: "ダーク",
-      themeWood: "木目",
       themeGothic: "ゴシック",
       themeMed: "地中海",
-      themeRetro: "レトロ",
       themeCyber: "サイバーパンク",
       themeIvory: "アイボリー",
       rulesTitle: "ルール",
@@ -2120,10 +2064,8 @@
       settingTheme: "主题",
       themeDefault: "默认",
       themeDark: "深色",
-      themeWood: "木纹",
       themeGothic: "哥特",
       themeMed: "地中海",
-      themeRetro: "复古",
       themeCyber: "赛博朋克",
       themeIvory: "象牙白",
       rulesTitle: "规则",
@@ -2171,10 +2113,8 @@
       settingTheme: "主題",
       themeDefault: "預設",
       themeDark: "深色",
-      themeWood: "木紋",
       themeGothic: "哥德",
       themeMed: "地中海",
-      themeRetro: "復古",
       themeCyber: "賽博龐克",
       themeIvory: "象牙白",
       rulesTitle: "規則",
@@ -2222,10 +2162,8 @@
       settingTheme: "Tema",
       themeDefault: "Predeterminado",
       themeDark: "Oscuro",
-      themeWood: "Madera",
       themeGothic: "Gótico",
       themeMed: "Mediterráneo",
-      themeRetro: "Retro",
       themeCyber: "Ciberpunk",
       themeIvory: "Marfil",
       rulesTitle: "Reglas",
@@ -2273,10 +2211,8 @@
       settingTheme: "Thème",
       themeDefault: "Par défaut",
       themeDark: "Sombre",
-      themeWood: "Bois",
       themeGothic: "Gothique",
       themeMed: "Méditerranée",
-      themeRetro: "Rétro",
       themeCyber: "Cyberpunk",
       themeIvory: "Ivoire",
       rulesTitle: "Règles",
@@ -2324,10 +2260,8 @@
       settingTheme: "Design",
       themeDefault: "Standard",
       themeDark: "Dunkel",
-      themeWood: "Holz",
       themeGothic: "Gotisch",
       themeMed: "Mediterran",
-      themeRetro: "Retro",
       themeCyber: "Cyberpunk",
       themeIvory: "Elfenbein",
       rulesTitle: "Regeln",
@@ -2375,10 +2309,8 @@
       settingTheme: "Tema",
       themeDefault: "Padrão",
       themeDark: "Escuro",
-      themeWood: "Madeira",
       themeGothic: "Gótico",
       themeMed: "Mediterrâneo",
-      themeRetro: "Retrô",
       themeCyber: "Cyberpunk",
       themeIvory: "Marfim",
       rulesTitle: "Regras",
@@ -2426,10 +2358,8 @@
       settingTheme: "Тема",
       themeDefault: "Стандартная",
       themeDark: "Тёмная",
-      themeWood: "Дерево",
       themeGothic: "Готика",
       themeMed: "Средиземноморье",
-      themeRetro: "Ретро",
       themeCyber: "Киберпанк",
       themeIvory: "Слоновая кость",
       rulesTitle: "Правила",
@@ -2477,10 +2407,8 @@
       settingTheme: "Tema",
       themeDefault: "Predefinito",
       themeDark: "Scuro",
-      themeWood: "Legno",
       themeGothic: "Gotico",
       themeMed: "Mediterraneo",
-      themeRetro: "Retrò",
       themeCyber: "Cyberpunk",
       themeIvory: "Avorio",
       rulesTitle: "Regole",
@@ -2528,10 +2456,8 @@
       settingTheme: "Giao diện",
       themeDefault: "Mặc định",
       themeDark: "Tối",
-      themeWood: "Gỗ",
       themeGothic: "Gothic",
       themeMed: "Địa Trung Hải",
-      themeRetro: "Cổ điển",
       themeCyber: "Cyberpunk",
       themeIvory: "Ngà",
       rulesTitle: "Luật chơi",
@@ -2579,10 +2505,8 @@
       settingTheme: "Tema",
       themeDefault: "Bawaan",
       themeDark: "Gelap",
-      themeWood: "Kayu",
       themeGothic: "Gotik",
       themeMed: "Mediterania",
-      themeRetro: "Retro",
       themeCyber: "Cyberpunk",
       themeIvory: "Gading",
       rulesTitle: "Aturan",
@@ -2630,10 +2554,8 @@
       settingTheme: "ธีม",
       themeDefault: "ค่าเริ่มต้น",
       themeDark: "มืด",
-      themeWood: "ไม้",
       themeGothic: "โกธิก",
       themeMed: "เมดิเตอร์เรเนียน",
-      themeRetro: "เรโทร",
       themeCyber: "ไซเบอร์พังก์",
       themeIvory: "งาช้าง",
       rulesTitle: "กติกา",
@@ -2814,7 +2736,7 @@
   function playResult(correct){ playSound(correct ? scheduleCorrect : scheduleIncorrect, 0.12); }
 
   const THEME_KEY = 'roomPuzzle.theme';
-  const THEMES = ['light', 'dark', 'wood', 'gothic', 'ivory', 'med', 'retro', 'cyber'];
+  const THEMES = ['light', 'dark', 'gothic', 'ivory', 'med', 'cyber'];
   function currentTheme(){
     const v = document.documentElement.dataset.theme;
     return THEMES.includes(v) ? v : 'light';
