@@ -99,6 +99,9 @@
     display:flex;
     flex-direction:column;
   }
+  .title-door{ height:.78em; width:auto; flex-shrink:0; }
+  .title-door path{ fill:var(--ink); }
+  .title-door circle{ fill:var(--paper); }
   /* language toggle sits at the bottom-right corner of the title section */
   .lang-btn{
     align-self:flex-end;
@@ -118,6 +121,10 @@
   }
   .lang-btn svg{ width:18px; height:18px; stroke:currentColor; fill:none; stroke-width:1.6; }
   header.top h1{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:.28em;
     font-family:var(--font-display);
     font-weight:600;
     font-size:clamp(40px,10vw,56px);
@@ -356,6 +363,11 @@
   .mark-q-tr{ top:0; right:0; }
   .mark-q-bl{ bottom:0; left:0; }
   .mark-q-br{ bottom:0; right:0; }
+  /* strip marks: a door's black half sliced in half again, i.e. the outer quarter strip */
+  .mark-s-up{ top:0; left:0; width:100%; height:25%; }
+  .mark-s-down{ bottom:0; left:0; width:100%; height:25%; }
+  .mark-s-left{ top:0; left:0; width:25%; height:100%; }
+  .mark-s-right{ top:0; right:0; width:25%; height:100%; }
 
   .actions{
     display:flex;
@@ -438,6 +450,7 @@
   details.legend[open] > summary::before{ transform:rotate(90deg); }
   details.legend[open] > summary{ margin-bottom:10px; }
 
+  .icon-tool svg{ width:22px; height:22px; stroke:var(--ink); fill:none; stroke-width:1.8; stroke-linejoin:round; stroke-linecap:round; color:var(--ink); }
   .eraser-btn svg{ width:20px; height:20px; stroke:var(--ink); fill:none; stroke-width:2; stroke-linejoin:round; stroke-linecap:round; }
   .lock-btn svg{ width:20px; height:20px; stroke:var(--ink); fill:none; stroke-width:2; }
   .lock-btn.active svg{ stroke:var(--danger); }
@@ -483,7 +496,7 @@
 
 <div class="page">
   <header class="top">
-    <h1>Room Puzzle</h1>
+    <h1><svg class="title-door" viewBox="0 0 20 28" aria-hidden="true"><path d="M2 28V3a3 3 0 0 1 3-3h10a3 3 0 0 1 3 3v25z"/><circle cx="13.5" cy="15" r="1.6"/></svg>Room Puzzle</h1>
     <button id="langBtn" class="lang-btn" onclick="toggleLang()" data-i18n-title="langTitle">
       <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a14 14 0 0 1 0 18"/><path d="M12 3a14 14 0 0 0 0 18"/></svg>
       <span data-i18n="langLabel">EN</span>
@@ -523,6 +536,9 @@
       <h2 class="tool-title" data-i18n="toolTitle">도구 선택</h2>
       <div class="tool-rows">
         <div class="tool-buttons">
+          <button class="tool-btn icon-tool" data-dir="cycle-door" onclick="selectTool('cycle-door')" data-i18n-title="toolCycleDoor">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 21V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v17"/><path d="M4 21h16"/><circle cx="14.5" cy="12.5" r=".9" fill="currentColor" stroke="none"/></svg>
+          </button>
           <button class="tool-btn" data-dir="up" onclick="selectTool('up')" data-i18n-title="tool_up">
             <span class="tool-swatch"><span class="fill fill-up"></span></span>
           </button>
@@ -537,6 +553,9 @@
           </button>
         </div>
         <div class="tool-buttons">
+          <button class="tool-btn icon-tool" data-dir="cycle-mark" onclick="selectTool('cycle-mark')" data-i18n-title="toolCycleMark">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15.5 4.5l4 4L8 20H4v-4z"/><path d="M13 7l4 4"/></svg>
+          </button>
           <button class="tool-btn" data-dir="q-tl" onclick="selectTool('q-tl')" data-i18n-title="tool_q_tl">
             <span class="tool-swatch"><span class="mark mark-q-tl"></span></span>
           </button>
@@ -548,6 +567,23 @@
           </button>
           <button class="tool-btn" data-dir="q-br" onclick="selectTool('q-br')" data-i18n-title="tool_q_br">
             <span class="tool-swatch"><span class="mark mark-q-br"></span></span>
+          </button>
+        </div>
+        <div class="tool-buttons">
+          <button class="tool-btn icon-tool" data-dir="cycle-strip" onclick="selectTool('cycle-strip')" data-i18n-title="toolCycleStrip">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 3l4 4-9 9H7v-4z"/><path d="M13.5 5.5l4 4"/><path d="M4 21h16"/></svg>
+          </button>
+          <button class="tool-btn" data-dir="s-up" onclick="selectTool('s-up')" data-i18n-title="tool_s_up">
+            <span class="tool-swatch"><span class="mark mark-s-up"></span></span>
+          </button>
+          <button class="tool-btn" data-dir="s-down" onclick="selectTool('s-down')" data-i18n-title="tool_s_down">
+            <span class="tool-swatch"><span class="mark mark-s-down"></span></span>
+          </button>
+          <button class="tool-btn" data-dir="s-left" onclick="selectTool('s-left')" data-i18n-title="tool_s_left">
+            <span class="tool-swatch"><span class="mark mark-s-left"></span></span>
+          </button>
+          <button class="tool-btn" data-dir="s-right" onclick="selectTool('s-right')" data-i18n-title="tool_s_right">
+            <span class="tool-swatch"><span class="mark mark-s-right"></span></span>
           </button>
         </div>
         <div class="tool-buttons">
@@ -582,6 +618,14 @@
 
 <script>
   const DIR_ORDER = ['blank','up','down','left','right'];
+  const MARK_ORDER = ['blank','q-tl','q-tr','q-bl','q-br'];
+  const STRIP_ORDER = ['blank','s-up','s-down','s-left','s-right'];
+  // cycle tools: each click advances the cell through its order (a value from the other
+  // order, e.g. a door under the pencil, starts the cycle like a blank)
+  const CYCLE_TOOLS = {'cycle-door': DIR_ORDER, 'cycle-mark': MARK_ORDER, 'cycle-strip': STRIP_ORDER};
+  function nextInCycle(order, cur){
+    return order[(Math.max(0, order.indexOf(cur)) + 1) % order.length];
+  }
   const ORIENTATIONS = ['up','down','left','right'];
 
   // half-block contribution to each of its own four sides (see legend for the shapes)
@@ -1569,6 +1613,8 @@
       sizeTitle: '퍼즐 크기 선택',
       loadingTitle: '퍼즐 생성 중…',
       loadingBody: '숫자 배치와 유일해 검증을 진행하고 있어요.',
+      toolCycleDoor: '문 순환: 누를 때마다 위 → 아래 → 왼쪽 → 오른쪽 → 빈칸',
+      toolCycleMark: '표기 순환(연필): 누를 때마다 좌상단 → 우상단 → 좌하단 → 우하단 → 빈칸',
       tool_up: '위쪽 문',
       tool_down: '아래쪽 문',
       tool_left: '왼쪽 문',
@@ -1577,6 +1623,11 @@
       tool_q_tr: '우상단 표시 (1/4칸, 답안에 포함되지 않음)',
       tool_q_bl: '좌하단 표시 (1/4칸, 답안에 포함되지 않음)',
       tool_q_br: '우하단 표시 (1/4칸, 답안에 포함되지 않음)',
+      toolCycleStrip: '줄 표기 순환: 누를 때마다 위 → 아래 → 왼쪽 → 오른쪽 → 빈칸 (1/4칸, 답안에 포함되지 않음)',
+      tool_s_up: '위쪽 줄 표시 (1/4칸, 답안에 포함되지 않음)',
+      tool_s_down: '아래쪽 줄 표시 (1/4칸, 답안에 포함되지 않음)',
+      tool_s_left: '왼쪽 줄 표시 (1/4칸, 답안에 포함되지 않음)',
+      tool_s_right: '오른쪽 줄 표시 (1/4칸, 답안에 포함되지 않음)',
       toolLock: '잠금 모드: 켜면 누른 칸이 잠기거나 풀립니다',
       toolErase: '지우개: 누른 칸의 문을 지웁니다',
       toolHint: '클릭 시 문 방향: 위 → 아래 → 왼쪽 → 오른쪽 → 빈칸\n우클릭 or 길게 클릭: 잠금',
@@ -1610,6 +1661,8 @@
       sizeTitle: 'Choose puzzle size',
       loadingTitle: 'Generating puzzle…',
       loadingBody: 'Placing numbers and verifying the puzzle.',
+      toolCycleDoor: 'Door cycle: each click goes Up → Down → Left → Right → Empty',
+      toolCycleMark: 'Mark cycle (pencil): each click goes Top-left → Top-right → Bottom-left → Bottom-right → Empty',
       tool_up: 'Door facing up',
       tool_down: 'Door facing down',
       tool_left: 'Door facing left',
@@ -1618,6 +1671,11 @@
       tool_q_tr: 'Top-right mark (quarter cell, not part of the answer)',
       tool_q_bl: 'Bottom-left mark (quarter cell, not part of the answer)',
       tool_q_br: 'Bottom-right mark (quarter cell, not part of the answer)',
+      toolCycleStrip: 'Strip mark cycle: each click goes Up → Down → Left → Right → Empty (quarter cell, not part of the answer)',
+      tool_s_up: 'Top strip mark (quarter cell, not part of the answer)',
+      tool_s_down: 'Bottom strip mark (quarter cell, not part of the answer)',
+      tool_s_left: 'Left strip mark (quarter cell, not part of the answer)',
+      tool_s_right: 'Right strip mark (quarter cell, not part of the answer)',
       toolLock: 'Lock mode: tap a cell to lock or unlock it',
       toolErase: 'Eraser: clears the door in a clicked cell',
       toolHint: 'Click to set door: Up → Down → Left → Right → Empty\nRight-click or long-press: lock',
@@ -1658,11 +1716,11 @@
     phase: 'start',      // 'start' | 'loading' | 'game'
     size: null,
     puzzle: null,
-    playerState: [],     // per-cell 'blank'|'up'|'down'|'left'|'right', or a 'q-*' solving mark (player cells only)
+    playerState: [],     // per-cell 'blank'|'up'|'down'|'left'|'right', or a 'q-*'/'s-*' solving mark (player cells only)
     lockedCells: [],      // per-cell boolean — a locked player cell ignores left-click/tool edits
     submittedState: null,
     viewMode: 'play',     // 'play' | 'result' (after submitting: the submitted placement)
-    selectedTool: null,   // null | 'up' | 'down' | 'left' | 'right' | 'q-tl' | 'q-tr' | 'q-bl' | 'q-br' | 'erase'
+    selectedTool: null,   // null | 'cycle-door' | 'cycle-mark' | 'up' | 'down' | 'left' | 'right' | 'q-tl' | 'q-tr' | 'q-bl' | 'q-br' | 'cycle-strip' | 's-up' | 's-down' | 's-left' | 's-right' | 'erase'
     lockMode: false,      // when on, a tap/click toggles the cell's lock instead of editing it
                           // (the touch-screen stand-in for right-click); exclusive with selectedTool
     history: [],          // stack of {playerState, lockedCells} snapshots taken right before
@@ -1758,11 +1816,12 @@
       return;
     }
     recordHistory();
-    if(state.selectedTool){
-      state.playerState[index] = (cur === state.selectedTool) ? 'blank' : state.selectedTool;
+    if(!state.selectedTool){
+      state.playerState[index] = nextInCycle(DIR_ORDER, cur);
+    } else if(CYCLE_TOOLS[state.selectedTool]){
+      state.playerState[index] = nextInCycle(CYCLE_TOOLS[state.selectedTool], cur);
     } else {
-      // a quarter mark isn't part of the door cycle, so cycling from one starts like a blank
-      state.playerState[index] = DIR_ORDER[(Math.max(0, DIR_ORDER.indexOf(cur)) + 1) % DIR_ORDER.length];
+      state.playerState[index] = (cur === state.selectedTool) ? 'blank' : state.selectedTool;
     }
     render();
   }
@@ -1788,7 +1847,8 @@
   // player cell, a number cell whose neighbors don't sum to its value (rule 1), a half-block
   // whose black half touches no number cell (rule 2), and both half-blocks of every pair
   // whose black halves touch (rule 3). An empty set means the placement is correct.
-  function isMark(v){ return typeof v === 'string' && v.startsWith('q-'); }
+  // solving marks: corner quarters ('q-*') and edge strips ('s-*'); never part of the answer
+  function isMark(v){ return typeof v === 'string' && (v.startsWith('q-') || v.startsWith('s-')); }
 
   function findViolations(){
     const n = state.size;
@@ -1863,11 +1923,22 @@
     return state.phase === 'game' && state.viewMode === 'play' && (state.lockMode || !!state.selectedTool);
   }
 
-  function paintCell(index, lock){
+  // The value a drag paints. A cycle tool advances the drag's first cell one step and then
+  // paints that same result on every other cell it passes.
+  function dragPaintValue(start){
+    const tool = state.selectedTool;
+    if(tool === 'erase') return 'blank';
+    const order = CYCLE_TOOLS[tool];
+    if(!order) return tool;
+    const startsOnFreeCell = state.puzzle.cells[start].type === 'player' && !state.lockedCells[start];
+    return startsOnFreeCell ? nextInCycle(order, state.playerState[start]) : order[1];
+  }
+
+  function paintCell(index, lock, value){
     if(state.puzzle.cells[index].type !== 'player') return;
     if(lock){ state.lockedCells[index] = true; return; }
     if(state.lockedCells[index]) return;
-    state.playerState[index] = state.selectedTool === 'erase' ? 'blank' : state.selectedTool;
+    state.playerState[index] = value;
   }
 
   function cellIndexAt(x, y){
@@ -1883,11 +1954,12 @@
     if(!drag.painted){
       cancelLongPress();
       recordHistory();
-      paintCell(drag.start, drag.lock);
+      if(!drag.lock) drag.value = dragPaintValue(drag.start);
+      paintCell(drag.start, drag.lock, drag.value);
       drag.painted = true;
     }
     drag.last = index;
-    paintCell(index, drag.lock);
+    paintCell(index, drag.lock, drag.value);
     render();
   });
   function endDrag(){
