@@ -2926,9 +2926,13 @@
     if(played && played.catch) played.catch(() => {}); // blocked until a user gesture
   }
 
-  // first gesture of the visit: start the saved theme's music if it isn't playing yet
-  document.addEventListener('pointerdown', () => {
-    if(BGM_TRACKS[currentTheme()] && bgm.paused && volumes.bgm > 0) startBgm(false);
+  // Start the saved theme's music on a user gesture if it isn't playing yet. Chrome only
+  // counts some events as a gesture (a touch pointerdown doesn't; its click/touchend
+  // does), so listen to all of them — a blocked attempt just waits for the next one.
+  ['pointerdown', 'touchend', 'click', 'keydown'].forEach(type => {
+    document.addEventListener(type, () => {
+      if(BGM_TRACKS[currentTheme()] && bgm.paused && volumes.bgm > 0 && !document.hidden) startBgm(false);
+    }, true);
   });
   // pause while the tab is in the background, pick up where it left off on return
   document.addEventListener('visibilitychange', () => {
