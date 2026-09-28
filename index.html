@@ -2916,19 +2916,44 @@
     scheduleSweep(ctx, dest, t, {type: 'sine', from: 480, to: 1500, gain: 0.55, length: 0.13, sweep: 0.05});
     scheduleSweep(ctx, dest, t + 0.06, {type: 'sine', from: 900, to: 1800, gain: 0.12, length: 0.08, sweep: 0.03});
   }
-  // rococo: a music-box / harpsichord ding on a random note of a pretty scale
-  const MUSIC_BOX_NOTES = [1318.5, 1568.0, 1760.0, 2093.0, 2349.3];
-  function schedulePlaceMusicBox(ctx, dest, t){
-    const f = MUSIC_BOX_NOTES[Math.floor(Math.random() * MUSIC_BOX_NOTES.length)];
-    scheduleNote(ctx, dest, t, f, {gain: 0.32, length: 0.5, type: 'triangle'});
-    scheduleNoiseBurst(ctx, dest, t, {freq: 5000, type: 'highpass', gain: 0.06, length: 0.01});
+  // rococo: a harpsichord pluck — bright buzzy string whose tone darkens as it decays —
+  // led in by a quick baroque grace note from the step above
+  const HARPSICHORD_NOTES = [587.3, 659.3, 740.0, 880.0, 987.8]; // D5 E5 F#5 A5 B5
+  function scheduleHarpsichord(ctx, dest, t, freq, gain, length){
+    const filter = ctx.createBiquadFilter();
+    filter.type = 'lowpass';
+    filter.Q.value = 2;
+    filter.frequency.setValueAtTime(7000, t);
+    filter.frequency.exponentialRampToValueAtTime(1100, t + length * 0.6);
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(gain, t + 0.002);
+    g.gain.exponentialRampToValueAtTime(gain * 0.35, t + 0.05);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + length);
+    filter.connect(g).connect(dest);
+    [[1, 'sawtooth', 1], [2, 'square', 0.35], [1.003, 'sawtooth', 0.5]].forEach(([mult, type, level]) => {
+      const osc = ctx.createOscillator();
+      osc.type = type;
+      osc.frequency.setValueAtTime(freq * mult, t);
+      const lg = ctx.createGain();
+      lg.gain.value = level;
+      osc.connect(lg).connect(filter);
+      osc.start(t);
+      osc.stop(t + length + 0.02);
+    });
+    scheduleNoiseBurst(ctx, dest, t, {freq: 3500, type: 'bandpass', gain: gain * 0.6, length: 0.012}); // the quill's pluck
+  }
+  function schedulePlaceHarpsichord(ctx, dest, t){
+    const k = Math.floor(Math.random() * (HARPSICHORD_NOTES.length - 1));
+    scheduleHarpsichord(ctx, dest, t, HARPSICHORD_NOTES[k + 1], 0.18, 0.09);   // grace note
+    scheduleHarpsichord(ctx, dest, t + 0.055, HARPSICHORD_NOTES[k], 0.34, 0.55);
   }
   // cyberpunk: a short synthetic double blip
   function schedulePlaceBlip(ctx, dest, t){
     scheduleSweep(ctx, dest, t, {type: 'square', from: 1300, to: 650, gain: 0.16, length: 0.06});
     scheduleSweep(ctx, dest, t + 0.045, {type: 'square', from: 1950, to: 1950, gain: 0.09, length: 0.04});
   }
-  const PLACE_SOUNDS = {med: schedulePlaceDrop, rococo: schedulePlaceMusicBox, cyber: schedulePlaceBlip};
+  const PLACE_SOUNDS = {med: schedulePlaceDrop, rococo: schedulePlaceHarpsichord, cyber: schedulePlaceBlip};
   let lastPlaceSoundAt = 0;
   function playPlace(){
     const now = performance.now();
