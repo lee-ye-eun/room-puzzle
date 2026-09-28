@@ -438,6 +438,7 @@
   details.legend[open] > summary::before{ transform:rotate(90deg); }
   details.legend[open] > summary{ margin-bottom:10px; }
 
+  .icon-tool svg{ width:22px; height:22px; stroke:var(--ink); fill:none; stroke-width:1.8; stroke-linejoin:round; stroke-linecap:round; color:var(--ink); }
   .eraser-btn svg{ width:20px; height:20px; stroke:var(--ink); fill:none; stroke-width:2; stroke-linejoin:round; stroke-linecap:round; }
   .lock-btn svg{ width:20px; height:20px; stroke:var(--ink); fill:none; stroke-width:2; }
   .lock-btn.active svg{ stroke:var(--danger); }
@@ -523,6 +524,9 @@
       <h2 class="tool-title" data-i18n="toolTitle">도구 선택</h2>
       <div class="tool-rows">
         <div class="tool-buttons">
+          <button class="tool-btn icon-tool" data-dir="cycle-door" onclick="selectTool('cycle-door')" data-i18n-title="toolCycleDoor">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 21V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v17"/><path d="M4 21h16"/><circle cx="14.5" cy="12.5" r=".9" fill="currentColor" stroke="none"/></svg>
+          </button>
           <button class="tool-btn" data-dir="up" onclick="selectTool('up')" data-i18n-title="tool_up">
             <span class="tool-swatch"><span class="fill fill-up"></span></span>
           </button>
@@ -537,6 +541,9 @@
           </button>
         </div>
         <div class="tool-buttons">
+          <button class="tool-btn icon-tool" data-dir="cycle-mark" onclick="selectTool('cycle-mark')" data-i18n-title="toolCycleMark">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15.5 4.5l4 4L8 20H4v-4z"/><path d="M13 7l4 4"/></svg>
+          </button>
           <button class="tool-btn" data-dir="q-tl" onclick="selectTool('q-tl')" data-i18n-title="tool_q_tl">
             <span class="tool-swatch"><span class="mark mark-q-tl"></span></span>
           </button>
@@ -582,6 +589,13 @@
 
 <script>
   const DIR_ORDER = ['blank','up','down','left','right'];
+  const MARK_ORDER = ['blank','q-tl','q-tr','q-bl','q-br'];
+  // cycle tools: each click advances the cell through its order (a value from the other
+  // order, e.g. a door under the pencil, starts the cycle like a blank)
+  const CYCLE_TOOLS = {'cycle-door': DIR_ORDER, 'cycle-mark': MARK_ORDER};
+  function nextInCycle(order, cur){
+    return order[(Math.max(0, order.indexOf(cur)) + 1) % order.length];
+  }
   const ORIENTATIONS = ['up','down','left','right'];
 
   // half-block contribution to each of its own four sides (see legend for the shapes)
@@ -1569,6 +1583,8 @@
       sizeTitle: '퍼즐 크기 선택',
       loadingTitle: '퍼즐 생성 중…',
       loadingBody: '숫자 배치와 유일해 검증을 진행하고 있어요.',
+      toolCycleDoor: '문 순환: 누를 때마다 위 → 아래 → 왼쪽 → 오른쪽 → 빈칸',
+      toolCycleMark: '표기 순환(연필): 누를 때마다 좌상단 → 우상단 → 좌하단 → 우하단 → 빈칸',
       tool_up: '위쪽 문',
       tool_down: '아래쪽 문',
       tool_left: '왼쪽 문',
@@ -1610,6 +1626,8 @@
       sizeTitle: 'Choose puzzle size',
       loadingTitle: 'Generating puzzle…',
       loadingBody: 'Placing numbers and verifying the puzzle.',
+      toolCycleDoor: 'Door cycle: each click goes Up → Down → Left → Right → Empty',
+      toolCycleMark: 'Mark cycle (pencil): each click goes Top-left → Top-right → Bottom-left → Bottom-right → Empty',
       tool_up: 'Door facing up',
       tool_down: 'Door facing down',
       tool_left: 'Door facing left',
@@ -1662,7 +1680,7 @@
     lockedCells: [],      // per-cell boolean — a locked player cell ignores left-click/tool edits
     submittedState: null,
     viewMode: 'play',     // 'play' | 'result' (after submitting: the submitted placement)
-    selectedTool: null,   // null | 'up' | 'down' | 'left' | 'right' | 'q-tl' | 'q-tr' | 'q-bl' | 'q-br' | 'erase'
+    selectedTool: null,   // null | 'cycle-door' | 'cycle-mark' | 'up' | 'down' | 'left' | 'right' | 'q-tl' | 'q-tr' | 'q-bl' | 'q-br' | 'erase'
     lockMode: false,      // when on, a tap/click toggles the cell's lock instead of editing it
                           // (the touch-screen stand-in for right-click); exclusive with selectedTool
     history: [],          // stack of {playerState, lockedCells} snapshots taken right before
@@ -1758,11 +1776,12 @@
       return;
     }
     recordHistory();
-    if(state.selectedTool){
-      state.playerState[index] = (cur === state.selectedTool) ? 'blank' : state.selectedTool;
+    if(!state.selectedTool){
+      state.playerState[index] = nextInCycle(DIR_ORDER, cur);
+    } else if(CYCLE_TOOLS[state.selectedTool]){
+      state.playerState[index] = nextInCycle(CYCLE_TOOLS[state.selectedTool], cur);
     } else {
-      // a quarter mark isn't part of the door cycle, so cycling from one starts like a blank
-      state.playerState[index] = DIR_ORDER[(Math.max(0, DIR_ORDER.indexOf(cur)) + 1) % DIR_ORDER.length];
+      state.playerState[index] = (cur === state.selectedTool) ? 'blank' : state.selectedTool;
     }
     render();
   }
@@ -1863,11 +1882,22 @@
     return state.phase === 'game' && state.viewMode === 'play' && (state.lockMode || !!state.selectedTool);
   }
 
-  function paintCell(index, lock){
+  // The value a drag paints. A cycle tool advances the drag's first cell one step and then
+  // paints that same result on every other cell it passes.
+  function dragPaintValue(start){
+    const tool = state.selectedTool;
+    if(tool === 'erase') return 'blank';
+    const order = CYCLE_TOOLS[tool];
+    if(!order) return tool;
+    const startsOnFreeCell = state.puzzle.cells[start].type === 'player' && !state.lockedCells[start];
+    return startsOnFreeCell ? nextInCycle(order, state.playerState[start]) : order[1];
+  }
+
+  function paintCell(index, lock, value){
     if(state.puzzle.cells[index].type !== 'player') return;
     if(lock){ state.lockedCells[index] = true; return; }
     if(state.lockedCells[index]) return;
-    state.playerState[index] = state.selectedTool === 'erase' ? 'blank' : state.selectedTool;
+    state.playerState[index] = value;
   }
 
   function cellIndexAt(x, y){
@@ -1883,11 +1913,12 @@
     if(!drag.painted){
       cancelLongPress();
       recordHistory();
-      paintCell(drag.start, drag.lock);
+      if(!drag.lock) drag.value = dragPaintValue(drag.start);
+      paintCell(drag.start, drag.lock, drag.value);
       drag.painted = true;
     }
     drag.last = index;
-    paintCell(index, drag.lock);
+    paintCell(index, drag.lock, drag.value);
     render();
   });
   function endDrag(){
