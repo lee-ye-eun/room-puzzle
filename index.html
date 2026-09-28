@@ -108,6 +108,57 @@
     --board-mark:#D9C6A8;
     --title-door:#7B4A26;
   }
+  /* oak: deep red-oak panelling with gold metal trim */
+  :root[data-theme="oak"]{
+    color-scheme:dark;
+    --paper:#2E1811;
+    --paper-raised:#3A2017;
+    --ink:#F3E4C8;
+    --line:#8C6A3A;
+    --line-soft:#4A2C20;
+    --accent:#D4AF37;
+    --accent-strong:#E6C45A;
+    --accent-soft:#4A3015;
+    --muted:#C2A987;
+    --danger:#FF6B5B;
+    --danger-soft:#4A1C16;
+    --correct:#E6C45A;
+    --correct-soft:#3F3212;
+    --fixed:#5A2616;
+    --fixed-text:#E6C45A;
+    --board-paper:#F6EAD3;
+    --board-ink:#9A3B1E;
+    --board-line:#CDAE72;
+    --board-hover:#EAD9B8;
+    --board-mark:#D9C39A;
+    --board-frame:#C9A227;
+    --title-door:#C9A227;
+  }
+  /* ivory: a clean interior of ivory walls and soft beige */
+  :root[data-theme="ivory"]{
+    --paper:#FBF8F1;
+    --paper-raised:#F4EEE3;
+    --ink:#4A4038;
+    --line:#DCCFBB;
+    --line-soft:#ECE4D6;
+    --accent:#8C7760;
+    --accent-strong:#6E5C49;
+    --accent-soft:#EFE7DA;
+    --muted:#9A8D7E;
+    --danger:#C8553D;
+    --danger-soft:#F8E4DE;
+    --correct:#5B7F95;
+    --correct-soft:#E6EEF2;
+    --fixed:#D3C3A8;
+    --fixed-text:#4A4038;
+    --board-paper:#FFFDF8;
+    --board-ink:#8C7760;
+    --board-line:#E3D8C6;
+    --board-hover:#F3ECE0;
+    --board-mark:#E6DDCE;
+    --board-frame:#BFAE95;
+    --title-door:#8C7760;
+  }
 
   body{
     background:var(--paper);
@@ -235,6 +286,10 @@
   .theme-swatch-dark span{ background:#EDEDED; }
   .theme-swatch-wood{ background:#FBF6EC; }
   .theme-swatch-wood span{ background:#7B4A26; }
+  .theme-swatch-oak{ background:#F6EAD3; border-color:#C9A227; border-width:2px; }
+  .theme-swatch-oak span{ background:#9A3B1E; }
+  .theme-swatch-ivory{ background:#FFFDF8; border-color:#DCCFBB; }
+  .theme-swatch-ivory span{ background:#8C7760; }
   .theme-swatch[aria-checked="true"]{ outline:2.5px solid var(--ink); outline-offset:2px; }
   .setting-row select{
     font:inherit;
@@ -459,7 +514,7 @@
   }
   .cell.fixed-number{
     background:var(--fixed);
-    color:#fff;
+    color:var(--fixed-text, #fff);
   }
   .cell.fixed-empty{
     background:var(--fixed);
@@ -491,6 +546,7 @@
   /* After an incorrect submission: cells that break a rule (not cells that merely differ from
      the generator's own answer) are marked red. */
   .cell.fixed-number.violation{
+    color:#fff;
     background:var(--danger);
     box-shadow:inset 0 0 0 3px var(--danger-soft);
   }
@@ -692,6 +748,8 @@
           <button class="theme-swatch theme-swatch-light" role="radio" data-theme-value="light" onclick="setTheme('light')" data-i18n-title="themeDefault"><span></span></button>
           <button class="theme-swatch theme-swatch-dark" role="radio" data-theme-value="dark" onclick="setTheme('dark')" data-i18n-title="themeDark"><span></span></button>
           <button class="theme-swatch theme-swatch-wood" role="radio" data-theme-value="wood" onclick="setTheme('wood')" data-i18n-title="themeWood"><span></span></button>
+          <button class="theme-swatch theme-swatch-oak" role="radio" data-theme-value="oak" onclick="setTheme('oak')" data-i18n-title="themeOak"><span></span></button>
+          <button class="theme-swatch theme-swatch-ivory" role="radio" data-theme-value="ivory" onclick="setTheme('ivory')" data-i18n-title="themeIvory"><span></span></button>
         </span>
       </div>
     </div>
@@ -1804,6 +1862,8 @@
       themeDefault: '기본',
       themeDark: '다크',
       themeWood: '나무',
+      themeOak: '오크',
+      themeIvory: '아이보리',
       rulesTitle: '규칙',
       rulesBody:
         '<li>숫자가 적힌 칸은 <strong>\'룸\'</strong>, 설치할 수 있는 검정 반칸은 <strong>\'문\'</strong>이다.</li>' +
@@ -1860,6 +1920,8 @@
       themeDefault: 'Default',
       themeDark: 'Dark',
       themeWood: 'Wood',
+      themeOak: 'Oak',
+      themeIvory: 'Ivory',
       rulesTitle: 'Rules',
       rulesBody:
         '<li>A cell with a number is a <strong>Room</strong>; a black half-cell you place is a <strong>Door</strong>.</li>' +
@@ -1916,6 +1978,8 @@
       themeDefault: "標準",
       themeDark: "ダーク",
       themeWood: "木目",
+      themeOak: "オーク",
+      themeIvory: "アイボリー",
       rulesTitle: "ルール",
       rulesBody: "<li>数字が書かれたマスは<strong>「ルーム」</strong>、置くことのできる黒い半マスは<strong>「ドア」</strong>です。</li><li>ルームの配置は変えられません。</li><li><strong>ルームの数字</strong>は、上下左右に<strong>接しているドアの面積</strong>の合計と同じでなければなりません。</li><li>すべての<strong>ドア</strong>は、必ず1つ以上の<strong>ルームに接していなければなりません</strong>。</li><li><strong>ドア同士は接することができません。</strong></li><li>すべての空きマスにドアを置かなければなりません。</li>",
       controlsTitle: "操作方法",
@@ -1962,6 +2026,8 @@
       themeDefault: "默认",
       themeDark: "深色",
       themeWood: "木纹",
+      themeOak: "橡木",
+      themeIvory: "象牙白",
       rulesTitle: "规则",
       rulesBody: "<li>写有数字的格子是<strong>“房间”</strong>，可以放置的黑色半格是<strong>“门”</strong>。</li><li>房间的位置不能改变。</li><li><strong>房间的数字</strong>必须等于其上下左右<strong>相邻门的面积</strong>之和。</li><li>每一扇<strong>门</strong>都必须<strong>至少与一个房间相邻</strong>。</li><li><strong>门与门不能相邻。</strong></li><li>所有空格都必须放入门。</li>",
       controlsTitle: "操作方法",
@@ -2008,6 +2074,8 @@
       themeDefault: "預設",
       themeDark: "深色",
       themeWood: "木紋",
+      themeOak: "橡木",
+      themeIvory: "象牙白",
       rulesTitle: "規則",
       rulesBody: "<li>寫有數字的格子是<strong>「房間」</strong>，可以放置的黑色半格是<strong>「門」</strong>。</li><li>房間的位置不能改變。</li><li><strong>房間的數字</strong>必須等於其上下左右<strong>相鄰門的面積</strong>總和。</li><li>每一扇<strong>門</strong>都必須<strong>至少與一個房間相鄰</strong>。</li><li><strong>門與門不能相鄰。</strong></li><li>所有空格都必須放入門。</li>",
       controlsTitle: "操作方式",
@@ -2054,6 +2122,8 @@
       themeDefault: "Predeterminado",
       themeDark: "Oscuro",
       themeWood: "Madera",
+      themeOak: "Roble",
+      themeIvory: "Marfil",
       rulesTitle: "Reglas",
       rulesBody: "<li>Una casilla con número es una <strong>Habitación</strong>; una media casilla negra que colocas es una <strong>Puerta</strong>.</li><li>Las habitaciones son fijas y no se pueden cambiar.</li><li><strong>El número de una habitación</strong> debe ser igual al <strong>área total de puertas que la tocan</strong> arriba, abajo, a la izquierda y a la derecha.</li><li>Cada <strong>puerta</strong> debe <strong>tocar al menos una habitación</strong>.</li><li><strong>Las puertas no pueden tocar otras puertas.</strong></li><li>Todas las casillas vacías deben contener una puerta.</li>",
       controlsTitle: "Cómo jugar",
@@ -2100,6 +2170,8 @@
       themeDefault: "Par défaut",
       themeDark: "Sombre",
       themeWood: "Bois",
+      themeOak: "Chêne",
+      themeIvory: "Ivoire",
       rulesTitle: "Règles",
       rulesBody: "<li>Une case avec un nombre est une <strong>Pièce</strong> ; une demi-case noire que vous placez est une <strong>Porte</strong>.</li><li>Les pièces sont fixes et ne peuvent pas être modifiées.</li><li><strong>Le nombre d’une pièce</strong> doit être égal à la <strong>surface totale des portes qui la touchent</strong> en haut, en bas, à gauche et à droite.</li><li>Chaque <strong>porte</strong> doit <strong>toucher au moins une pièce</strong>.</li><li><strong>Les portes ne peuvent pas se toucher entre elles.</strong></li><li>Chaque case vide doit contenir une porte.</li>",
       controlsTitle: "Comment jouer",
@@ -2146,6 +2218,8 @@
       themeDefault: "Standard",
       themeDark: "Dunkel",
       themeWood: "Holz",
+      themeOak: "Eiche",
+      themeIvory: "Elfenbein",
       rulesTitle: "Regeln",
       rulesBody: "<li>Ein Feld mit einer Zahl ist ein <strong>Raum</strong>; ein schwarzes Halbfeld, das du setzt, ist eine <strong>Tür</strong>.</li><li>Räume sind fest und können nicht verändert werden.</li><li><strong>Die Zahl eines Raums</strong> muss der <strong>Gesamtfläche der angrenzenden Türen</strong> oben, unten, links und rechts entsprechen.</li><li>Jede <strong>Tür</strong> muss <strong>mindestens einen Raum berühren</strong>.</li><li><strong>Türen dürfen andere Türen nicht berühren.</strong></li><li>Jedes leere Feld muss eine Tür enthalten.</li>",
       controlsTitle: "Spielanleitung",
@@ -2192,6 +2266,8 @@
       themeDefault: "Padrão",
       themeDark: "Escuro",
       themeWood: "Madeira",
+      themeOak: "Carvalho",
+      themeIvory: "Marfim",
       rulesTitle: "Regras",
       rulesBody: "<li>Uma casa com número é um <strong>Quarto</strong>; uma meia casa preta que você coloca é uma <strong>Porta</strong>.</li><li>Os quartos são fixos e não podem ser alterados.</li><li><strong>O número de um quarto</strong> deve ser igual à <strong>área total de portas que o tocam</strong> acima, abaixo, à esquerda e à direita.</li><li>Toda <strong>porta</strong> deve <strong>tocar pelo menos um quarto</strong>.</li><li><strong>Portas não podem tocar outras portas.</strong></li><li>Toda casa vazia deve conter uma porta.</li>",
       controlsTitle: "Como jogar",
@@ -2238,6 +2314,8 @@
       themeDefault: "Стандартная",
       themeDark: "Тёмная",
       themeWood: "Дерево",
+      themeOak: "Дуб",
+      themeIvory: "Слоновая кость",
       rulesTitle: "Правила",
       rulesBody: "<li>Клетка с числом — это <strong>Комната</strong>; чёрная полуклетка, которую вы ставите, — это <strong>Дверь</strong>.</li><li>Комнаты зафиксированы, их нельзя изменить.</li><li><strong>Число комнаты</strong> должно быть равно <strong>общей площади дверей, касающихся её</strong> сверху, снизу, слева и справа.</li><li>Каждая <strong>дверь</strong> должна <strong>касаться хотя бы одной комнаты</strong>.</li><li><strong>Двери не могут касаться друг друга.</strong></li><li>В каждой пустой клетке должна быть дверь.</li>",
       controlsTitle: "Как играть",
@@ -2284,6 +2362,8 @@
       themeDefault: "Predefinito",
       themeDark: "Scuro",
       themeWood: "Legno",
+      themeOak: "Rovere",
+      themeIvory: "Avorio",
       rulesTitle: "Regole",
       rulesBody: "<li>Una casella con un numero è una <strong>Stanza</strong>; una mezza casella nera che posizioni è una <strong>Porta</strong>.</li><li>Le stanze sono fisse e non si possono modificare.</li><li><strong>Il numero di una stanza</strong> deve essere uguale all’<strong>area totale delle porte che la toccano</strong> sopra, sotto, a sinistra e a destra.</li><li>Ogni <strong>porta</strong> deve <strong>toccare almeno una stanza</strong>.</li><li><strong>Le porte non possono toccare altre porte.</strong></li><li>Ogni casella vuota deve contenere una porta.</li>",
       controlsTitle: "Come si gioca",
@@ -2330,6 +2410,8 @@
       themeDefault: "Mặc định",
       themeDark: "Tối",
       themeWood: "Gỗ",
+      themeOak: "Gỗ sồi",
+      themeIvory: "Ngà",
       rulesTitle: "Luật chơi",
       rulesBody: "<li>Ô có số là <strong>Phòng</strong>; nửa ô màu đen bạn đặt vào là <strong>Cửa</strong>.</li><li>Vị trí các phòng cố định, không thể thay đổi.</li><li><strong>Số của một phòng</strong> phải bằng <strong>tổng diện tích cửa chạm vào nó</strong> ở trên, dưới, trái và phải.</li><li>Mỗi <strong>cửa</strong> phải <strong>chạm vào ít nhất một phòng</strong>.</li><li><strong>Các cửa không được chạm vào nhau.</strong></li><li>Mọi ô trống đều phải có cửa.</li>",
       controlsTitle: "Cách chơi",
@@ -2376,6 +2458,8 @@
       themeDefault: "Bawaan",
       themeDark: "Gelap",
       themeWood: "Kayu",
+      themeOak: "Ek",
+      themeIvory: "Gading",
       rulesTitle: "Aturan",
       rulesBody: "<li>Kotak bernomor adalah <strong>Ruangan</strong>; setengah kotak hitam yang kamu pasang adalah <strong>Pintu</strong>.</li><li>Posisi ruangan tetap dan tidak bisa diubah.</li><li><strong>Angka sebuah ruangan</strong> harus sama dengan <strong>total luas pintu yang menyentuhnya</strong> di atas, bawah, kiri, dan kanan.</li><li>Setiap <strong>pintu</strong> harus <strong>menyentuh setidaknya satu ruangan</strong>.</li><li><strong>Pintu tidak boleh menyentuh pintu lain.</strong></li><li>Setiap kotak kosong harus berisi pintu.</li>",
       controlsTitle: "Cara bermain",
@@ -2422,6 +2506,8 @@
       themeDefault: "ค่าเริ่มต้น",
       themeDark: "มืด",
       themeWood: "ไม้",
+      themeOak: "ไม้โอ๊ก",
+      themeIvory: "งาช้าง",
       rulesTitle: "กติกา",
       rulesBody: "<li>ช่องที่มีตัวเลขคือ <strong>ห้อง</strong> ส่วนครึ่งช่องสีดำที่คุณวางคือ <strong>ประตู</strong></li><li>ตำแหน่งของห้องคงที่และเปลี่ยนไม่ได้</li><li><strong>ตัวเลขของห้อง</strong>ต้องเท่ากับ<strong>พื้นที่รวมของประตูที่แตะห้องนั้น</strong>ทั้งด้านบน ล่าง ซ้าย และขวา</li><li><strong>ประตู</strong>ทุกบานต้อง<strong>แตะห้องอย่างน้อยหนึ่งห้อง</strong></li><li><strong>ประตูแตะกับประตูอื่นไม่ได้</strong></li><li>ทุกช่องว่างต้องมีประตู</li>",
       controlsTitle: "วิธีเล่น",
@@ -2600,7 +2686,7 @@
   function playResult(correct){ playSound(correct ? scheduleCorrect : scheduleIncorrect, 0.12); }
 
   const THEME_KEY = 'roomPuzzle.theme';
-  const THEMES = ['light', 'dark', 'wood'];
+  const THEMES = ['light', 'dark', 'wood', 'oak', 'ivory'];
   function currentTheme(){
     const v = document.documentElement.dataset.theme;
     return THEMES.includes(v) ? v : 'light';
