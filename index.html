@@ -1894,8 +1894,9 @@
     }
   };
   const LANG_KEY = 'roomPuzzle.lang';
-  let lang = 'ko';
-  try { if(localStorage.getItem(LANG_KEY) === 'en') lang = 'en'; } catch(e){}
+  // English on a first visit; after that, whatever language was last picked in settings
+  let lang = 'en';
+  try { if(localStorage.getItem(LANG_KEY) === 'ko') lang = 'ko'; } catch(e){}
 
   function t(key){ return STRINGS[lang][key]; }
 
@@ -2492,11 +2493,6 @@
     });
   }
 
-  // Phones start with the rules folded so the size picker is visible without scrolling.
-  if(window.matchMedia('(max-width:600px)').matches){
-    document.getElementById('rulesCard').open = false;
-    document.getElementById('controlsCard').open = false;
-  }
   applyLang();
   render();
 </script>
