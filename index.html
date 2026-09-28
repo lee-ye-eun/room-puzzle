@@ -809,17 +809,31 @@
       </button>
       <h2 id="settingsTitle" data-i18n="settingsTitle">설정</h2>
       <div class="setting-row">
-        <span class="setting-label" data-i18n="settingSound">사운드</span>
+        <span class="setting-label" data-i18n="settingBgm">BGM</span>
         <span class="stepper">
-          <button id="soundDown" onclick="changeSound(-1)" data-i18n-title="soundDown">−</button>
-          <span id="soundBar" class="sound-bar" role="meter" aria-valuemin="0" aria-valuemax="5">
-            <button class="sound-seg" onclick="setSound(1)" tabindex="-1"></button>
-            <button class="sound-seg" onclick="setSound(2)" tabindex="-1"></button>
-            <button class="sound-seg" onclick="setSound(3)" tabindex="-1"></button>
-            <button class="sound-seg" onclick="setSound(4)" tabindex="-1"></button>
-            <button class="sound-seg" onclick="setSound(5)" tabindex="-1"></button>
+          <button id="bgmDown" onclick="changeVolume('bgm', -1)" data-i18n-title="soundDown">−</button>
+          <span id="bgmBar" class="sound-bar" role="meter" aria-valuemin="0" aria-valuemax="5">
+            <button class="sound-seg" onclick="setVolume('bgm', 1)" tabindex="-1"></button>
+            <button class="sound-seg" onclick="setVolume('bgm', 2)" tabindex="-1"></button>
+            <button class="sound-seg" onclick="setVolume('bgm', 3)" tabindex="-1"></button>
+            <button class="sound-seg" onclick="setVolume('bgm', 4)" tabindex="-1"></button>
+            <button class="sound-seg" onclick="setVolume('bgm', 5)" tabindex="-1"></button>
           </span>
-          <button id="soundUp" onclick="changeSound(1)" data-i18n-title="soundUp">+</button>
+          <button id="bgmUp" onclick="changeVolume('bgm', 1)" data-i18n-title="soundUp">+</button>
+        </span>
+      </div>
+      <div class="setting-row">
+        <span class="setting-label" data-i18n="settingSfx">효과음</span>
+        <span class="stepper">
+          <button id="sfxDown" onclick="changeVolume('sfx', -1)" data-i18n-title="soundDown">−</button>
+          <span id="sfxBar" class="sound-bar" role="meter" aria-valuemin="0" aria-valuemax="5">
+            <button class="sound-seg" onclick="setVolume('sfx', 1)" tabindex="-1"></button>
+            <button class="sound-seg" onclick="setVolume('sfx', 2)" tabindex="-1"></button>
+            <button class="sound-seg" onclick="setVolume('sfx', 3)" tabindex="-1"></button>
+            <button class="sound-seg" onclick="setVolume('sfx', 4)" tabindex="-1"></button>
+            <button class="sound-seg" onclick="setVolume('sfx', 5)" tabindex="-1"></button>
+          </span>
+          <button id="sfxUp" onclick="changeVolume('sfx', 1)" data-i18n-title="soundUp">+</button>
         </span>
       </div>
       <div class="setting-row">
@@ -1988,7 +2002,8 @@
       settingsOpen: '설정',
       settingsClose: '닫기',
       settingsTitle: '설정',
-      settingSound: '사운드',
+      settingBgm: 'BGM',
+      settingSfx: '효과음',
       soundDown: '사운드 줄이기',
       soundUp: '사운드 키우기',
       settingLang: '언어',
@@ -2047,7 +2062,8 @@
       settingsOpen: 'Settings',
       settingsClose: 'Close',
       settingsTitle: 'Settings',
-      settingSound: 'Sound',
+      settingBgm: 'BGM',
+      settingSfx: 'SFX',
       soundDown: 'Lower sound',
       soundUp: 'Raise sound',
       settingLang: 'Language',
@@ -2106,7 +2122,8 @@
       settingsOpen: "設定",
       settingsClose: "閉じる",
       settingsTitle: "設定",
-      settingSound: "サウンド",
+      settingBgm: "BGM",
+      settingSfx: "効果音",
       soundDown: "音量を下げる",
       soundUp: "音量を上げる",
       settingLang: "言語",
@@ -2155,7 +2172,8 @@
       settingsOpen: "设置",
       settingsClose: "关闭",
       settingsTitle: "设置",
-      settingSound: "声音",
+      settingBgm: "背景音乐",
+      settingSfx: "音效",
       soundDown: "降低音量",
       soundUp: "提高音量",
       settingLang: "语言",
@@ -2204,7 +2222,8 @@
       settingsOpen: "設定",
       settingsClose: "關閉",
       settingsTitle: "設定",
-      settingSound: "聲音",
+      settingBgm: "背景音樂",
+      settingSfx: "音效",
       soundDown: "降低音量",
       soundUp: "提高音量",
       settingLang: "語言",
@@ -2253,7 +2272,8 @@
       settingsOpen: "Ajustes",
       settingsClose: "Cerrar",
       settingsTitle: "Ajustes",
-      settingSound: "Sonido",
+      settingBgm: "Música",
+      settingSfx: "Efectos",
       soundDown: "Bajar sonido",
       soundUp: "Subir sonido",
       settingLang: "Idioma",
@@ -2302,7 +2322,8 @@
       settingsOpen: "Paramètres",
       settingsClose: "Fermer",
       settingsTitle: "Paramètres",
-      settingSound: "Son",
+      settingBgm: "Musique",
+      settingSfx: "Effets",
       soundDown: "Baisser le son",
       soundUp: "Monter le son",
       settingLang: "Langue",
@@ -2351,7 +2372,8 @@
       settingsOpen: "Einstellungen",
       settingsClose: "Schließen",
       settingsTitle: "Einstellungen",
-      settingSound: "Ton",
+      settingBgm: "Musik",
+      settingSfx: "Effekte",
       soundDown: "Leiser",
       soundUp: "Lauter",
       settingLang: "Sprache",
@@ -2400,7 +2422,8 @@
       settingsOpen: "Configurações",
       settingsClose: "Fechar",
       settingsTitle: "Configurações",
-      settingSound: "Som",
+      settingBgm: "Música",
+      settingSfx: "Efeitos",
       soundDown: "Diminuir som",
       soundUp: "Aumentar som",
       settingLang: "Idioma",
@@ -2449,7 +2472,8 @@
       settingsOpen: "Настройки",
       settingsClose: "Закрыть",
       settingsTitle: "Настройки",
-      settingSound: "Звук",
+      settingBgm: "Музыка",
+      settingSfx: "Эффекты",
       soundDown: "Тише",
       soundUp: "Громче",
       settingLang: "Язык",
@@ -2498,7 +2522,8 @@
       settingsOpen: "Impostazioni",
       settingsClose: "Chiudi",
       settingsTitle: "Impostazioni",
-      settingSound: "Suono",
+      settingBgm: "Musica",
+      settingSfx: "Effetti",
       soundDown: "Abbassa il suono",
       soundUp: "Alza il suono",
       settingLang: "Lingua",
@@ -2547,7 +2572,8 @@
       settingsOpen: "Cài đặt",
       settingsClose: "Đóng",
       settingsTitle: "Cài đặt",
-      settingSound: "Âm thanh",
+      settingBgm: "Nhạc nền",
+      settingSfx: "Hiệu ứng",
       soundDown: "Giảm âm lượng",
       soundUp: "Tăng âm lượng",
       settingLang: "Ngôn ngữ",
@@ -2596,7 +2622,8 @@
       settingsOpen: "Pengaturan",
       settingsClose: "Tutup",
       settingsTitle: "Pengaturan",
-      settingSound: "Suara",
+      settingBgm: "Musik",
+      settingSfx: "Efek",
       soundDown: "Kecilkan suara",
       soundUp: "Besarkan suara",
       settingLang: "Bahasa",
@@ -2645,7 +2672,8 @@
       settingsOpen: "การตั้งค่า",
       settingsClose: "ปิด",
       settingsTitle: "การตั้งค่า",
-      settingSound: "เสียง",
+      settingBgm: "เพลงประกอบ",
+      settingSfx: "เสียงเอฟเฟกต์",
       soundDown: "ลดเสียง",
       soundUp: "เพิ่มเสียง",
       settingLang: "ภาษา",
@@ -2716,27 +2744,40 @@
   }
 
   // ---- settings popup ----
-  // Sound is a stored 0–5 bar level (0 = mute, 5 = full volume, 3 by default); there are
-  // no sounds yet, so for now it's only remembered.
-  const SOUND_KEY = 'roomPuzzle.soundLevel';
+  // Two separate 0–5 volume bars (0 = mute, 5 = full, 3 by default): background music
+  // (the special themes' tracks) and sound effects (button clicks, correct/incorrect).
+  // A level saved by the older single "sound" bar seeds both on first load.
   const SOUND_MAX = 5;
   const SOUND_DEFAULT = 3;
-  let soundLevel = SOUND_DEFAULT;
-  try {
-    const raw = localStorage.getItem(SOUND_KEY);
-    const v = Number(raw);
-    if(raw !== null && Number.isInteger(v) && v >= 0 && v <= SOUND_MAX) soundLevel = v;
-  } catch(e){}
+  const VOLUME_KEYS = {bgm: 'roomPuzzle.bgmLevel', sfx: 'roomPuzzle.sfxLevel'};
+  const volumes = {bgm: SOUND_DEFAULT, sfx: SOUND_DEFAULT};
+  function readLevel(key){
+    try {
+      const raw = localStorage.getItem(key);
+      const v = Number(raw);
+      if(raw !== null && Number.isInteger(v) && v >= 0 && v <= SOUND_MAX) return v;
+    } catch(e){}
+    return null;
+  }
+  {
+    const legacy = readLevel('roomPuzzle.soundLevel');
+    for(const kind of ['bgm', 'sfx']){
+      const saved = readLevel(VOLUME_KEYS[kind]);
+      volumes[kind] = saved !== null ? saved : legacy !== null ? legacy : SOUND_DEFAULT;
+    }
+  }
 
-  function setSound(level){
-    soundLevel = Math.min(SOUND_MAX, Math.max(0, level));
-    try { localStorage.setItem(SOUND_KEY, String(soundLevel)); } catch(e){}
-    bgm.volume = bgmVolume();
-    if(soundLevel <= 0) bgm.pause();
-    else if(bgm.paused) startBgm(false);
+  function setVolume(kind, level){
+    volumes[kind] = Math.min(SOUND_MAX, Math.max(0, level));
+    try { localStorage.setItem(VOLUME_KEYS[kind], String(volumes[kind])); } catch(e){}
+    if(kind === 'bgm'){
+      bgm.volume = bgmVolume();
+      if(volumes.bgm <= 0) bgm.pause();
+      else if(bgm.paused) startBgm(false);
+    }
     renderSettings();
   }
-  function changeSound(delta){ setSound(soundLevel + delta); }
+  function changeVolume(kind, delta){ setVolume(kind, volumes[kind] + delta); }
 
   // ---- sound effects ----
   // A soft "click" (달칵) like pressing a real button: synthesized with Web Audio, no files.
@@ -2822,11 +2863,11 @@
   }
 
   function playSound(schedule, delay = 0){
-    if(soundLevel <= 0) return;
+    if(volumes.sfx <= 0) return;
     const ctx = getAudioCtx();
     if(!ctx) return;
     const master = ctx.createGain();
-    const v = soundLevel / SOUND_MAX;
+    const v = volumes.sfx / SOUND_MAX;
     master.gain.value = 0.35 * Math.pow(v, 1.5); // perceptual-ish curve, so low steps stay quiet
     master.connect(ctx.destination);
     schedule(ctx, master, ctx.currentTime + 0.005 + delay);
@@ -2862,8 +2903,8 @@
   let bgmTrack = null;
 
   function bgmVolume(){
-    const v = soundLevel / SOUND_MAX;
-    return 0.6 * Math.pow(v, 1.5); // same curve as the effects, a little under them
+    const v = volumes.bgm / SOUND_MAX;
+    return 0.6 * Math.pow(v, 1.5); // same perceptual curve as the effects
   }
 
   function startBgm(fromStart){
@@ -2880,14 +2921,14 @@
       bgm.currentTime = 0;
     }
     bgm.volume = bgmVolume();
-    if(soundLevel <= 0 || document.hidden){ bgm.pause(); return; }
+    if(volumes.bgm <= 0 || document.hidden){ bgm.pause(); return; }
     const played = bgm.play();
     if(played && played.catch) played.catch(() => {}); // blocked until a user gesture
   }
 
   // first gesture of the visit: start the saved theme's music if it isn't playing yet
   document.addEventListener('pointerdown', () => {
-    if(BGM_TRACKS[currentTheme()] && bgm.paused && soundLevel > 0) startBgm(false);
+    if(BGM_TRACKS[currentTheme()] && bgm.paused && volumes.bgm > 0) startBgm(false);
   });
   // pause while the tab is in the background, pick up where it left off on return
   document.addEventListener('visibilitychange', () => {
@@ -2896,12 +2937,15 @@
   });
 
   function renderSettings(){
-    document.querySelectorAll('#soundBar .sound-seg').forEach((seg, k) => {
-      seg.classList.toggle('on', k < soundLevel);
-    });
-    document.getElementById('soundBar').setAttribute('aria-valuenow', soundLevel);
-    document.getElementById('soundDown').disabled = soundLevel <= 0;
-    document.getElementById('soundUp').disabled = soundLevel >= SOUND_MAX;
+    for(const kind of ['bgm', 'sfx']){
+      const level = volumes[kind];
+      document.querySelectorAll(`#${kind}Bar .sound-seg`).forEach((seg, k) => {
+        seg.classList.toggle('on', k < level);
+      });
+      document.getElementById(kind + 'Bar').setAttribute('aria-valuenow', level);
+      document.getElementById(kind + 'Down').disabled = level <= 0;
+      document.getElementById(kind + 'Up').disabled = level >= SOUND_MAX;
+    }
     document.getElementById('langSelect').value = lang;
     document.querySelectorAll('.theme-swatch').forEach(btn => {
       btn.setAttribute('aria-checked', String(btn.dataset.themeValue === currentTheme()));
