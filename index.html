@@ -2916,45 +2916,32 @@
     scheduleSweep(ctx, dest, t, {type: 'sine', from: 480, to: 1500, gain: 0.55, length: 0.13, sweep: 0.05});
     scheduleSweep(ctx, dest, t + 0.06, {type: 'sine', from: 900, to: 1800, gain: 0.12, length: 0.08, sweep: 0.03});
   }
-  // rococo: a soft piano note — additive string partials (slightly stretched, the higher
-  // ones dying away faster, like a real piano) plus the felt hammer's light knock
-  const PIANO_NOTES = [523.3, 587.3, 659.3, 784.0, 880.0]; // C5 D5 E5 G5 A5
-  function schedulePiano(ctx, dest, t, freq, gain){
-    const tone = ctx.createBiquadFilter();
-    tone.type = 'lowpass';
-    tone.frequency.value = 3800;
-    tone.connect(dest);
-    for(let n = 1; n <= 6; n++){
-      const partial = freq * n * Math.sqrt(1 + 0.0004 * n * n);
-      const level = gain / Math.pow(n, 1.3);
-      const decay = 1.4 / Math.pow(n, 0.7);
-      // the fundamental gets a second, barely detuned string for a piano's gentle chorus
-      (n === 1 ? [0, 0.8] : [0]).forEach(detune => {
-        const osc = ctx.createOscillator();
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(partial, t);
-        osc.detune.value = detune;
-        const g = ctx.createGain();
-        g.gain.setValueAtTime(0.0001, t);
-        g.gain.exponentialRampToValueAtTime(level * (n === 1 ? 0.6 : 1), t + 0.004);
-        g.gain.exponentialRampToValueAtTime(level * 0.3, t + decay * 0.25);
-        g.gain.exponentialRampToValueAtTime(0.0001, t + decay);
-        osc.connect(g).connect(tone);
-        osc.start(t);
-        osc.stop(t + decay + 0.02);
-      });
-    }
-    scheduleNoiseBurst(ctx, dest, t, {freq: 2200, gain: gain * 0.12, length: 0.015}); // hammer
+  // rococo: a low music-box note — pure sine partials only (no noise, no buzzy waves):
+  // the tine's fundamental ringing long, a soft octave, and a faint high shimmer that fades fast
+  const MUSIC_BOX_NOTES = [392.0, 440.0, 523.3, 587.3, 659.3]; // G4 A4 C5 D5 E5
+  function scheduleMusicBoxNote(ctx, dest, t, freq, gain){
+    [[1, 1, 1.6], [2, 0.3, 0.7], [5.4, 0.07, 0.18]].forEach(([mult, level, decay]) => {
+      const osc = ctx.createOscillator();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq * mult, t);
+      const g = ctx.createGain();
+      g.gain.setValueAtTime(0.0001, t);
+      g.gain.exponentialRampToValueAtTime(gain * level, t + 0.006);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + decay);
+      osc.connect(g).connect(dest);
+      osc.start(t);
+      osc.stop(t + decay + 0.02);
+    });
   }
-  function schedulePlacePiano(ctx, dest, t){
-    schedulePiano(ctx, dest, t, PIANO_NOTES[Math.floor(Math.random() * PIANO_NOTES.length)], 0.38);
+  function schedulePlaceMusicBox(ctx, dest, t){
+    scheduleMusicBoxNote(ctx, dest, t, MUSIC_BOX_NOTES[Math.floor(Math.random() * MUSIC_BOX_NOTES.length)], 0.62);
   }
   // cyberpunk: a short synthetic double blip
   function schedulePlaceBlip(ctx, dest, t){
     scheduleSweep(ctx, dest, t, {type: 'square', from: 1300, to: 650, gain: 0.16, length: 0.06});
     scheduleSweep(ctx, dest, t + 0.045, {type: 'square', from: 1950, to: 1950, gain: 0.09, length: 0.04});
   }
-  const PLACE_SOUNDS = {med: schedulePlaceDrop, rococo: schedulePlacePiano, cyber: schedulePlaceBlip};
+  const PLACE_SOUNDS = {med: schedulePlaceDrop, rococo: schedulePlaceMusicBox, cyber: schedulePlaceBlip};
   let lastPlaceSoundAt = 0;
   function playPlace(){
     const now = performance.now();
