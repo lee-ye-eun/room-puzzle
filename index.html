@@ -3361,6 +3361,42 @@
     render();
   }
 
+  // Clicking a room fills in neighbors its number already decides. Only locked doors (and
+  // fixed cells) count as known; every other neighbor could still be 0, 0.5 or 1. Those
+  // unknowns are forced only when the room needs all of them fully attached (remaining ==
+  // count) or none of them (remaining == 0) — a forced 0.5 is never filled. Door overlap
+  // (rule 3) is deliberately ignored. Filled doors are locked, since they're now certain.
+  function autoFillRoom(index){
+    if(state.phase !== 'game' || state.viewMode !== 'play') return;
+    const cells = state.puzzle.cells;
+    if(cells[index].type !== 'number') return;
+    let remaining = cells[index].value;
+    const unknown = [];
+    neighborsOf(state.size, index).forEach(({idx, dir}) => {
+      const cell = cells[idx];
+      const value = state.playerState[idx];
+      if(cell.type !== 'player') remaining -= contribution(cell.type, dir);
+      else if(state.lockedCells[idx] && ORIENTATIONS.includes(value)) remaining -= contribution(value, dir);
+      else unknown.push({idx, dir});
+    });
+    if(unknown.length === 0) return;
+    const attach = Math.abs(remaining - unknown.length) < 1e-9;
+    const detach = Math.abs(remaining) < 1e-9;
+    if(!attach && !detach) return;
+    // a locked blank/marked neighbor is unknown but can't be overwritten, so it's left as is
+    const fills = unknown
+      .filter(({idx}) => !state.lockedCells[idx])
+      .map(({idx, dir}) => ({idx, value: attach ? OPPOSITE[dir] : dir}));
+    if(fills.length === 0) return;
+    recordHistory();
+    fills.forEach(({idx, value}) => {
+      state.playerState[idx] = value;
+      state.lockedCells[idx] = true;
+    });
+    playPlace();
+    render();
+  }
+
   // Judges the player's CURRENT placement against the three rules directly — not against
   // puzzle.cells' own stored answer — so an alternate valid placement (the puzzle turning out
   // non-unique) is still graded correct. Reuses the exact same rule checks the generator
@@ -3555,7 +3591,8 @@
 
   function onCellClick(index){
     if(suppressNextClick){ suppressNextClick = false; return; }
-    handleCellClick(index);
+    if(state.puzzle.cells[index].type === 'number') autoFillRoom(index);
+    else handleCellClick(index);
   }
   // The lock toggle itself happens on pointerup (see endDrag) so a right-button press can
   // turn into a drag; touch long-press is handled by its timer. Here we only keep the
@@ -3641,6 +3678,7 @@
       if(state.viewMode === 'play' && cell.type !== 'player'){
         div.onpointerdown = (e) => startDrag(e, i);
         div.oncontextmenu = onCellContextMenu;
+        if(cell.type === 'number') div.onclick = () => onCellClick(i);
       }
       board.appendChild(div);
     });
