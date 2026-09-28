@@ -539,7 +539,21 @@
   .tool-buttons{ display:flex; gap:8px; justify-content:center; }
   #submitActions{ margin-top:18px; }
   #resultBanner{ margin-bottom:14px; }
-  #historyActions{ margin:18px 0 10px; }
+  #historyActions{ margin:6px 0 10px; }
+  .solve-timer{
+    margin-top:16px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:6px;
+    font-family:var(--font-mono);
+    font-size:16px;
+    font-weight:600;
+    font-variant-numeric:tabular-nums;
+    color:var(--ink);
+  }
+  .solve-timer svg{ width:17px; height:17px; stroke:currentColor; fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+  .solve-timer.stopped{ color:var(--muted); }
   .btn.icon-btn{
     width:48px;
     height:44px;
@@ -776,7 +790,8 @@
 
     #gameScreen{ display:flex; flex-direction:column; gap:10px; }
     .tool-palette{ padding:4px 0 12px; gap:8px 10px; }
-    #historyActions{ margin:6px 0 0; }
+    #historyActions{ margin:0; }
+    .solve-timer{ margin-top:4px; font-size:15px; }
     #historyActions .btn{ flex:none; width:56px; padding:0; }
     #submitActions{ margin-top:6px; }
     #resultBanner{ margin-bottom:0; }
@@ -967,6 +982,10 @@
         </div>
       </div>
       <span id="toolHint" class="tool-hint" data-i18n="toolHint"></span>
+    </div>
+    <div id="solveTimer" class="solve-timer" aria-live="off">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2.5"/><path d="M9.5 2.5h5"/></svg>
+      <span id="solveTimerText">00:00</span>
     </div>
     <div id="historyActions" class="actions">
       <button id="undoBtn" class="btn secondary icon-btn" onclick="undo()" data-i18n-title="undoTitle">
@@ -3109,6 +3128,34 @@
     undo();
   });
 
+  // ---- solve timer: runs from the moment the puzzle appears until it's submitted ----
+  const timer = {start: 0, elapsed: 0, running: false, tick: null};
+  function formatElapsed(ms){
+    const total = Math.floor(ms / 1000);
+    const h = Math.floor(total / 3600), m = Math.floor(total / 60) % 60, sec = total % 60;
+    const two = x => String(x).padStart(2, '0');
+    return (h ? h + ':' + two(m) : two(m)) + ':' + two(sec);
+  }
+  function renderTimer(){
+    const ms = timer.running ? performance.now() - timer.start : timer.elapsed;
+    document.getElementById('solveTimerText').textContent = formatElapsed(ms);
+    document.getElementById('solveTimer').classList.toggle('stopped', !timer.running);
+  }
+  function startTimer(){
+    stopTimer();
+    timer.start = performance.now();
+    timer.elapsed = 0;
+    timer.running = true;
+    timer.tick = setInterval(renderTimer, 250);
+    renderTimer();
+  }
+  function stopTimer(){
+    if(timer.running) timer.elapsed = performance.now() - timer.start;
+    timer.running = false;
+    clearInterval(timer.tick);
+    timer.tick = null;
+  }
+
   function startGame(size){
     state.phase = 'loading';
     render();
@@ -3128,12 +3175,14 @@
       state.submissionCorrect = null;
       state.violations = new Set();
       render();
+      startTimer();
     }, 30);
   }
 
   const TOOLS_COLLAPSED_KEY = 'roomPuzzle.toolsCollapsed';
-  let toolsCollapsed = false;
-  try { toolsCollapsed = localStorage.getItem(TOOLS_COLLAPSED_KEY) === '1'; } catch(e){}
+  let toolsCollapsed = true;
+  // collapsed unless the player opened it before (a saved '0')
+  try { toolsCollapsed = localStorage.getItem(TOOLS_COLLAPSED_KEY) !== '0'; } catch(e){ toolsCollapsed = true; }
 
   // Folding the tool section leaves only the five cycle/lock/eraser tools; a selected tool
   // that gets hidden is deselected so nothing invisible stays active.
@@ -3253,11 +3302,14 @@
     state.viewMode = 'result';
     state.violations = findViolations();
     state.submissionCorrect = state.violations.size === 0;
+    stopTimer();
+    renderTimer();
     playResult(state.submissionCorrect);
     render();
   }
 
   function restart(){
+    stopTimer();
     state.phase = 'start';
     state.size = null;
     state.puzzle = null;
