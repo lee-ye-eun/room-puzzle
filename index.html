@@ -1992,7 +1992,37 @@
     scheduleTap(ctx, dest, t + 0.05, {tone: 170, freq: 1900, gain: 0.5, length: 0.018}); // release: 칵
   }
 
-  function playClick(){
+  // One soft bell-like note: a sine plus a quieter octave partial, quick attack, gentle decay.
+  function scheduleNote(ctx, dest, t, freq, {gain = 0.5, length = 0.5, type = 'sine'} = {}){
+    [[1, 1], [2, 0.25]].forEach(([mult, level]) => {
+      const osc = ctx.createOscillator();
+      osc.type = type;
+      osc.frequency.setValueAtTime(freq * mult, t);
+      const g = ctx.createGain();
+      g.gain.setValueAtTime(0.0001, t);
+      g.gain.exponentialRampToValueAtTime(gain * level, t + 0.012);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + length);
+      osc.connect(g).connect(dest);
+      osc.start(t);
+      osc.stop(t + length + 0.02);
+    });
+  }
+
+  // correct: a bright rising three-note chime (C6 → E6 → G6, then a held C7)
+  function scheduleCorrect(ctx, dest, t){
+    scheduleNote(ctx, dest, t,        1046.5, {gain: 0.45, length: 0.35});
+    scheduleNote(ctx, dest, t + 0.09, 1318.5, {gain: 0.45, length: 0.35});
+    scheduleNote(ctx, dest, t + 0.18, 1568.0, {gain: 0.45, length: 0.4});
+    scheduleNote(ctx, dest, t + 0.27, 2093.0, {gain: 0.4,  length: 0.7});
+  }
+
+  // incorrect: a soft, low two-note fall (A3 → F3) — clearly "not quite", without a harsh buzz
+  function scheduleIncorrect(ctx, dest, t){
+    scheduleNote(ctx, dest, t,        220.0, {gain: 0.6, length: 0.28, type: 'triangle'});
+    scheduleNote(ctx, dest, t + 0.2,  174.6, {gain: 0.6, length: 0.5,  type: 'triangle'});
+  }
+
+  function playSound(schedule, delay = 0){
     if(soundLevel <= 0) return;
     const ctx = getAudioCtx();
     if(!ctx) return;
@@ -2000,8 +2030,12 @@
     const v = soundLevel / SOUND_MAX;
     master.gain.value = 0.35 * Math.pow(v, 1.5); // perceptual-ish curve, so low steps stay quiet
     master.connect(ctx.destination);
-    scheduleClick(ctx, master, ctx.currentTime + 0.005);
+    schedule(ctx, master, ctx.currentTime + 0.005 + delay);
   }
+
+  function playClick(){ playSound(scheduleClick); }
+  // played on submit, just after the submit button's own click
+  function playResult(correct){ playSound(correct ? scheduleCorrect : scheduleIncorrect, 0.12); }
 
   const THEME_KEY = 'roomPuzzle.theme';
   const THEMES = ['light', 'dark', 'wood'];
@@ -2240,6 +2274,7 @@
     state.viewMode = 'result';
     state.violations = findViolations();
     state.submissionCorrect = state.violations.size === 0;
+    playResult(state.submissionCorrect);
     render();
   }
 
