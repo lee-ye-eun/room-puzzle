@@ -4,7 +4,7 @@
   // apply the saved theme before anything paints, so there's no flash of the default one
   try {
     const saved = localStorage.getItem('roomPuzzle.theme');
-    const known = ['light', 'dark', 'gothic', 'ivory', 'med', 'cyber'];
+    const known = ['light', 'dark', 'ivory', 'med', 'pop', 'cyber'];
     document.documentElement.dataset.theme = known.includes(saved) ? saved : 'light';
   }
   catch(e){ document.documentElement.dataset.theme = 'light'; }
@@ -89,32 +89,36 @@
     --board-mark:#B3B3B3;
     --board-frame:#8A8A8A;
   }
-  /* gothic: black stone, crimson rooms, gold doors and trim */
-  :root[data-theme="gothic"]{
-    color-scheme:dark;
-    --paper:#0B0909;
-    --paper-raised:#151010;
-    --ink:#EFE3C8;
-    --line:#7A5E24;
-    --line-soft:#2A1E1A;
-    --accent:#C9A227;
-    --accent-strong:#E0BC4A;
-    --accent-soft:#2B2210;
-    --muted:#A8977A;
-    --danger:#FF5A4E;
-    --danger-soft:#4A1214;
-    --correct:#E0BC4A;
-    --correct-soft:#2E2610;
-    --fixed:#A8141B;
-    --fixed-text:#F5E6C8;
-    --board-paper:#2A2222;
-    --board-ink:#D4AF37;
-    --board-line:#5E4A1E;
-    --board-hover:#3A2E2E;
-    --board-mark:#5A4B4B;
-    --board-frame:#C9A227;
-    --title-door:#D4AF37;
+  /* pop art: primary colours, halftone dots, hard black outlines */
+  :root[data-theme="pop"]{
+    --paper:#FFE14D;
+    --paper-raised:#FFF0A0;
+    --ink:#111111;
+    --line:#111111;
+    --line-soft:#111111;
+    --accent:#0047FF;
+    --accent-strong:#0036C2;
+    --accent-soft:#D6E2FF;
+    --muted:#2B2B2B;
+    --danger:#E3001B;
+    --danger-soft:#FFD3D8;
+    --correct:#0047FF;
+    --correct-soft:#D6E2FF;
+    --fixed:#111111;
+    --fixed-text:#FFE14D;
+    --board-paper:#FFFFFF;
+    --board-ink:#0047FF;
+    --board-line:#111111;
+    --board-hover:#FFF6C4;
+    --board-mark:#BFD0FF;
+    --board-frame:#111111;
+    --title-door:#0047FF;
   }
+  :root[data-theme="pop"] body{
+    background-image:radial-gradient(rgba(0,0,0,.14) 1.3px, transparent 1.5px);
+    background-size:10px 10px;
+  }
+  :root[data-theme="pop"] .board{ border-width:3px; box-shadow:6px 6px 0 #E3001B; }
   /* ivory (shown as "모던 / Modern"): a clean interior of ivory walls and soft beige */
   :root[data-theme="ivory"]{
     --paper:#FBF8F1;
@@ -317,8 +321,8 @@
   .theme-swatch-light span{ background:#111111; }
   .theme-swatch-dark{ background:#0E0E0E; border-color:#474747; }
   .theme-swatch-dark span{ background:#EDEDED; }
-  .theme-swatch-gothic{ background:#0B0909; border-color:#C9A227; border-width:2px; }
-  .theme-swatch-gothic span{ background:#D4AF37; }
+  .theme-swatch-pop{ background:#FFE14D; border-color:#111111; border-width:2px; }
+  .theme-swatch-pop span{ background:#0047FF; }
   .theme-swatch-ivory{ background:#FFFDF8; border-color:#DCCFBB; }
   .theme-swatch-ivory span{ background:#8C7760; }
   .theme-swatch-med{ background:#FFFFFF; border-color:#C5D3E4; }
@@ -784,7 +788,7 @@
           <button class="theme-swatch theme-swatch-dark" role="radio" data-theme-value="dark" onclick="setTheme('dark')" data-i18n-title="themeDark"><span></span></button>
           <button class="theme-swatch theme-swatch-ivory" role="radio" data-theme-value="ivory" onclick="setTheme('ivory')" data-i18n-title="themeIvory"><span></span></button>
           <button class="theme-swatch theme-swatch-med" role="radio" data-theme-value="med" onclick="setTheme('med')" data-i18n-title="themeMed"><span></span></button>
-          <button class="theme-swatch theme-swatch-gothic" role="radio" data-theme-value="gothic" onclick="setTheme('gothic')" data-i18n-title="themeGothic"><span></span></button>
+          <button class="theme-swatch theme-swatch-pop" role="radio" data-theme-value="pop" onclick="setTheme('pop')" data-i18n-title="themePop"><span></span></button>
           <button class="theme-swatch theme-swatch-cyber" role="radio" data-theme-value="cyber" onclick="setTheme('cyber')" data-i18n-title="themeCyber"><span></span></button>
         </span>
       </div>
@@ -1897,7 +1901,7 @@
       settingTheme: '테마',
       themeDefault: '기본',
       themeDark: '다크',
-      themeGothic: '고딕',
+      themePop: '팝아트',
       themeMed: '지중해',
       themeCyber: '사이버펑크',
       themeIvory: '모던',
@@ -1956,7 +1960,7 @@
       settingTheme: 'Theme',
       themeDefault: 'Default',
       themeDark: 'Dark',
-      themeGothic: 'Gothic',
+      themePop: 'Pop Art',
       themeMed: 'Mediterranean',
       themeCyber: 'Cyberpunk',
       themeIvory: 'Modern',
@@ -2015,7 +2019,7 @@
       settingTheme: "テーマ",
       themeDefault: "標準",
       themeDark: "ダーク",
-      themeGothic: "ゴシック",
+      themePop: "ポップアート",
       themeMed: "地中海",
       themeCyber: "サイバーパンク",
       themeIvory: "モダン",
@@ -2064,7 +2068,7 @@
       settingTheme: "主题",
       themeDefault: "默认",
       themeDark: "深色",
-      themeGothic: "哥特",
+      themePop: "波普艺术",
       themeMed: "地中海",
       themeCyber: "赛博朋克",
       themeIvory: "现代",
@@ -2113,7 +2117,7 @@
       settingTheme: "主題",
       themeDefault: "預設",
       themeDark: "深色",
-      themeGothic: "哥德",
+      themePop: "普普藝術",
       themeMed: "地中海",
       themeCyber: "賽博龐克",
       themeIvory: "現代",
@@ -2162,7 +2166,7 @@
       settingTheme: "Tema",
       themeDefault: "Predeterminado",
       themeDark: "Oscuro",
-      themeGothic: "Gótico",
+      themePop: "Pop art",
       themeMed: "Mediterráneo",
       themeCyber: "Ciberpunk",
       themeIvory: "Moderno",
@@ -2211,7 +2215,7 @@
       settingTheme: "Thème",
       themeDefault: "Par défaut",
       themeDark: "Sombre",
-      themeGothic: "Gothique",
+      themePop: "Pop art",
       themeMed: "Méditerranée",
       themeCyber: "Cyberpunk",
       themeIvory: "Moderne",
@@ -2260,7 +2264,7 @@
       settingTheme: "Design",
       themeDefault: "Standard",
       themeDark: "Dunkel",
-      themeGothic: "Gotisch",
+      themePop: "Pop-Art",
       themeMed: "Mediterran",
       themeCyber: "Cyberpunk",
       themeIvory: "Modern",
@@ -2309,7 +2313,7 @@
       settingTheme: "Tema",
       themeDefault: "Padrão",
       themeDark: "Escuro",
-      themeGothic: "Gótico",
+      themePop: "Pop art",
       themeMed: "Mediterrâneo",
       themeCyber: "Cyberpunk",
       themeIvory: "Moderno",
@@ -2358,7 +2362,7 @@
       settingTheme: "Тема",
       themeDefault: "Стандартная",
       themeDark: "Тёмная",
-      themeGothic: "Готика",
+      themePop: "Поп-арт",
       themeMed: "Средиземноморье",
       themeCyber: "Киберпанк",
       themeIvory: "Модерн",
@@ -2407,7 +2411,7 @@
       settingTheme: "Tema",
       themeDefault: "Predefinito",
       themeDark: "Scuro",
-      themeGothic: "Gotico",
+      themePop: "Pop art",
       themeMed: "Mediterraneo",
       themeCyber: "Cyberpunk",
       themeIvory: "Moderno",
@@ -2456,7 +2460,7 @@
       settingTheme: "Giao diện",
       themeDefault: "Mặc định",
       themeDark: "Tối",
-      themeGothic: "Gothic",
+      themePop: "Pop art",
       themeMed: "Địa Trung Hải",
       themeCyber: "Cyberpunk",
       themeIvory: "Hiện đại",
@@ -2505,7 +2509,7 @@
       settingTheme: "Tema",
       themeDefault: "Bawaan",
       themeDark: "Gelap",
-      themeGothic: "Gotik",
+      themePop: "Pop art",
       themeMed: "Mediterania",
       themeCyber: "Cyberpunk",
       themeIvory: "Modern",
@@ -2554,7 +2558,7 @@
       settingTheme: "ธีม",
       themeDefault: "ค่าเริ่มต้น",
       themeDark: "มืด",
-      themeGothic: "โกธิก",
+      themePop: "ป๊อปอาร์ต",
       themeMed: "เมดิเตอร์เรเนียน",
       themeCyber: "ไซเบอร์พังก์",
       themeIvory: "โมเดิร์น",
@@ -2736,7 +2740,7 @@
   function playResult(correct){ playSound(correct ? scheduleCorrect : scheduleIncorrect, 0.12); }
 
   const THEME_KEY = 'roomPuzzle.theme';
-  const THEMES = ['light', 'dark', 'ivory', 'med', 'gothic', 'cyber'];
+  const THEMES = ['light', 'dark', 'ivory', 'med', 'pop', 'cyber'];
   function currentTheme(){
     const v = document.documentElement.dataset.theme;
     return THEMES.includes(v) ? v : 'light';
