@@ -99,6 +99,9 @@
     display:flex;
     flex-direction:column;
   }
+  .title-door{ height:.78em; width:auto; flex-shrink:0; }
+  .title-door path{ fill:var(--ink); }
+  .title-door circle{ fill:var(--paper); }
   /* language toggle sits at the bottom-right corner of the title section */
   .lang-btn{
     align-self:flex-end;
@@ -118,6 +121,10 @@
   }
   .lang-btn svg{ width:18px; height:18px; stroke:currentColor; fill:none; stroke-width:1.6; }
   header.top h1{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:.28em;
     font-family:var(--font-display);
     font-weight:600;
     font-size:clamp(40px,10vw,56px);
@@ -484,7 +491,7 @@
 
 <div class="page">
   <header class="top">
-    <h1>Room Puzzle</h1>
+    <h1><svg class="title-door" viewBox="0 0 20 28" aria-hidden="true"><path d="M2 28V3a3 3 0 0 1 3-3h10a3 3 0 0 1 3 3v25z"/><circle cx="13.5" cy="15" r="1.6"/></svg>Room Puzzle</h1>
     <button id="langBtn" class="lang-btn" onclick="toggleLang()" data-i18n-title="langTitle">
       <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a14 14 0 0 1 0 18"/><path d="M12 3a14 14 0 0 0 0 18"/></svg>
       <span data-i18n="langLabel">EN</span>
