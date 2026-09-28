@@ -2731,6 +2731,9 @@
   function setSound(level){
     soundLevel = Math.min(SOUND_MAX, Math.max(0, level));
     try { localStorage.setItem(SOUND_KEY, String(soundLevel)); } catch(e){}
+    bgm.volume = bgmVolume();
+    if(soundLevel <= 0) bgm.pause();
+    else if(bgm.paused) startBgm(false);
     renderSettings();
   }
   function changeSound(delta){ setSound(soundLevel + delta); }
@@ -2841,10 +2844,56 @@
   }
   function setTheme(value){
     const theme = THEMES.includes(value) ? value : 'light';
+    const changed = theme !== currentTheme();
     document.documentElement.dataset.theme = theme;
     try { localStorage.setItem(THEME_KEY, theme); } catch(e){}
+    if(changed) startBgm(true);
     renderSettings();
   }
+
+  // ---- background music for the special themes ----
+  // Each special theme loops its own track; switching themes restarts from the beginning.
+  // Browsers only allow audio after a user gesture, so a theme restored from a previous
+  // visit starts playing on the first tap/click anywhere on the page.
+  const BGM_TRACKS = {med: 'audio/bgm-med.mp3', rococo: 'audio/bgm-rococo.mp3', cyber: 'audio/bgm-cyber.mp3'};
+  const bgm = new Audio();
+  bgm.loop = true;
+  bgm.preload = 'none';
+  let bgmTrack = null;
+
+  function bgmVolume(){
+    const v = soundLevel / SOUND_MAX;
+    return 0.6 * Math.pow(v, 1.5); // same curve as the effects, a little under them
+  }
+
+  function startBgm(fromStart){
+    const src = BGM_TRACKS[currentTheme()] || null;
+    if(!src){
+      bgm.pause();
+      bgmTrack = null;
+      return;
+    }
+    if(src !== bgmTrack){
+      bgm.src = src;
+      bgmTrack = src;
+    } else if(fromStart){
+      bgm.currentTime = 0;
+    }
+    bgm.volume = bgmVolume();
+    if(soundLevel <= 0 || document.hidden){ bgm.pause(); return; }
+    const played = bgm.play();
+    if(played && played.catch) played.catch(() => {}); // blocked until a user gesture
+  }
+
+  // first gesture of the visit: start the saved theme's music if it isn't playing yet
+  document.addEventListener('pointerdown', () => {
+    if(BGM_TRACKS[currentTheme()] && bgm.paused && soundLevel > 0) startBgm(false);
+  });
+  // pause while the tab is in the background, pick up where it left off on return
+  document.addEventListener('visibilitychange', () => {
+    if(document.hidden) bgm.pause();
+    else startBgm(false);
+  });
 
   function renderSettings(){
     document.querySelectorAll('#soundBar .sound-seg').forEach((seg, k) => {
