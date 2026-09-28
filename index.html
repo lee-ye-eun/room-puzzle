@@ -236,6 +236,23 @@
   }
   /* tool rows: doors (4) / solving marks (4) / lock + eraser (2), each centered */
   .tool-rows{ flex-basis:100%; display:flex; flex-direction:column; align-items:center; gap:8px; }
+  .tool-toggle{
+    font:inherit;
+    color:inherit;
+    background:none;
+    border:none;
+    padding:2px 4px;
+    cursor:pointer;
+    display:inline-flex;
+    align-items:center;
+    gap:4px;
+  }
+  .tool-toggle svg{ width:18px; height:18px; stroke:var(--muted); fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; transition:transform .15s; }
+  /* collapsed: only door / pencil / strip-pencil / lock / eraser, in one row */
+  .tool-palette.collapsed .tool-toggle svg{ transform:rotate(-90deg); }
+  .tool-palette.collapsed .tool-rows{ flex-direction:row; flex-wrap:wrap; justify-content:center; }
+  .tool-palette.collapsed .tool-buttons{ display:contents; }
+  .tool-palette.collapsed .tool-btn:not(.compact-keep){ display:none; }
   .tool-buttons{ display:flex; gap:8px; justify-content:center; }
   #submitActions{ margin-top:18px; }
   #resultBanner{ margin-bottom:14px; }
@@ -533,10 +550,15 @@
   <section id="gameScreen" hidden>
     <div id="resultBanner" class="result-banner" hidden></div>
     <div id="toolPalette" class="tool-palette">
-      <h2 class="tool-title" data-i18n="toolTitle">도구 선택</h2>
+      <h2 class="tool-title">
+        <button id="toolToggleBtn" class="tool-toggle" onclick="toggleToolsCollapsed()" aria-expanded="true" data-i18n-title="toolToggle">
+          <span data-i18n="toolTitle">도구 선택</span>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+      </h2>
       <div class="tool-rows">
         <div class="tool-buttons">
-          <button class="tool-btn icon-tool" data-dir="cycle-door" onclick="selectTool('cycle-door')" data-i18n-title="toolCycleDoor">
+          <button class="tool-btn icon-tool compact-keep" data-dir="cycle-door" onclick="selectTool('cycle-door')" data-i18n-title="toolCycleDoor">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 21V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v17"/><path d="M4 21h16"/><circle cx="14.5" cy="12.5" r=".9" fill="currentColor" stroke="none"/></svg>
           </button>
           <button class="tool-btn" data-dir="up" onclick="selectTool('up')" data-i18n-title="tool_up">
@@ -553,7 +575,7 @@
           </button>
         </div>
         <div class="tool-buttons">
-          <button class="tool-btn icon-tool" data-dir="cycle-mark" onclick="selectTool('cycle-mark')" data-i18n-title="toolCycleMark">
+          <button class="tool-btn icon-tool compact-keep" data-dir="cycle-mark" onclick="selectTool('cycle-mark')" data-i18n-title="toolCycleMark">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15.5 4.5l4 4L8 20H4v-4z"/><path d="M13 7l4 4"/></svg>
           </button>
           <button class="tool-btn" data-dir="q-tl" onclick="selectTool('q-tl')" data-i18n-title="tool_q_tl">
@@ -570,7 +592,7 @@
           </button>
         </div>
         <div class="tool-buttons">
-          <button class="tool-btn icon-tool" data-dir="cycle-strip" onclick="selectTool('cycle-strip')" data-i18n-title="toolCycleStrip">
+          <button class="tool-btn icon-tool compact-keep" data-dir="cycle-strip" onclick="selectTool('cycle-strip')" data-i18n-title="toolCycleStrip">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 3l4 4-9 9H7v-4z"/><path d="M13.5 5.5l4 4"/><path d="M4 21h16"/></svg>
           </button>
           <button class="tool-btn" data-dir="s-up" onclick="selectTool('s-up')" data-i18n-title="tool_s_up">
@@ -587,10 +609,10 @@
           </button>
         </div>
         <div class="tool-buttons">
-          <button id="lockModeBtn" class="tool-btn lock-btn" onclick="toggleLockMode()" data-i18n-title="toolLock">
+          <button id="lockModeBtn" class="tool-btn lock-btn compact-keep" onclick="toggleLockMode()" data-i18n-title="toolLock">
             <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>
           </button>
-          <button class="tool-btn eraser-btn" data-dir="erase" onclick="selectTool('erase')" data-i18n-title="toolErase">
+          <button class="tool-btn eraser-btn compact-keep" data-dir="erase" onclick="selectTool('erase')" data-i18n-title="toolErase">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16.2 3.8l4 4a1.5 1.5 0 0 1 0 2.1L11 19H7l-3.2-3.2a1.5 1.5 0 0 1 0-2.1l10.3-9.9a1.5 1.5 0 0 1 2.1 0z"/><path d="M9 9l6 6"/><path d="M11 19h9"/></svg>
           </button>
         </div>
@@ -1636,6 +1658,7 @@
       submit: '답안 제출',
       restart: '재시작',
       toolTitle: '도구 선택',
+      toolToggle: '도구 펼치기/접기',
       resultCorrect: '정답!',
       resultIncorrect: '오답',
       cellLock: '우클릭(길게 누르기)하면 이 칸을 잠급니다',
@@ -1684,6 +1707,7 @@
       submit: 'Submit',
       restart: 'Restart',
       toolTitle: 'Tools',
+      toolToggle: 'Show/hide tools',
       resultCorrect: 'Correct!',
       resultIncorrect: 'Incorrect',
       cellLock: 'Right-click (long-press) to lock this cell',
@@ -1785,6 +1809,20 @@
       state.violations = new Set();
       render();
     }, 30);
+  }
+
+  const TOOLS_COLLAPSED_KEY = 'roomPuzzle.toolsCollapsed';
+  let toolsCollapsed = false;
+  try { toolsCollapsed = localStorage.getItem(TOOLS_COLLAPSED_KEY) === '1'; } catch(e){}
+
+  // Folding the tool section leaves only the five cycle/lock/eraser tools; a selected tool
+  // that gets hidden is deselected so nothing invisible stays active.
+  function toggleToolsCollapsed(){
+    toolsCollapsed = !toolsCollapsed;
+    try { localStorage.setItem(TOOLS_COLLAPSED_KEY, toolsCollapsed ? '1' : '0'); } catch(e){}
+    const compact = ['cycle-door', 'cycle-mark', 'cycle-strip', 'erase'];
+    if(toolsCollapsed && state.selectedTool && !compact.includes(state.selectedTool)) state.selectedTool = null;
+    render();
   }
 
   function selectTool(dir){
@@ -2047,6 +2085,8 @@
     }
 
     document.getElementById('toolPalette').hidden = state.viewMode !== 'play';
+    document.getElementById('toolPalette').classList.toggle('collapsed', toolsCollapsed);
+    document.getElementById('toolToggleBtn').setAttribute('aria-expanded', String(!toolsCollapsed));
     document.querySelectorAll('.tool-btn').forEach(btn => {
       btn.classList.toggle('active', state.selectedTool === btn.dataset.dir);
     });
