@@ -1,11 +1,20 @@
 <!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
 <title>Room Puzzle</title>
+<script>
+  // apply the saved theme before anything paints, so there's no flash of the default one
+  try { document.documentElement.dataset.theme = localStorage.getItem('roomPuzzle.theme') || 'light'; }
+  catch(e){ document.documentElement.dataset.theme = 'light'; }
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:wght@500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
 <style>
-  /* Black & white theme. The only colours kept are red (locks, rule violations) and blue
-     (the "correct" result banner). */
+  /* Themes, picked in the settings popup and stored as <html data-theme>:
+     light (기본) — black & white; the only colours kept are red (locks, rule violations)
+       and blue (the "correct" result banner)
+     dark (다크) — the same, inverted around the board
+     wood (나무) — warm paper and brown doors
+     With no data-theme at all the page follows the system light/dark preference. */
   :root{
     --paper:#FFFFFF;
     --paper-raised:#F6F6F6;
@@ -33,7 +42,7 @@
     --font-mono:'IBM Plex Mono',ui-monospace,monospace;
   }
   @media (prefers-color-scheme: dark){
-    :root:not([data-theme="light"]){
+    :root:not([data-theme]){
       --paper:#0E0E0E;
       --paper-raised:#1A1A1A;
       --ink:#F2F2F2;
@@ -52,9 +61,11 @@
       --board-line:#8A8A8A;
       --board-hover:#D0D0D0;
       --board-mark:#B3B3B3;
+      --board-frame:#8A8A8A;
     }
   }
   :root[data-theme="dark"]{
+    color-scheme:dark;
     --paper:#0E0E0E;
     --paper-raised:#1A1A1A;
     --ink:#F2F2F2;
@@ -73,6 +84,29 @@
     --board-line:#8A8A8A;
     --board-hover:#D0D0D0;
     --board-mark:#B3B3B3;
+    --board-frame:#8A8A8A;
+  }
+  :root[data-theme="wood"]{
+    --paper:#F5EDE0;
+    --paper-raised:#EEE3D1;
+    --ink:#3E2C1F;
+    --line:#CDB99C;
+    --line-soft:#E2D4BE;
+    --accent:#7B4A26;
+    --accent-strong:#5C3519;
+    --accent-soft:#E8D9C2;
+    --muted:#8A7461;
+    --danger:#C0392B;
+    --danger-soft:#F6DED8;
+    --correct:#2E6F8E;
+    --correct-soft:#DCEBF1;
+    --fixed:#6F7F5E;
+    --board-paper:#FBF6EC;
+    --board-ink:#7B4A26;
+    --board-line:#D3C0A3;
+    --board-hover:#EFE3CF;
+    --board-mark:#D9C6A8;
+    --title-door:#7B4A26;
   }
 
   body{
@@ -168,7 +202,18 @@
     cursor:pointer;
   }
   .stepper button:disabled{ opacity:.35; cursor:default; }
-  .stepper output{ min-width:2ch; text-align:center; font-family:var(--font-mono); font-weight:600; }
+  .sound-bar{ display:inline-flex; gap:4px; }
+  .stepper .sound-seg{
+    width:14px;
+    height:22px;
+    padding:0;
+    border-radius:3px;
+    border:1.5px solid var(--ink);
+    background:transparent;
+    cursor:pointer;
+  }
+  .stepper .sound-seg.on{ background:var(--ink); }
+  .stepper{ gap:8px; }
   .setting-row select{
     font:inherit;
     font-size:14px;
@@ -180,7 +225,7 @@
     min-width:120px;
   }
   .title-door{ height:.84em; width:auto; flex-shrink:0; }
-  .title-door path, .title-door rect{ fill:var(--ink); }
+  .title-door path, .title-door rect{ fill:var(--title-door, var(--ink)); }
   .title-door circle{ fill:var(--paper); }
   header.top h1{
     display:flex;
@@ -373,7 +418,7 @@
     display:grid;
     width:min(92vw,480px);
     aspect-ratio:1/1;
-    border:2px solid var(--board-ink);
+    border:2px solid var(--board-frame, var(--board-ink));
     border-radius:4px;
     overflow:hidden;
     background:var(--board-line);
@@ -590,7 +635,13 @@
         <span class="setting-label" data-i18n="settingSound">사운드</span>
         <span class="stepper">
           <button id="soundDown" onclick="changeSound(-1)" data-i18n-title="soundDown">−</button>
-          <output id="soundValue">0</output>
+          <span id="soundBar" class="sound-bar" role="meter" aria-valuemin="0" aria-valuemax="5">
+            <button class="sound-seg" onclick="setSound(1)" tabindex="-1"></button>
+            <button class="sound-seg" onclick="setSound(2)" tabindex="-1"></button>
+            <button class="sound-seg" onclick="setSound(3)" tabindex="-1"></button>
+            <button class="sound-seg" onclick="setSound(4)" tabindex="-1"></button>
+            <button class="sound-seg" onclick="setSound(5)" tabindex="-1"></button>
+          </span>
           <button id="soundUp" onclick="changeSound(1)" data-i18n-title="soundUp">+</button>
         </span>
       </div>
@@ -603,8 +654,10 @@
       </div>
       <div class="setting-row">
         <label for="themeSelect" data-i18n="settingTheme">테마</label>
-        <select id="themeSelect">
-          <option value="default" data-i18n="themeDefault">기본</option>
+        <select id="themeSelect" onchange="setTheme(this.value)">
+          <option value="light" data-i18n="themeDefault">기본</option>
+          <option value="dark" data-i18n="themeDark">다크</option>
+          <option value="wood" data-i18n="themeWood">나무</option>
         </select>
       </div>
     </div>
@@ -1715,6 +1768,8 @@
       settingLang: '언어',
       settingTheme: '테마',
       themeDefault: '기본',
+      themeDark: '다크',
+      themeWood: '나무',
       rulesTitle: '규칙',
       rulesBody:
         '<li>숫자가 적힌 칸은 <strong>\'룸\'</strong>, 설치할 수 있는 검정 반칸은 <strong>\'문\'</strong>이다.</li>' +
@@ -1771,6 +1826,8 @@
       settingLang: 'Language',
       settingTheme: 'Theme',
       themeDefault: 'Default',
+      themeDark: 'Dark',
+      themeWood: 'Wood',
       rulesTitle: 'Rules',
       rulesBody:
         '<li>A cell with a number is a <strong>Room</strong>; a black half-cell you place is a <strong>Door</strong>.</li>' +
@@ -1841,27 +1898,46 @@
   }
 
   // ---- settings popup ----
-  // Sound is only a stored 0–10 level for now (there are no sounds yet); theme has just
-  // the default option. Both are placeholders the popup is laid out around.
-  const SOUND_KEY = 'roomPuzzle.sound';
-  const SOUND_MAX = 10;
-  let soundLevel = 0;
+  // Sound is a stored 0–5 bar level (0 = mute, 5 = full volume, 3 by default); there are
+  // no sounds yet, so for now it's only remembered.
+  const SOUND_KEY = 'roomPuzzle.soundLevel';
+  const SOUND_MAX = 5;
+  const SOUND_DEFAULT = 3;
+  let soundLevel = SOUND_DEFAULT;
   try {
-    const v = Number(localStorage.getItem(SOUND_KEY));
-    if(Number.isInteger(v) && v >= 0 && v <= SOUND_MAX) soundLevel = v;
+    const raw = localStorage.getItem(SOUND_KEY);
+    const v = Number(raw);
+    if(raw !== null && Number.isInteger(v) && v >= 0 && v <= SOUND_MAX) soundLevel = v;
   } catch(e){}
 
-  function changeSound(delta){
-    soundLevel = Math.min(SOUND_MAX, Math.max(0, soundLevel + delta));
+  function setSound(level){
+    soundLevel = Math.min(SOUND_MAX, Math.max(0, level));
     try { localStorage.setItem(SOUND_KEY, String(soundLevel)); } catch(e){}
     renderSettings();
   }
+  function changeSound(delta){ setSound(soundLevel + delta); }
+
+  const THEME_KEY = 'roomPuzzle.theme';
+  const THEMES = ['light', 'dark', 'wood'];
+  function currentTheme(){
+    const v = document.documentElement.dataset.theme;
+    return THEMES.includes(v) ? v : 'light';
+  }
+  function setTheme(value){
+    const theme = THEMES.includes(value) ? value : 'light';
+    document.documentElement.dataset.theme = theme;
+    try { localStorage.setItem(THEME_KEY, theme); } catch(e){}
+  }
 
   function renderSettings(){
-    document.getElementById('soundValue').textContent = soundLevel;
+    document.querySelectorAll('#soundBar .sound-seg').forEach((seg, k) => {
+      seg.classList.toggle('on', k < soundLevel);
+    });
+    document.getElementById('soundBar').setAttribute('aria-valuenow', soundLevel);
     document.getElementById('soundDown').disabled = soundLevel <= 0;
     document.getElementById('soundUp').disabled = soundLevel >= SOUND_MAX;
     document.getElementById('langSelect').value = lang;
+    document.getElementById('themeSelect').value = currentTheme();
   }
 
   function settingsOpen(){ return !document.getElementById('settingsModal').hidden; }
