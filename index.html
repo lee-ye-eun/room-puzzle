@@ -214,6 +214,27 @@
   }
   .stepper .sound-seg.on{ background:var(--ink); }
   .stepper{ gap:8px; }
+  /* theme picker: each option is a square board cell with a right-half door in that
+     theme's own colours (fixed, so they look the same whatever theme is active) */
+  .theme-options{ display:inline-flex; gap:10px; }
+  .theme-swatch{
+    position:relative;
+    width:34px;
+    height:34px;
+    padding:0;
+    border-radius:6px;
+    border:1px solid var(--line);
+    overflow:hidden;
+    cursor:pointer;
+  }
+  .theme-swatch span{ position:absolute; top:0; right:0; bottom:0; width:50%; }
+  .theme-swatch-light{ background:#FFFFFF; }
+  .theme-swatch-light span{ background:#111111; }
+  .theme-swatch-dark{ background:#0E0E0E; border-color:#474747; }
+  .theme-swatch-dark span{ background:#EDEDED; }
+  .theme-swatch-wood{ background:#FBF6EC; }
+  .theme-swatch-wood span{ background:#7B4A26; }
+  .theme-swatch[aria-checked="true"]{ outline:2.5px solid var(--ink); outline-offset:2px; }
   .setting-row select{
     font:inherit;
     font-size:14px;
@@ -653,12 +674,12 @@
         </select>
       </div>
       <div class="setting-row">
-        <label for="themeSelect" data-i18n="settingTheme">테마</label>
-        <select id="themeSelect" onchange="setTheme(this.value)">
-          <option value="light" data-i18n="themeDefault">기본</option>
-          <option value="dark" data-i18n="themeDark">다크</option>
-          <option value="wood" data-i18n="themeWood">나무</option>
-        </select>
+        <span class="setting-label" id="themeLabel" data-i18n="settingTheme">테마</span>
+        <span class="theme-options" role="radiogroup" aria-labelledby="themeLabel">
+          <button class="theme-swatch theme-swatch-light" role="radio" data-theme-value="light" onclick="setTheme('light')" data-i18n-title="themeDefault"><span></span></button>
+          <button class="theme-swatch theme-swatch-dark" role="radio" data-theme-value="dark" onclick="setTheme('dark')" data-i18n-title="themeDark"><span></span></button>
+          <button class="theme-swatch theme-swatch-wood" role="radio" data-theme-value="wood" onclick="setTheme('wood')" data-i18n-title="themeWood"><span></span></button>
+        </span>
       </div>
     </div>
   </div>
@@ -1927,6 +1948,7 @@
     const theme = THEMES.includes(value) ? value : 'light';
     document.documentElement.dataset.theme = theme;
     try { localStorage.setItem(THEME_KEY, theme); } catch(e){}
+    renderSettings();
   }
 
   function renderSettings(){
@@ -1937,7 +1959,9 @@
     document.getElementById('soundDown').disabled = soundLevel <= 0;
     document.getElementById('soundUp').disabled = soundLevel >= SOUND_MAX;
     document.getElementById('langSelect').value = lang;
-    document.getElementById('themeSelect').value = currentTheme();
+    document.querySelectorAll('.theme-swatch').forEach(btn => {
+      btn.setAttribute('aria-checked', String(btn.dataset.themeValue === currentTheme()));
+    });
   }
 
   function settingsOpen(){ return !document.getElementById('settingsModal').hidden; }
