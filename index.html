@@ -980,6 +980,40 @@
   // cycle tools: each click advances the cell through its order (a value from the other
   // order, e.g. a door under the pencil, starts the cycle like a blank)
   const CYCLE_TOOLS = {'cycle-door': DIR_ORDER, 'cycle-mark': MARK_ORDER, 'cycle-strip': STRIP_ORDER};
+  // A cell holds 'blank', a door ('up'…), or solving marks: at most one corner quarter
+  // ('q-*') plus at most one edge strip ('s-*'), stored together as e.g. 'q-br|s-down'.
+  // A mark of the same kind replaces the old one; a door (or the eraser) clears them all.
+  function markParts(v){
+    const parts = {q: null, s: null};
+    if(typeof v !== 'string') return parts;
+    v.split('|').forEach(m => {
+      if(m.startsWith('q-')) parts.q = m;
+      else if(m.startsWith('s-')) parts.s = m;
+    });
+    return parts;
+  }
+  function joinMarks(parts){
+    const list = [parts.q, parts.s].filter(Boolean);
+    return list.length ? list.join('|') : 'blank';
+  }
+  function markKind(mark){ return mark.startsWith('q-') ? 'q' : 's'; }
+  function withMark(cur, mark){
+    const parts = markParts(cur);
+    parts[markKind(mark)] = mark;
+    return joinMarks(parts);
+  }
+  function withoutMark(cur, kind){
+    const parts = markParts(cur);
+    parts[kind] = null;
+    return joinMarks(parts);
+  }
+  // a mark cycle tool steps just its own kind of mark and leaves the other kind in place
+  function cycleMark(order, cur){
+    const kind = markKind(order[1]);
+    const next = nextInCycle(order, markParts(cur)[kind] || 'blank');
+    return next === 'blank' ? withoutMark(cur, kind) : withMark(cur, next);
+  }
+
   function nextInCycle(order, cur){
     return order[(Math.max(0, order.indexOf(cur)) + 1) % order.length];
   }
@@ -2974,8 +3008,15 @@
     recordHistory();
     if(!state.selectedTool){
       state.playerState[index] = nextInCycle(DIR_ORDER, cur);
+    } else if(state.selectedTool === 'cycle-door'){
+      state.playerState[index] = nextInCycle(DIR_ORDER, cur);
     } else if(CYCLE_TOOLS[state.selectedTool]){
-      state.playerState[index] = nextInCycle(CYCLE_TOOLS[state.selectedTool], cur);
+      state.playerState[index] = cycleMark(CYCLE_TOOLS[state.selectedTool], cur);
+    } else if(isMark(state.selectedTool)){
+      const kind = markKind(state.selectedTool);
+      state.playerState[index] = markParts(cur)[kind] === state.selectedTool
+        ? withoutMark(cur, kind)
+        : withMark(cur, state.selectedTool);
     } else {
       state.playerState[index] = (cur === state.selectedTool) ? 'blank' : state.selectedTool;
     }
@@ -3082,20 +3123,30 @@
 
   // The value a drag paints. A cycle tool advances the drag's first cell one step and then
   // paints that same result on every other cell it passes.
+  // Returns how the drag rewrites each cell it passes: (current value) => new value.
+  // Doors and the eraser replace the whole cell; a mark is added alongside the other kind.
   function dragPaintValue(start){
     const tool = state.selectedTool;
-    if(tool === 'erase') return 'blank';
+    if(tool === 'erase') return () => 'blank';
+    if(isMark(tool)) return cur => withMark(cur, tool);
     const order = CYCLE_TOOLS[tool];
-    if(!order) return tool;
+    if(!order) return () => tool;
     const startsOnFreeCell = state.puzzle.cells[start].type === 'player' && !state.lockedCells[start];
-    return startsOnFreeCell ? nextInCycle(order, state.playerState[start]) : order[1];
+    const startValue = startsOnFreeCell ? state.playerState[start] : 'blank';
+    if(tool === 'cycle-door'){
+      const door = nextInCycle(DIR_ORDER, startValue);
+      return () => door;
+    }
+    const kind = markKind(order[1]);
+    const next = nextInCycle(order, markParts(startValue)[kind] || 'blank');
+    return next === 'blank' ? cur => withoutMark(cur, kind) : cur => withMark(cur, next);
   }
 
   function paintCell(index, lock, value){
     if(state.puzzle.cells[index].type !== 'player') return;
     if(lock){ state.lockedCells[index] = true; return; }
     if(state.lockedCells[index]) return;
-    state.playerState[index] = value;
+    state.playerState[index] = value(state.playerState[index]);
   }
 
   function cellIndexAt(x, y){
@@ -3240,9 +3291,11 @@
         const dir = state.viewMode === 'play' ? state.playerState[i] : state.submittedState[i];
 
         if(dir && dir !== 'blank'){
-          const fill = document.createElement('span');
-          fill.className = isMark(dir) ? 'mark mark-' + dir : 'fill fill-' + dir;
-          div.appendChild(fill);
+          (isMark(dir) ? dir.split('|') : [dir]).forEach(part => {
+            const fill = document.createElement('span');
+            fill.className = isMark(part) ? 'mark mark-' + part : 'fill fill-' + part;
+            div.appendChild(fill);
+          });
         }
         if(interactive){
           div.onpointerdown = (e) => onCellPointerDown(e, i);
