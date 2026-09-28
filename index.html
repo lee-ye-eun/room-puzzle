@@ -159,6 +159,83 @@
     --board-frame:#BFAE95;
     --title-door:#8C7760;
   }
+  /* mediterranean: whitewashed walls, aegean blue, sun-bleached stone */
+  :root[data-theme="med"]{
+    --paper:#FBFAF6;
+    --paper-raised:#F1EDE4;
+    --ink:#1D355A;
+    --line:#C5D3E4;
+    --line-soft:#E6ECF3;
+    --accent:#1E5AA8;
+    --accent-strong:#154684;
+    --accent-soft:#E3ECF7;
+    --muted:#6D7F99;
+    --danger:#D23B2E;
+    --danger-soft:#FBE3DF;
+    --correct:#1E5AA8;
+    --correct-soft:#E3ECF7;
+    --fixed:#CFC5B2;
+    --fixed-text:#1D355A;
+    --board-paper:#FFFFFF;
+    --board-ink:#1E5AA8;
+    --board-line:#DCD4C4;
+    --board-hover:#EEF3F9;
+    --board-mark:#E2DBCD;
+    --board-frame:#1E5AA8;
+    --title-door:#1E5AA8;
+  }
+  /* retro: a classic handheld's four greens */
+  :root[data-theme="retro"]{
+    --paper:#9BBC0F;
+    --paper-raised:#8BAC0F;
+    --ink:#0F380F;
+    --line:#306230;
+    --line-soft:#7FA00F;
+    --accent:#0F380F;
+    --accent-strong:#0F380F;
+    --accent-soft:#8BAC0F;
+    --muted:#306230;
+    --danger:#D02B2B;
+    --danger-soft:#E7B9A2;
+    --correct:#0F380F;
+    --correct-soft:#8BAC0F;
+    --fixed:#306230;
+    --fixed-text:#C4DC6E;
+    --board-paper:#C4DC6E;
+    --board-ink:#0F380F;
+    --board-line:#306230;
+    --board-hover:#B3CF4F;
+    --board-mark:#8BAC0F;
+    --board-frame:#0F380F;
+    --title-door:#0F380F;
+  }
+  /* cyberpunk: black base, neon light, brushed metal */
+  :root[data-theme="cyber"]{
+    color-scheme:dark;
+    --paper:#07070D;
+    --paper-raised:#10111B;
+    --ink:#E4F6FF;
+    --line:#3A4058;
+    --line-soft:#1A1D2B;
+    --accent:#00E5FF;
+    --accent-strong:#5CF2FF;
+    --accent-soft:#0B2530;
+    --muted:#8C95AD;
+    --danger:#FF2E4D;
+    --danger-soft:#3A0B16;
+    --correct:#39FF88;
+    --correct-soft:#0B2A18;
+    --fixed:#262B3B;
+    --fixed-text:#FF3CD8;
+    --board-paper:#12141F;
+    --board-ink:#00E5FF;
+    --board-line:#2C3246;
+    --board-hover:#1C2030;
+    --board-mark:#3A4260;
+    --board-frame:#FF3CD8;
+    --title-door:#00E5FF;
+  }
+  :root[data-theme="cyber"] .board{ box-shadow:0 0 14px rgba(255,60,216,.55), 0 0 30px rgba(0,229,255,.18); }
 
   body{
     background:var(--paper);
@@ -268,7 +345,7 @@
   .stepper{ gap:8px; }
   /* theme picker: each option is a square board cell with a right-half door in that
      theme's own colours (fixed, so they look the same whatever theme is active) */
-  .theme-options{ display:inline-flex; gap:10px; }
+  .theme-options{ display:grid; grid-template-columns:repeat(4, 34px); gap:10px; }
   .theme-swatch{
     position:relative;
     width:34px;
@@ -290,6 +367,12 @@
   .theme-swatch-gothic span{ background:#A8141B; }
   .theme-swatch-ivory{ background:#FFFDF8; border-color:#DCCFBB; }
   .theme-swatch-ivory span{ background:#8C7760; }
+  .theme-swatch-med{ background:#FFFFFF; border-color:#C5D3E4; }
+  .theme-swatch-med span{ background:#1E5AA8; }
+  .theme-swatch-retro{ background:#C4DC6E; border-color:#306230; }
+  .theme-swatch-retro span{ background:#0F380F; }
+  .theme-swatch-cyber{ background:#12141F; border-color:#FF3CD8; box-shadow:0 0 6px rgba(255,60,216,.6); }
+  .theme-swatch-cyber span{ background:#00E5FF; }
   .theme-swatch[aria-checked="true"]{ outline:2.5px solid var(--ink); outline-offset:2px; }
   .setting-row select{
     font:inherit;
@@ -750,6 +833,9 @@
           <button class="theme-swatch theme-swatch-wood" role="radio" data-theme-value="wood" onclick="setTheme('wood')" data-i18n-title="themeWood"><span></span></button>
           <button class="theme-swatch theme-swatch-gothic" role="radio" data-theme-value="gothic" onclick="setTheme('gothic')" data-i18n-title="themeGothic"><span></span></button>
           <button class="theme-swatch theme-swatch-ivory" role="radio" data-theme-value="ivory" onclick="setTheme('ivory')" data-i18n-title="themeIvory"><span></span></button>
+          <button class="theme-swatch theme-swatch-med" role="radio" data-theme-value="med" onclick="setTheme('med')" data-i18n-title="themeMed"><span></span></button>
+          <button class="theme-swatch theme-swatch-retro" role="radio" data-theme-value="retro" onclick="setTheme('retro')" data-i18n-title="themeRetro"><span></span></button>
+          <button class="theme-swatch theme-swatch-cyber" role="radio" data-theme-value="cyber" onclick="setTheme('cyber')" data-i18n-title="themeCyber"><span></span></button>
         </span>
       </div>
     </div>
@@ -1863,6 +1949,9 @@
       themeDark: '다크',
       themeWood: '나무',
       themeGothic: '고딕',
+      themeMed: '지중해',
+      themeRetro: '레트로',
+      themeCyber: '사이버펑크',
       themeIvory: '아이보리',
       rulesTitle: '규칙',
       rulesBody:
@@ -1921,6 +2010,9 @@
       themeDark: 'Dark',
       themeWood: 'Wood',
       themeGothic: 'Gothic',
+      themeMed: 'Mediterranean',
+      themeRetro: 'Retro',
+      themeCyber: 'Cyberpunk',
       themeIvory: 'Ivory',
       rulesTitle: 'Rules',
       rulesBody:
@@ -1979,6 +2071,9 @@
       themeDark: "ダーク",
       themeWood: "木目",
       themeGothic: "ゴシック",
+      themeMed: "地中海",
+      themeRetro: "レトロ",
+      themeCyber: "サイバーパンク",
       themeIvory: "アイボリー",
       rulesTitle: "ルール",
       rulesBody: "<li>数字が書かれたマスは<strong>「ルーム」</strong>、置くことのできる黒い半マスは<strong>「ドア」</strong>です。</li><li>ルームの配置は変えられません。</li><li><strong>ルームの数字</strong>は、上下左右に<strong>接しているドアの面積</strong>の合計と同じでなければなりません。</li><li>すべての<strong>ドア</strong>は、必ず1つ以上の<strong>ルームに接していなければなりません</strong>。</li><li><strong>ドア同士は接することができません。</strong></li><li>すべての空きマスにドアを置かなければなりません。</li>",
@@ -2027,6 +2122,9 @@
       themeDark: "深色",
       themeWood: "木纹",
       themeGothic: "哥特",
+      themeMed: "地中海",
+      themeRetro: "复古",
+      themeCyber: "赛博朋克",
       themeIvory: "象牙白",
       rulesTitle: "规则",
       rulesBody: "<li>写有数字的格子是<strong>“房间”</strong>，可以放置的黑色半格是<strong>“门”</strong>。</li><li>房间的位置不能改变。</li><li><strong>房间的数字</strong>必须等于其上下左右<strong>相邻门的面积</strong>之和。</li><li>每一扇<strong>门</strong>都必须<strong>至少与一个房间相邻</strong>。</li><li><strong>门与门不能相邻。</strong></li><li>所有空格都必须放入门。</li>",
@@ -2075,6 +2173,9 @@
       themeDark: "深色",
       themeWood: "木紋",
       themeGothic: "哥德",
+      themeMed: "地中海",
+      themeRetro: "復古",
+      themeCyber: "賽博龐克",
       themeIvory: "象牙白",
       rulesTitle: "規則",
       rulesBody: "<li>寫有數字的格子是<strong>「房間」</strong>，可以放置的黑色半格是<strong>「門」</strong>。</li><li>房間的位置不能改變。</li><li><strong>房間的數字</strong>必須等於其上下左右<strong>相鄰門的面積</strong>總和。</li><li>每一扇<strong>門</strong>都必須<strong>至少與一個房間相鄰</strong>。</li><li><strong>門與門不能相鄰。</strong></li><li>所有空格都必須放入門。</li>",
@@ -2123,6 +2224,9 @@
       themeDark: "Oscuro",
       themeWood: "Madera",
       themeGothic: "Gótico",
+      themeMed: "Mediterráneo",
+      themeRetro: "Retro",
+      themeCyber: "Ciberpunk",
       themeIvory: "Marfil",
       rulesTitle: "Reglas",
       rulesBody: "<li>Una casilla con número es una <strong>Habitación</strong>; una media casilla negra que colocas es una <strong>Puerta</strong>.</li><li>Las habitaciones son fijas y no se pueden cambiar.</li><li><strong>El número de una habitación</strong> debe ser igual al <strong>área total de puertas que la tocan</strong> arriba, abajo, a la izquierda y a la derecha.</li><li>Cada <strong>puerta</strong> debe <strong>tocar al menos una habitación</strong>.</li><li><strong>Las puertas no pueden tocar otras puertas.</strong></li><li>Todas las casillas vacías deben contener una puerta.</li>",
@@ -2171,6 +2275,9 @@
       themeDark: "Sombre",
       themeWood: "Bois",
       themeGothic: "Gothique",
+      themeMed: "Méditerranée",
+      themeRetro: "Rétro",
+      themeCyber: "Cyberpunk",
       themeIvory: "Ivoire",
       rulesTitle: "Règles",
       rulesBody: "<li>Une case avec un nombre est une <strong>Pièce</strong> ; une demi-case noire que vous placez est une <strong>Porte</strong>.</li><li>Les pièces sont fixes et ne peuvent pas être modifiées.</li><li><strong>Le nombre d’une pièce</strong> doit être égal à la <strong>surface totale des portes qui la touchent</strong> en haut, en bas, à gauche et à droite.</li><li>Chaque <strong>porte</strong> doit <strong>toucher au moins une pièce</strong>.</li><li><strong>Les portes ne peuvent pas se toucher entre elles.</strong></li><li>Chaque case vide doit contenir une porte.</li>",
@@ -2219,6 +2326,9 @@
       themeDark: "Dunkel",
       themeWood: "Holz",
       themeGothic: "Gotisch",
+      themeMed: "Mediterran",
+      themeRetro: "Retro",
+      themeCyber: "Cyberpunk",
       themeIvory: "Elfenbein",
       rulesTitle: "Regeln",
       rulesBody: "<li>Ein Feld mit einer Zahl ist ein <strong>Raum</strong>; ein schwarzes Halbfeld, das du setzt, ist eine <strong>Tür</strong>.</li><li>Räume sind fest und können nicht verändert werden.</li><li><strong>Die Zahl eines Raums</strong> muss der <strong>Gesamtfläche der angrenzenden Türen</strong> oben, unten, links und rechts entsprechen.</li><li>Jede <strong>Tür</strong> muss <strong>mindestens einen Raum berühren</strong>.</li><li><strong>Türen dürfen andere Türen nicht berühren.</strong></li><li>Jedes leere Feld muss eine Tür enthalten.</li>",
@@ -2267,6 +2377,9 @@
       themeDark: "Escuro",
       themeWood: "Madeira",
       themeGothic: "Gótico",
+      themeMed: "Mediterrâneo",
+      themeRetro: "Retrô",
+      themeCyber: "Cyberpunk",
       themeIvory: "Marfim",
       rulesTitle: "Regras",
       rulesBody: "<li>Uma casa com número é um <strong>Quarto</strong>; uma meia casa preta que você coloca é uma <strong>Porta</strong>.</li><li>Os quartos são fixos e não podem ser alterados.</li><li><strong>O número de um quarto</strong> deve ser igual à <strong>área total de portas que o tocam</strong> acima, abaixo, à esquerda e à direita.</li><li>Toda <strong>porta</strong> deve <strong>tocar pelo menos um quarto</strong>.</li><li><strong>Portas não podem tocar outras portas.</strong></li><li>Toda casa vazia deve conter uma porta.</li>",
@@ -2315,6 +2428,9 @@
       themeDark: "Тёмная",
       themeWood: "Дерево",
       themeGothic: "Готика",
+      themeMed: "Средиземноморье",
+      themeRetro: "Ретро",
+      themeCyber: "Киберпанк",
       themeIvory: "Слоновая кость",
       rulesTitle: "Правила",
       rulesBody: "<li>Клетка с числом — это <strong>Комната</strong>; чёрная полуклетка, которую вы ставите, — это <strong>Дверь</strong>.</li><li>Комнаты зафиксированы, их нельзя изменить.</li><li><strong>Число комнаты</strong> должно быть равно <strong>общей площади дверей, касающихся её</strong> сверху, снизу, слева и справа.</li><li>Каждая <strong>дверь</strong> должна <strong>касаться хотя бы одной комнаты</strong>.</li><li><strong>Двери не могут касаться друг друга.</strong></li><li>В каждой пустой клетке должна быть дверь.</li>",
@@ -2363,6 +2479,9 @@
       themeDark: "Scuro",
       themeWood: "Legno",
       themeGothic: "Gotico",
+      themeMed: "Mediterraneo",
+      themeRetro: "Retrò",
+      themeCyber: "Cyberpunk",
       themeIvory: "Avorio",
       rulesTitle: "Regole",
       rulesBody: "<li>Una casella con un numero è una <strong>Stanza</strong>; una mezza casella nera che posizioni è una <strong>Porta</strong>.</li><li>Le stanze sono fisse e non si possono modificare.</li><li><strong>Il numero di una stanza</strong> deve essere uguale all’<strong>area totale delle porte che la toccano</strong> sopra, sotto, a sinistra e a destra.</li><li>Ogni <strong>porta</strong> deve <strong>toccare almeno una stanza</strong>.</li><li><strong>Le porte non possono toccare altre porte.</strong></li><li>Ogni casella vuota deve contenere una porta.</li>",
@@ -2411,6 +2530,9 @@
       themeDark: "Tối",
       themeWood: "Gỗ",
       themeGothic: "Gothic",
+      themeMed: "Địa Trung Hải",
+      themeRetro: "Cổ điển",
+      themeCyber: "Cyberpunk",
       themeIvory: "Ngà",
       rulesTitle: "Luật chơi",
       rulesBody: "<li>Ô có số là <strong>Phòng</strong>; nửa ô màu đen bạn đặt vào là <strong>Cửa</strong>.</li><li>Vị trí các phòng cố định, không thể thay đổi.</li><li><strong>Số của một phòng</strong> phải bằng <strong>tổng diện tích cửa chạm vào nó</strong> ở trên, dưới, trái và phải.</li><li>Mỗi <strong>cửa</strong> phải <strong>chạm vào ít nhất một phòng</strong>.</li><li><strong>Các cửa không được chạm vào nhau.</strong></li><li>Mọi ô trống đều phải có cửa.</li>",
@@ -2459,6 +2581,9 @@
       themeDark: "Gelap",
       themeWood: "Kayu",
       themeGothic: "Gotik",
+      themeMed: "Mediterania",
+      themeRetro: "Retro",
+      themeCyber: "Cyberpunk",
       themeIvory: "Gading",
       rulesTitle: "Aturan",
       rulesBody: "<li>Kotak bernomor adalah <strong>Ruangan</strong>; setengah kotak hitam yang kamu pasang adalah <strong>Pintu</strong>.</li><li>Posisi ruangan tetap dan tidak bisa diubah.</li><li><strong>Angka sebuah ruangan</strong> harus sama dengan <strong>total luas pintu yang menyentuhnya</strong> di atas, bawah, kiri, dan kanan.</li><li>Setiap <strong>pintu</strong> harus <strong>menyentuh setidaknya satu ruangan</strong>.</li><li><strong>Pintu tidak boleh menyentuh pintu lain.</strong></li><li>Setiap kotak kosong harus berisi pintu.</li>",
@@ -2507,6 +2632,9 @@
       themeDark: "มืด",
       themeWood: "ไม้",
       themeGothic: "โกธิก",
+      themeMed: "เมดิเตอร์เรเนียน",
+      themeRetro: "เรโทร",
+      themeCyber: "ไซเบอร์พังก์",
       themeIvory: "งาช้าง",
       rulesTitle: "กติกา",
       rulesBody: "<li>ช่องที่มีตัวเลขคือ <strong>ห้อง</strong> ส่วนครึ่งช่องสีดำที่คุณวางคือ <strong>ประตู</strong></li><li>ตำแหน่งของห้องคงที่และเปลี่ยนไม่ได้</li><li><strong>ตัวเลขของห้อง</strong>ต้องเท่ากับ<strong>พื้นที่รวมของประตูที่แตะห้องนั้น</strong>ทั้งด้านบน ล่าง ซ้าย และขวา</li><li><strong>ประตู</strong>ทุกบานต้อง<strong>แตะห้องอย่างน้อยหนึ่งห้อง</strong></li><li><strong>ประตูแตะกับประตูอื่นไม่ได้</strong></li><li>ทุกช่องว่างต้องมีประตู</li>",
@@ -2686,7 +2814,7 @@
   function playResult(correct){ playSound(correct ? scheduleCorrect : scheduleIncorrect, 0.12); }
 
   const THEME_KEY = 'roomPuzzle.theme';
-  const THEMES = ['light', 'dark', 'wood', 'gothic', 'ivory'];
+  const THEMES = ['light', 'dark', 'wood', 'gothic', 'ivory', 'med', 'retro', 'cyber'];
   function currentTheme(){
     const v = document.documentElement.dataset.theme;
     return THEMES.includes(v) ? v : 'light';
