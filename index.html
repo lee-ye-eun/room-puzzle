@@ -3350,35 +3350,43 @@
     timer.tick = null;
   }
 
-  // ---- my records: clear count + fastest RECORD_KEEP times per size, kept in this browser ----
-  // Stored as {v:1, sizes:{"5":{clears, times:[ms, fastest first]}}}; a time pushed past
-  // RECORD_KEEP is dropped for good. Storage failures (private windows etc.) never break play.
+  // ---- my records: clear count + fastest RECORD_KEEP times per mode and size, kept in this browser ----
+  // Stored as {v:2, modes:{plain:{sizes:{"5":{clears, times:[ms, fastest first]}}}, knob:{…}}};
+  // a time pushed past RECORD_KEEP is dropped for good. Records saved before modes existed
+  // ({v:1, sizes}) were all plain-mode clears, so they carry over as the plain records.
+  // Storage failures (private windows etc.) never break play.
   const RECORDS_KEY = 'roomPuzzle.records';
   const RECORD_SIZES = [5, 7, 9, 15];
   const RECORD_KEEP = 5;
   function loadRecords(){
     let saved = null;
     try { saved = JSON.parse(localStorage.getItem(RECORDS_KEY)); } catch(e){}
-    const records = {v: 1, sizes: {}};
-    RECORD_SIZES.forEach(size => {
-      const s = saved && saved.sizes && saved.sizes[size];
-      records.sizes[size] = {
-        clears: s && Number.isFinite(s.clears) ? s.clears : 0,
-        times: s && Array.isArray(s.times) ? s.times.filter(Number.isFinite).slice(0, RECORD_KEEP) : []
-      };
+    const savedModes = saved && saved.modes ? saved.modes : {plain: saved};
+    const records = {v: 2, modes: {}};
+    MODES.forEach(m => {
+      const sizes = {};
+      RECORD_SIZES.forEach(size => {
+        const s = savedModes[m] && savedModes[m].sizes && savedModes[m].sizes[size];
+        sizes[size] = {
+          clears: s && Number.isFinite(s.clears) ? s.clears : 0,
+          times: s && Array.isArray(s.times) ? s.times.filter(Number.isFinite).slice(0, RECORD_KEEP) : []
+        };
+      });
+      records.modes[m] = {sizes};
     });
     return records;
   }
-  function recordClear(size, ms){
+  function recordClear(recordMode, size, ms){
     const records = loadRecords();
-    const entry = records.sizes[size];
+    const entry = records.modes[recordMode] && records.modes[recordMode].sizes[size];
     if(!entry) return;
     entry.clears += 1;
     entry.times = entry.times.concat(ms).sort((a, b) => a - b).slice(0, RECORD_KEEP);
     try { localStorage.setItem(RECORDS_KEY, JSON.stringify(records)); } catch(e){}
   }
+  // shows the records of the mode currently picked on the start screen
   function renderRecords(){
-    const records = loadRecords();
+    const records = loadRecords().modes[mode];
     const head = document.getElementById('recordsHead');
     const clears = document.getElementById('recordsClears');
     const times = document.getElementById('recordsTimes');
@@ -3643,7 +3651,7 @@
     const wasRunning = timer.running; // a puzzle's clear is only recorded once
     stopTimer();
     renderTimer();
-    if(state.submissionCorrect && wasRunning) recordClear(state.size, Math.round(timer.elapsed));
+    if(state.submissionCorrect && wasRunning) recordClear(state.knobClues ? 'knob' : 'plain', state.size, Math.round(timer.elapsed));
     playResult(state.submissionCorrect);
     render();
   }
