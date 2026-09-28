@@ -1939,6 +1939,70 @@
   }
   function changeSound(delta){ setSound(soundLevel + delta); }
 
+  // ---- sound effects ----
+  // A soft "click" (달칵) like pressing a real button: synthesized with Web Audio, no files.
+  // It's two short taps — the press and, a moment later, a quieter release — each a burst
+  // of band-passed noise (the plastic "tick") over a brief low sine (the body "thud").
+  // Volume follows the settings bar (0 = silent, 5 = full).
+  let audioCtx = null;
+  function getAudioCtx(){
+    if(!audioCtx){
+      const Ctx = window.AudioContext || window.webkitAudioContext;
+      if(!Ctx) return null;
+      audioCtx = new Ctx();
+    }
+    if(audioCtx.state === 'suspended') audioCtx.resume();
+    return audioCtx;
+  }
+
+  function scheduleTap(ctx, dest, t, {tone, freq, gain, length}){
+    const noiseLen = Math.ceil(ctx.sampleRate * length);
+    const buf = ctx.createBuffer(1, noiseLen, ctx.sampleRate);
+    const data = buf.getChannelData(0);
+    for(let i = 0; i < noiseLen; i++) data[i] = Math.random() * 2 - 1;
+    const noise = ctx.createBufferSource();
+    noise.buffer = buf;
+    const band = ctx.createBiquadFilter();
+    band.type = 'bandpass';
+    band.frequency.value = freq;
+    band.Q.value = 1.2;
+    const noiseGain = ctx.createGain();
+    noiseGain.gain.setValueAtTime(0.0001, t);
+    noiseGain.gain.exponentialRampToValueAtTime(gain, t + 0.001);
+    noiseGain.gain.exponentialRampToValueAtTime(0.0001, t + length);
+    noise.connect(band).connect(noiseGain).connect(dest);
+    noise.start(t);
+    noise.stop(t + length);
+
+    const osc = ctx.createOscillator();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(tone, t);
+    osc.frequency.exponentialRampToValueAtTime(tone * 0.6, t + length * 1.5);
+    const oscGain = ctx.createGain();
+    oscGain.gain.setValueAtTime(0.0001, t);
+    oscGain.gain.exponentialRampToValueAtTime(gain * 0.9, t + 0.002);
+    oscGain.gain.exponentialRampToValueAtTime(0.0001, t + length * 1.5);
+    osc.connect(oscGain).connect(dest);
+    osc.start(t);
+    osc.stop(t + length * 1.5);
+  }
+
+  function scheduleClick(ctx, dest, t){
+    scheduleTap(ctx, dest, t,        {tone: 220, freq: 2600, gain: 0.9, length: 0.022}); // press: 달
+    scheduleTap(ctx, dest, t + 0.05, {tone: 170, freq: 1900, gain: 0.5, length: 0.018}); // release: 칵
+  }
+
+  function playClick(){
+    if(soundLevel <= 0) return;
+    const ctx = getAudioCtx();
+    if(!ctx) return;
+    const master = ctx.createGain();
+    const v = soundLevel / SOUND_MAX;
+    master.gain.value = 0.35 * Math.pow(v, 1.5); // perceptual-ish curve, so low steps stay quiet
+    master.connect(ctx.destination);
+    scheduleClick(ctx, master, ctx.currentTime + 0.005);
+  }
+
   const THEME_KEY = 'roomPuzzle.theme';
   const THEMES = ['light', 'dark', 'wood'];
   function currentTheme(){
@@ -2076,6 +2140,11 @@
     if(toolsCollapsed && state.selectedTool && !compact.includes(state.selectedTool)) state.selectedTool = null;
     render();
   }
+
+  // every tool button (doors, marks, cycle tools, lock, eraser) clicks when pressed
+  document.getElementById('toolPalette').addEventListener('click', (e) => {
+    if(e.target.closest('.tool-btn')) playClick();
+  });
 
   function selectTool(dir){
     if(state.phase !== 'game' || state.viewMode !== 'play') return;
