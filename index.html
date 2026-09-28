@@ -363,6 +363,11 @@
   .mark-q-tr{ top:0; right:0; }
   .mark-q-bl{ bottom:0; left:0; }
   .mark-q-br{ bottom:0; right:0; }
+  /* strip marks: a door's black half sliced in half again, i.e. the outer quarter strip */
+  .mark-s-up{ top:0; left:0; width:100%; height:25%; }
+  .mark-s-down{ bottom:0; left:0; width:100%; height:25%; }
+  .mark-s-left{ top:0; left:0; width:25%; height:100%; }
+  .mark-s-right{ top:0; right:0; width:25%; height:100%; }
 
   .actions{
     display:flex;
@@ -565,6 +570,23 @@
           </button>
         </div>
         <div class="tool-buttons">
+          <button class="tool-btn icon-tool" data-dir="cycle-strip" onclick="selectTool('cycle-strip')" data-i18n-title="toolCycleStrip">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 3l4 4-9 9H7v-4z"/><path d="M13.5 5.5l4 4"/><path d="M4 21h16"/></svg>
+          </button>
+          <button class="tool-btn" data-dir="s-up" onclick="selectTool('s-up')" data-i18n-title="tool_s_up">
+            <span class="tool-swatch"><span class="mark mark-s-up"></span></span>
+          </button>
+          <button class="tool-btn" data-dir="s-down" onclick="selectTool('s-down')" data-i18n-title="tool_s_down">
+            <span class="tool-swatch"><span class="mark mark-s-down"></span></span>
+          </button>
+          <button class="tool-btn" data-dir="s-left" onclick="selectTool('s-left')" data-i18n-title="tool_s_left">
+            <span class="tool-swatch"><span class="mark mark-s-left"></span></span>
+          </button>
+          <button class="tool-btn" data-dir="s-right" onclick="selectTool('s-right')" data-i18n-title="tool_s_right">
+            <span class="tool-swatch"><span class="mark mark-s-right"></span></span>
+          </button>
+        </div>
+        <div class="tool-buttons">
           <button id="lockModeBtn" class="tool-btn lock-btn" onclick="toggleLockMode()" data-i18n-title="toolLock">
             <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>
           </button>
@@ -597,9 +619,10 @@
 <script>
   const DIR_ORDER = ['blank','up','down','left','right'];
   const MARK_ORDER = ['blank','q-tl','q-tr','q-bl','q-br'];
+  const STRIP_ORDER = ['blank','s-up','s-down','s-left','s-right'];
   // cycle tools: each click advances the cell through its order (a value from the other
   // order, e.g. a door under the pencil, starts the cycle like a blank)
-  const CYCLE_TOOLS = {'cycle-door': DIR_ORDER, 'cycle-mark': MARK_ORDER};
+  const CYCLE_TOOLS = {'cycle-door': DIR_ORDER, 'cycle-mark': MARK_ORDER, 'cycle-strip': STRIP_ORDER};
   function nextInCycle(order, cur){
     return order[(Math.max(0, order.indexOf(cur)) + 1) % order.length];
   }
@@ -1600,6 +1623,11 @@
       tool_q_tr: '우상단 표시 (1/4칸, 답안에 포함되지 않음)',
       tool_q_bl: '좌하단 표시 (1/4칸, 답안에 포함되지 않음)',
       tool_q_br: '우하단 표시 (1/4칸, 답안에 포함되지 않음)',
+      toolCycleStrip: '줄 표기 순환: 누를 때마다 위 → 아래 → 왼쪽 → 오른쪽 → 빈칸 (1/4칸, 답안에 포함되지 않음)',
+      tool_s_up: '위쪽 줄 표시 (1/4칸, 답안에 포함되지 않음)',
+      tool_s_down: '아래쪽 줄 표시 (1/4칸, 답안에 포함되지 않음)',
+      tool_s_left: '왼쪽 줄 표시 (1/4칸, 답안에 포함되지 않음)',
+      tool_s_right: '오른쪽 줄 표시 (1/4칸, 답안에 포함되지 않음)',
       toolLock: '잠금 모드: 켜면 누른 칸이 잠기거나 풀립니다',
       toolErase: '지우개: 누른 칸의 문을 지웁니다',
       toolHint: '클릭 시 문 방향: 위 → 아래 → 왼쪽 → 오른쪽 → 빈칸\n우클릭 or 길게 클릭: 잠금',
@@ -1643,6 +1671,11 @@
       tool_q_tr: 'Top-right mark (quarter cell, not part of the answer)',
       tool_q_bl: 'Bottom-left mark (quarter cell, not part of the answer)',
       tool_q_br: 'Bottom-right mark (quarter cell, not part of the answer)',
+      toolCycleStrip: 'Strip mark cycle: each click goes Up → Down → Left → Right → Empty (quarter cell, not part of the answer)',
+      tool_s_up: 'Top strip mark (quarter cell, not part of the answer)',
+      tool_s_down: 'Bottom strip mark (quarter cell, not part of the answer)',
+      tool_s_left: 'Left strip mark (quarter cell, not part of the answer)',
+      tool_s_right: 'Right strip mark (quarter cell, not part of the answer)',
       toolLock: 'Lock mode: tap a cell to lock or unlock it',
       toolErase: 'Eraser: clears the door in a clicked cell',
       toolHint: 'Click to set door: Up → Down → Left → Right → Empty\nRight-click or long-press: lock',
@@ -1683,11 +1716,11 @@
     phase: 'start',      // 'start' | 'loading' | 'game'
     size: null,
     puzzle: null,
-    playerState: [],     // per-cell 'blank'|'up'|'down'|'left'|'right', or a 'q-*' solving mark (player cells only)
+    playerState: [],     // per-cell 'blank'|'up'|'down'|'left'|'right', or a 'q-*'/'s-*' solving mark (player cells only)
     lockedCells: [],      // per-cell boolean — a locked player cell ignores left-click/tool edits
     submittedState: null,
     viewMode: 'play',     // 'play' | 'result' (after submitting: the submitted placement)
-    selectedTool: null,   // null | 'cycle-door' | 'cycle-mark' | 'up' | 'down' | 'left' | 'right' | 'q-tl' | 'q-tr' | 'q-bl' | 'q-br' | 'erase'
+    selectedTool: null,   // null | 'cycle-door' | 'cycle-mark' | 'up' | 'down' | 'left' | 'right' | 'q-tl' | 'q-tr' | 'q-bl' | 'q-br' | 'cycle-strip' | 's-up' | 's-down' | 's-left' | 's-right' | 'erase'
     lockMode: false,      // when on, a tap/click toggles the cell's lock instead of editing it
                           // (the touch-screen stand-in for right-click); exclusive with selectedTool
     history: [],          // stack of {playerState, lockedCells} snapshots taken right before
@@ -1814,7 +1847,8 @@
   // player cell, a number cell whose neighbors don't sum to its value (rule 1), a half-block
   // whose black half touches no number cell (rule 2), and both half-blocks of every pair
   // whose black halves touch (rule 3). An empty set means the placement is correct.
-  function isMark(v){ return typeof v === 'string' && v.startsWith('q-'); }
+  // solving marks: corner quarters ('q-*') and edge strips ('s-*'); never part of the answer
+  function isMark(v){ return typeof v === 'string' && (v.startsWith('q-') || v.startsWith('s-')); }
 
   function findViolations(){
     const n = state.size;
