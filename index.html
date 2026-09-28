@@ -2141,9 +2141,10 @@
     render();
   }
 
-  // every tool button (doors, marks, cycle tools, lock, eraser) clicks when pressed
-  document.getElementById('toolPalette').addEventListener('click', (e) => {
-    if(e.target.closest('.tool-btn')) playClick();
+  // Every button on the page clicks when pressed (tools, undo/redo, submit, restart, puzzle
+  // sizes, settings…). Board cells aren't buttons, so placing doors and marks stays silent.
+  document.addEventListener('click', (e) => {
+    if(e.target.closest && e.target.closest('button')) playClick();
   });
 
   function selectTool(dir){
