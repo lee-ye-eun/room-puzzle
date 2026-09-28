@@ -770,6 +770,9 @@
   .row-clues .knob-clue{ justify-content:flex-end; }
   /* every other cell's pair of numbers gets a soft band, so the two halves read as one line */
   .knob-clue.band{ background:var(--line-soft); }
+  /* a clue the player has ticked off (click to toggle) greys out */
+  .knob-clue{ cursor:pointer; }
+  .knob-clue.done{ color:var(--board-mark); }
   .knob-clue.violation{ color:var(--danger); }
 
   .actions{
@@ -3280,7 +3283,8 @@
     submissionCorrect: null, // set by submitAnswer(): true/false once submitted, null before
     violations: new Set(),   // set by submitAnswer(): indices of cells that break a rule
     knobClues: null,         // knob mode only: {rows, cols} knob counts per half-line, from the answer
-    knobViolations: new Set() // set by submitAnswer(): 'r3' / 'c7' half-lines whose knob count is off
+    knobViolations: new Set(), // set by submitAnswer(): 'r3' / 'c7' half-lines whose knob count is off
+    knobDone: new Set()        // knob clues the player clicked to grey out, same 'r3' / 'c7' keys
   };
 
   // Snapshots playerState/lockedCells right before an edit so undo/redo can restore them.
@@ -3457,6 +3461,7 @@
       state.submissionCorrect = null;
       state.violations = new Set();
       state.knobViolations = new Set();
+      state.knobDone = new Set();
       render();
       startTimer();
     }, 30);
@@ -3660,6 +3665,7 @@
     state.violations = new Set();
     state.knobClues = null;
     state.knobViolations = new Set();
+    state.knobDone = new Set();
     render();
   }
 
@@ -3800,6 +3806,14 @@
     e.preventDefault();
   }
 
+  // Clicking a knob clue greys it out as "done"; clicking again restores it. A solving note
+  // only, so it isn't part of undo/redo.
+  function toggleKnobDone(key){
+    if(state.knobDone.has(key)) state.knobDone.delete(key);
+    else state.knobDone.add(key);
+    render();
+  }
+
   // The number strips beside and above the board: 2n numbers each, every cell's two halves
   // sharing a band on alternate cells.
   function renderKnobClues(){
@@ -3812,8 +3826,10 @@
       state.knobClues[key].forEach((count, k) => {
         const span = document.createElement('span');
         span.className = 'knob-clue' + (Math.floor(k / 2) % 2 ? ' band' : '')
+          + (state.knobDone.has(key[0] + k) ? ' done' : '')
           + (state.knobViolations.has(key[0] + k) ? ' violation' : '');
         span.textContent = count;
+        span.onclick = () => toggleKnobDone(key[0] + k);
         strip.appendChild(span);
       });
     });
