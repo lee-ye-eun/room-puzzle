@@ -1995,11 +1995,10 @@
     // that pass's own comment). A generous cap here trades a little loading-screen time for
     // making an outright failure practically impossible.
     //
-    // NOTE: this build has no independent uniqueness solver — see index-solver.html for
-    // that variant. Verified empirically to leave only a small residual chance (roughly
-    // 1-3 cells per puzzle) of a genuine multi-orientation tie slipping through; the solver
-    // variant closes that gap but, at the time it was split out, made larger boards (13×13+)
-    // take tens of seconds per puzzle, which isn't practical yet.
+    // NOTE: this build has no independent uniqueness solver. Verified empirically to leave
+    // only a small residual chance (roughly 1-3 cells per puzzle) of a genuine
+    // multi-orientation tie slipping through; a solver variant closed that gap but made
+    // larger boards (13×13+) take tens of seconds per puzzle, so it was dropped.
     for(let attempt = 0; attempt < 8000; attempt++){
       const puzzle = generatePuzzleAttempt(n);
       if(puzzle) return puzzle;

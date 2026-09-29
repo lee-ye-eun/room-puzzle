@@ -98,7 +98,6 @@
 ```
 .
 ├── index.html          # 게임 본체 (HTML·CSS·JS 단일 파일)
-├── index-solver.html   # 솔버·생성 과정 확인용 실험 페이지
 ├── audio/              # 테마별 BGM (bgm-med / bgm-rococo / bgm-cyber, 암호화된 .dat)
 ├── tools/              # BGM 암호화 스크립트 (encode-audio.mjs)
 └── docs/images/        # README 스크린샷
