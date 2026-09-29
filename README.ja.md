@@ -99,7 +99,8 @@
 .
 ├── index.html          # ゲーム本体（HTML・CSS・JSの単一ファイル）
 ├── index-solver.html   # ソルバー・生成過程を確認する実験用ページ
-├── audio/              # テーマ別BGM（bgm-med / bgm-rococo / bgm-cyber）
+├── audio/              # テーマ別BGM（bgm-med / bgm-rococo / bgm-cyber、暗号化済みの .dat）
+├── tools/              # BGM暗号化スクリプト（encode-audio.mjs）
 └── docs/images/        # README用スクリーンショット
 ```
 
@@ -111,7 +112,7 @@ cd room-puzzle
 open index.html
 ```
 
-> BGMが再生されない場合は、簡易ローカルサーバーで開いてください：`python3 -m http.server` を実行して http://localhost:8000 にアクセス
+> ファイルを直接開くとBGMは再生されません。簡易ローカルサーバーで開いてください：`python3 -m http.server` を実行して http://localhost:8000 にアクセス
 
 ## デプロイ
 
