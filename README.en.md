@@ -99,7 +99,8 @@ Plain **HTML · CSS · JavaScript**, with no build tools or external libraries.
 .
 ├── index.html          # the game (HTML, CSS and JS in one file)
 ├── index-solver.html   # experimental page for inspecting the solver/generator
-├── audio/              # theme BGM (bgm-med / bgm-rococo / bgm-cyber)
+├── audio/              # theme BGM (bgm-med / bgm-rococo / bgm-cyber, encrypted .dat)
+├── tools/              # BGM encryption script (encode-audio.mjs)
 └── docs/images/        # README screenshots
 ```
 
@@ -111,7 +112,7 @@ cd room-puzzle
 open index.html
 ```
 
-> If the BGM doesn't play, serve it locally instead: run `python3 -m http.server` and open http://localhost:8000
+> The BGM won't play when the file is opened directly. Serve it locally instead: run `python3 -m http.server` and open http://localhost:8000
 
 ## Deployment
 
