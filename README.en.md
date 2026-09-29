@@ -98,7 +98,6 @@ Plain **HTML · CSS · JavaScript**, with no build tools or external libraries.
 ```
 .
 ├── index.html          # the game (HTML, CSS and JS in one file)
-├── index-solver.html   # experimental page for inspecting the solver/generator
 ├── audio/              # theme BGM (bgm-med / bgm-rococo / bgm-cyber, encrypted .dat)
 ├── tools/              # BGM encryption script (encode-audio.mjs)
 └── docs/images/        # README screenshots

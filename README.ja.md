@@ -98,7 +98,6 @@
 ```
 .
 ├── index.html          # ゲーム本体（HTML・CSS・JSの単一ファイル）
-├── index-solver.html   # ソルバー・生成過程を確認する実験用ページ
 ├── audio/              # テーマ別BGM（bgm-med / bgm-rococo / bgm-cyber、暗号化済みの .dat）
 ├── tools/              # BGM暗号化スクリプト（encode-audio.mjs）
 └── docs/images/        # README用スクリーンショット
