@@ -634,13 +634,23 @@
   .tool-swatch .fill{ position:absolute; background:var(--board-ink); }
   .tool-btn.active .tool-swatch{ border-color:var(--accent-strong); }
 
+  /* --zoom (set from the magnifier buttons) scales the board; once it outgrows the page the
+     wrap scrolls. The frame centres with auto margins, which drop to 0 on overflow, so the
+     left edge stays reachable. The padding keeps theme frames/glows from being clipped. */
   .board-wrap{
+    --zoom:1;
     display:flex;
-    justify-content:center;
+  }
+  .board-frame{ margin:0 auto; }
+  .board-wrap.zoomed{
+    overflow:auto;
+    padding:8px;
+    margin:-8px;
+    -webkit-overflow-scrolling:touch;
   }
   .board{
     display:grid;
-    width:min(92vw,480px);
+    width:var(--board-w);
     aspect-ratio:1/1;
     border:2px solid var(--board-frame, var(--board-ink));
     border-radius:4px;
@@ -740,7 +750,7 @@
     /* room between the clues and the board, clear of any theme's frame (rococo's gilded
        double frame reaches 5.5px outside the board) */
     --clue-gap:10px;
-    --kb-w:calc(min(92vw,480px) - var(--clue-w));
+    --kb-w:calc((min(92vw,480px) - var(--clue-w)) * var(--zoom));
     display:grid;
     grid-template-columns:var(--clue-w) var(--kb-w);
     grid-template-rows:auto var(--kb-w);
@@ -828,8 +838,8 @@
     -webkit-touch-callout:none;
     -webkit-tap-highlight-color:transparent;
   }
-  .cell{ font-size:clamp(9px, calc(var(--board-w) / var(--n, 9) * .5), 20px); }
-  .board{ --board-w:min(92vw,480px); }
+  .cell{ font-size:clamp(9px, calc(var(--board-w) / var(--n, 9) * .5), calc(20px * var(--zoom))); }
+  .board{ --board-w:calc(min(92vw,480px) * var(--zoom)); }
 
   details.legend > summary{
     cursor:pointer;
@@ -877,7 +887,7 @@
     .tool-palette{ padding:4px 0 12px; gap:8px 10px; }
     #historyActions{ margin:0; }
     .solve-timer{ margin-top:4px; font-size:15px; }
-    #historyActions .btn{ flex:none; width:56px; padding:0; }
+    #historyActions .btn{ flex:none; width:52px; padding:0; }
     #submitActions{ margin-top:6px; }
     #resultBanner{ margin-bottom:0; }
     .tool-title{ font-size:16px; }
@@ -885,9 +895,8 @@
     .tool-buttons{ gap:6px; }
     .tool-btn{ width:52px; height:48px; }
 
-    .board{ --board-w:calc(100vw - 24px); width:var(--board-w); max-width:480px; }
-    .board-frame.knob{ --kb-w:calc(min(100vw - 24px, 480px) - var(--clue-w)); }
-    .board-frame.knob .board{ max-width:none; }
+    .board{ --board-w:calc(min(100vw - 24px, 480px) * var(--zoom)); }
+    .board-frame.knob{ --kb-w:calc((min(100vw - 24px, 480px) - var(--clue-w)) * var(--zoom)); }
 
     .actions{ gap:8px; }
     .actions .btn{ flex:1; padding:12px 10px; min-width:0; }
@@ -1099,6 +1108,12 @@
       </button>
       <button id="redoBtn" class="btn secondary icon-btn" onclick="redo()" data-i18n-title="redo">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 14l5-5-5-5"/><path d="M20 9H9.5a5.5 5.5 0 0 0 0 11H13"/></svg>
+      </button>
+      <button id="zoomOutBtn" class="btn secondary icon-btn" onclick="changeZoom(-1)" data-i18n-title="zoomOut">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L21 21"/><path d="M7.5 10.5h6"/></svg>
+      </button>
+      <button id="zoomInBtn" class="btn secondary icon-btn" onclick="changeZoom(1)" data-i18n-title="zoomIn">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L21 21"/><path d="M7.5 10.5h6"/><path d="M10.5 7.5v6"/></svg>
       </button>
     </div>
     <div class="board-wrap">
@@ -2182,6 +2197,8 @@
       toolErase: '지우개: 누른 칸의 문을 지웁니다',
       undoTitle: '실행 취소 (Ctrl+Z)',
       redo: '다시 실행',
+      zoomIn: '확대',
+      zoomOut: '축소',
       submit: '제출',
       restart: '재시작',
       toolTitle: '도구',
@@ -2245,6 +2262,8 @@
       toolErase: 'Eraser: clears the door in a clicked cell',
       undoTitle: 'Undo (Ctrl+Z)',
       redo: 'Redo',
+      zoomIn: 'Zoom in',
+      zoomOut: 'Zoom out',
       submit: 'Submit',
       restart: 'Restart',
       toolTitle: 'Tools',
@@ -2298,6 +2317,8 @@
       toolErase: "消しゴム：クリックしたマスのドアを消します",
       undoTitle: "元に戻す (Ctrl+Z)",
       redo: "やり直す",
+      zoomIn: "拡大",
+      zoomOut: "縮小",
       submit: "提出",
       restart: "やり直し",
       toolTitle: "ツール",
@@ -2351,6 +2372,8 @@
       toolErase: "橡皮擦：擦除所点格子中的门",
       undoTitle: "撤销 (Ctrl+Z)",
       redo: "重做",
+      zoomIn: "放大",
+      zoomOut: "缩小",
       submit: "提交",
       restart: "重新开始",
       toolTitle: "工具",
@@ -2404,6 +2427,8 @@
       toolErase: "橡皮擦：擦除所點格子中的門",
       undoTitle: "復原 (Ctrl+Z)",
       redo: "重做",
+      zoomIn: "放大",
+      zoomOut: "縮小",
       submit: "提交",
       restart: "重新開始",
       toolTitle: "工具",
@@ -2457,6 +2482,8 @@
       toolErase: "Borrador: quita la puerta de la casilla que pulses",
       undoTitle: "Deshacer (Ctrl+Z)",
       redo: "Rehacer",
+      zoomIn: "Acercar",
+      zoomOut: "Alejar",
       submit: "Enviar",
       restart: "Reiniciar",
       toolTitle: "Herramientas",
@@ -2510,6 +2537,8 @@
       toolErase: "Gomme : efface la porte de la case cliquée",
       undoTitle: "Annuler (Ctrl+Z)",
       redo: "Rétablir",
+      zoomIn: "Zoom avant",
+      zoomOut: "Zoom arrière",
       submit: "Valider",
       restart: "Recommencer",
       toolTitle: "Outils",
@@ -2563,6 +2592,8 @@
       toolErase: "Radierer: löscht die Tür im angeklickten Feld",
       undoTitle: "Rückgängig (Strg+Z)",
       redo: "Wiederholen",
+      zoomIn: "Vergrößern",
+      zoomOut: "Verkleinern",
       submit: "Abgeben",
       restart: "Neu starten",
       toolTitle: "Werkzeuge",
@@ -2616,6 +2647,8 @@
       toolErase: "Borracha: apaga a porta da casa clicada",
       undoTitle: "Desfazer (Ctrl+Z)",
       redo: "Refazer",
+      zoomIn: "Ampliar",
+      zoomOut: "Reduzir",
       submit: "Enviar",
       restart: "Reiniciar",
       toolTitle: "Ferramentas",
@@ -2669,6 +2702,8 @@
       toolErase: "Ластик: стирает дверь в нажатой клетке",
       undoTitle: "Отменить (Ctrl+Z)",
       redo: "Повторить",
+      zoomIn: "Увеличить",
+      zoomOut: "Уменьшить",
       submit: "Проверить",
       restart: "Заново",
       toolTitle: "Инструменты",
@@ -2722,6 +2757,8 @@
       toolErase: "Gomma: cancella la porta nella casella cliccata",
       undoTitle: "Annulla (Ctrl+Z)",
       redo: "Ripeti",
+      zoomIn: "Ingrandisci",
+      zoomOut: "Riduci",
       submit: "Invia",
       restart: "Ricomincia",
       toolTitle: "Strumenti",
@@ -2775,6 +2812,8 @@
       toolErase: "Cục tẩy: xóa cửa trong ô được nhấn",
       undoTitle: "Hoàn tác (Ctrl+Z)",
       redo: "Làm lại",
+      zoomIn: "Phóng to",
+      zoomOut: "Thu nhỏ",
       submit: "Nộp",
       restart: "Chơi lại",
       toolTitle: "Công cụ",
@@ -2828,6 +2867,8 @@
       toolErase: "Penghapus: menghapus pintu di kotak yang diklik",
       undoTitle: "Urungkan (Ctrl+Z)",
       redo: "Ulangi",
+      zoomIn: "Perbesar",
+      zoomOut: "Perkecil",
       submit: "Kirim",
       restart: "Mulai ulang",
       toolTitle: "Alat",
@@ -2881,6 +2922,8 @@
       toolErase: "ยางลบ: ลบประตูในช่องที่คลิก",
       undoTitle: "เลิกทำ (Ctrl+Z)",
       redo: "ทำซ้ำ",
+      zoomIn: "ขยาย",
+      zoomOut: "ย่อ",
       submit: "ส่ง",
       restart: "เริ่มใหม่",
       toolTitle: "เครื่องมือ",
@@ -3853,6 +3896,64 @@
   document.addEventListener('pointerup', endDrag);
   document.addEventListener('pointercancel', () => { drag = null; });
 
+  // Board zoom (the magnifier buttons next to undo/redo). The level is a per-device view
+  // preference, kept in localStorage; it isn't part of the puzzle state.
+  const ZOOM_LEVELS = [0.6, 0.8, 1, 1.25, 1.5, 2, 2.5, 3];
+  let zoomIndex = ZOOM_LEVELS.indexOf(1);
+  try {
+    const savedZoom = ZOOM_LEVELS.indexOf(Number(localStorage.getItem('roomPuzzle.zoom')));
+    if(savedZoom >= 0) zoomIndex = savedZoom;
+  } catch(e){}
+
+  function changeZoom(step){
+    const next = Math.max(0, Math.min(ZOOM_LEVELS.length - 1, zoomIndex + step));
+    if(next === zoomIndex) return;
+    const wrap = document.querySelector('.board-wrap');
+    // keep the point at the middle of the visible area in the middle after rescaling
+    const ratio = ZOOM_LEVELS[next] / ZOOM_LEVELS[zoomIndex];
+    const cx = wrap.scrollLeft + wrap.clientWidth / 2;
+    zoomIndex = next;
+    try { localStorage.setItem('roomPuzzle.zoom', String(ZOOM_LEVELS[zoomIndex])); } catch(e){}
+    renderZoom();
+    wrap.scrollLeft = cx * ratio - wrap.clientWidth / 2;
+  }
+
+  function renderZoom(){
+    const zoom = ZOOM_LEVELS[zoomIndex];
+    const wrap = document.querySelector('.board-wrap');
+    wrap.style.setProperty('--zoom', zoom);
+    wrap.classList.toggle('zoomed', zoom > 1);
+    document.getElementById('zoomOutBtn').disabled = zoomIndex === 0;
+    document.getElementById('zoomInBtn').disabled = zoomIndex === ZOOM_LEVELS.length - 1;
+  }
+
+  // While a tool is selected a one-finger drag paints, so a zoomed board is panned with two
+  // fingers instead. A second finger also cancels the paint drag / long-press it started.
+  let pan = null;
+  function touchMid(e){
+    return {x: (e.touches[0].clientX + e.touches[1].clientX) / 2,
+            y: (e.touches[0].clientY + e.touches[1].clientY) / 2};
+  }
+  document.querySelector('.board-wrap').addEventListener('touchstart', (e) => {
+    if(e.touches.length < 2) return;
+    if(drag && !drag.painted) drag = null;
+    cancelLongPress();
+    pan = touchMid(e);
+  }, {passive: true});
+  document.querySelector('.board-wrap').addEventListener('touchmove', (e) => {
+    if(!pan || e.touches.length < 2) return;
+    e.preventDefault();
+    drag = null;
+    const mid = touchMid(e);
+    const wrap = e.currentTarget;
+    wrap.scrollLeft -= mid.x - pan.x;
+    window.scrollBy(0, -(mid.y - pan.y));
+    pan = touchMid(e);
+  }, {passive: false});
+  document.querySelector('.board-wrap').addEventListener('touchend', (e) => {
+    if(e.touches.length < 2) pan = null;
+  });
+
   // Wired to every board cell (rooms included), so a drag can start anywhere on the board.
   function startDrag(e, index){
     suppressNextClick = false;
@@ -3972,6 +4073,7 @@
     document.getElementById('historyActions').hidden = state.viewMode !== 'play';
     document.getElementById('undoBtn').disabled = state.history.length === 0;
     document.getElementById('redoBtn').disabled = state.future.length === 0;
+    renderZoom();
     document.getElementById('lockModeBtn').classList.toggle('active', state.lockMode);
 
     const board = document.getElementById('board');
