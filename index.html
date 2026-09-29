@@ -673,6 +673,10 @@
     background:var(--fixed);
     color:var(--fixed-text, #fff);
   }
+  /* a room the player clicked: its number fades out, like a greyed-out knob clue */
+  .cell.fixed-number.done{
+    color:color-mix(in srgb, var(--fixed-text, #fff) 35%, var(--fixed));
+  }
   .cell.fixed-empty{
     background:var(--fixed);
   }
@@ -1138,9 +1142,10 @@
   // cycle tools: each click advances the cell through its order (a value from the other
   // order, e.g. a door under the pencil, starts the cycle like a blank)
   const CYCLE_TOOLS = {'cycle-door': DIR_ORDER, 'cycle-mark': MARK_ORDER, 'cycle-strip': STRIP_ORDER};
-  // A cell holds 'blank', a door ('up'…), or solving marks: at most one corner quarter
-  // ('q-*') plus at most one edge strip ('s-*'), stored together as e.g. 'q-br|s-down'.
-  // A mark of the same kind replaces the old one; a door (or the eraser) clears them all.
+  // A cell holds 'blank', a door ('up'…), or a solving mark: a corner quarter ('q-*') or an
+  // edge strip ('s-*'). A mark of the same kind replaces the old one; a door (or the eraser)
+  // clears it. Quarters outrank strips: a quarter overwrites the cell's strip, and a strip
+  // is never added to a cell that already holds a quarter.
   function markParts(v){
     const parts = {q: null, s: null};
     if(typeof v !== 'string') return parts;
@@ -1157,6 +1162,8 @@
   function markKind(mark){ return mark.startsWith('q-') ? 'q' : 's'; }
   function withMark(cur, mark){
     const parts = markParts(cur);
+    if(markKind(mark) === 'q') parts.s = null;
+    else if(parts.q) return cur;
     parts[markKind(mark)] = mark;
     return joinMarks(parts);
   }
@@ -3414,7 +3421,8 @@
     violations: new Set(),   // set by submitAnswer(): indices of cells that break a rule
     knobClues: null,         // knob mode only: {rows, cols} knob counts per half-line, from the answer
     knobViolations: new Set(), // set by submitAnswer(): 'r3' / 'c7' half-lines whose knob count is off
-    knobDone: new Set()        // knob clues the player clicked to grey out, same 'r3' / 'c7' keys
+    knobDone: new Set(),       // knob clues the player clicked to grey out, same 'r3' / 'c7' keys
+    roomDone: new Set()        // indices of rooms the player clicked to fade their number
   };
 
   // Snapshots playerState/lockedCells right before an edit so undo/redo can restore them.
@@ -3600,10 +3608,21 @@
       state.violations = new Set();
       state.knobViolations = new Set();
       state.knobDone = new Set();
+      state.roomDone = new Set();
       render();
       startTimer();
     }, 30);
   }
+
+  // The rules / how-to-play cards stay open or closed the way the player last left them.
+  ['rulesCard', 'controlsCard'].forEach(id => {
+    const card = document.getElementById(id);
+    const key = 'roomPuzzle.' + id + 'Open';
+    try { if(localStorage.getItem(key) === '0') card.open = false; } catch(e){}
+    card.addEventListener('toggle', () => {
+      try { localStorage.setItem(key, card.open ? '1' : '0'); } catch(e){}
+    });
+  });
 
   const TOOLS_COLLAPSED_KEY = 'roomPuzzle.toolsCollapsed';
   let toolsCollapsed = true;
@@ -3693,9 +3712,7 @@
   // count) or none of them (remaining == 0) — a forced 0.5 is never filled. Door overlap
   // (rule 3) is deliberately ignored. Filled doors are locked, since they're now certain.
   function autoFillRoom(index){
-    if(state.phase !== 'game' || state.viewMode !== 'play') return;
     const cells = state.puzzle.cells;
-    if(cells[index].type !== 'number') return;
     let remaining = cells[index].value;
     const unknown = [];
     neighborsOf(state.size, index).forEach(({idx, dir}) => {
@@ -3720,6 +3737,19 @@
       state.lockedCells[idx] = true;
     });
     playPlace();
+  }
+
+  // Clicking a room fades its number as "done" (a solving note like a greyed-out knob clue,
+  // so the fade itself isn't part of undo/redo), auto-filling whatever the number decides.
+  // Clicking a faded room restores its number without touching the board.
+  function handleRoomClick(index){
+    if(state.phase !== 'game' || state.viewMode !== 'play') return;
+    if(state.roomDone.has(index)){
+      state.roomDone.delete(index);
+    } else {
+      autoFillRoom(index);
+      state.roomDone.add(index);
+    }
     render();
   }
 
@@ -3804,6 +3834,7 @@
     state.knobClues = null;
     state.knobViolations = new Set();
     state.knobDone = new Set();
+    state.roomDone = new Set();
     render();
   }
 
@@ -3992,7 +4023,7 @@
 
   function onCellClick(index){
     if(suppressNextClick){ suppressNextClick = false; return; }
-    if(state.puzzle.cells[index].type === 'number') autoFillRoom(index);
+    if(state.puzzle.cells[index].type === 'number') handleRoomClick(index);
     else handleCellClick(index);
   }
   // The lock toggle itself happens on pointerup (see endDrag) so a right-button press can
@@ -4092,7 +4123,8 @@
       div.dataset.index = i;
 
       if(cell.type === 'number'){
-        div.className = 'cell fixed-number' + (state.violations.has(i) ? ' violation' : '');
+        div.className = 'cell fixed-number' + (state.roomDone.has(i) ? ' done' : '')
+          + (state.violations.has(i) ? ' violation' : '');
         div.textContent = cell.value;
       } else if(cell.type === 'full'){
         div.className = 'cell fixed-full';
