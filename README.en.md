@@ -19,6 +19,7 @@ No installation needed — play it right in your browser.
 4. Every door must **touch at least one room**.
 5. **Doors cannot touch other doors.**
 6. Every empty cell must contain a door.
+7. Gray marks are notes for solving, not doors.
 
 ### Example
 
@@ -55,12 +56,24 @@ Click a number to gray it out once you've dealt with it.
 | Click an empty cell | Cycle the door: Up → Down → Left → Right → Empty |
 | Pick a tool, then click/drag | Place a door facing that way on one or many cells |
 | Right-click · long-press | Lock/unlock a cell (right-drag to lock many at once) |
-| Click a room | Auto-fill neighbors that have only one possible door |
+| Click a room | Fade its number, auto-filling any neighbors that have only one possible door (click again to restore the number) |
 | Click a number outside the grid | Toggle gray-out |
 | `Ctrl + Z` | Undo |
 
 Gray marks (quarter-cell and strip notes) are for solving and aren't checked as part of the answer.
 Locked cells have a red border.
+
+### Keyboard shortcuts
+
+A letter key alone picks that row's cycle tool; hold the letter and press a number to pick a specific tool.
+
+| Key | Tool | `+ 1` | `+ 2` | `+ 3` | `+ 4` |
+| --- | --- | --- | --- | --- | --- |
+| `D` | Door (cycles 4 directions) | Up | Down | Left | Right |
+| `F` | Quarter-cell note (cycles 4 corners) | Top-left | Top-right | Bottom-left | Bottom-right |
+| `G` | Strip note (cycles 4 sides) | Top | Bottom | Left | Right |
+| `L` | Lock | | | | |
+| `E` | Eraser | | | | |
 
 ### Checking
 
