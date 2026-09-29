@@ -735,7 +735,10 @@
   /* doorknob clues: one number per half-row (left of the board) and per half-column
      (above it), since a knob always sits in one quarter of its cell */
   .board-frame.knob{
-    --clue-w:22px;
+    --clue-w:28px;
+    /* room between the clues and the board, clear of any theme's frame (rococo's gilded
+       double frame reaches 5.5px outside the board) */
+    --clue-gap:10px;
     --kb-w:calc(min(92vw,480px) - var(--clue-w));
     display:grid;
     grid-template-columns:var(--clue-w) var(--kb-w);
@@ -753,11 +756,11 @@
     line-height:1;
   }
   /* the 2n tracks are set from render() */
-  .col-clues{ grid-column:2; grid-row:1; padding:0 2px 4px; }
-  .row-clues{ grid-column:1; grid-row:2; padding:2px 4px 2px 0; }
+  .col-clues{ grid-column:2; grid-row:1; padding:0 2px var(--clue-gap); }
+  .row-clues{ grid-column:1; grid-row:2; padding:2px var(--clue-gap) 2px 0; }
   .knob-clue{ display:flex; align-items:center; justify-content:center; }
-  .col-clues .knob-clue{ align-items:flex-end; padding-top:3px; }
-  .row-clues .knob-clue{ justify-content:flex-end; }
+  /* numbers sit dead centre in their slot, so the band around them is even on every side */
+  .col-clues .knob-clue{ padding:3px 0; }
   /* every other cell's pair of numbers gets a soft band, so the two halves read as one line */
   .knob-clue.band{ background:var(--line-soft); }
   /* a clue the player has ticked off (click to toggle) greys out */
@@ -1012,7 +1015,6 @@
 
   <section id="loadingScreen" class="start-card" hidden>
     <h2 data-i18n="loadingTitle">퍼즐 생성 중…</h2>
-    <p style="margin:0;color:var(--muted);font-size:13px;" data-i18n="loadingBody">숫자 배치와 유일해 검증을 진행하고 있어요.</p>
   </section>
 
   <section id="gameScreen" hidden>
@@ -1106,7 +1108,7 @@
       </div>
     </div>
     <div id="submitActions" class="actions">
-      <button id="submitBtn" class="btn" onclick="submitAnswer()" data-i18n="submit">답안 제출</button>
+      <button id="submitBtn" class="btn" onclick="submitAnswer()" data-i18n="submit">제출</button>
       <button id="restartBtn" class="btn danger-outline" onclick="restart()" hidden data-i18n="restart">재시작</button>
     </div>
   </section>
@@ -2161,7 +2163,6 @@
       sizeTitle: '퍼즐 크기',
       recordsTitle: '기록',
       loadingTitle: '퍼즐 생성 중…',
-      loadingBody: '숫자 배치와 유일해 검증을 진행하고 있어요.',
       toolCycleDoor: '문 순환: 누를 때마다 위 → 아래 → 왼쪽 → 오른쪽 → 빈칸',
       toolCycleMark: '표기 순환(연필): 누를 때마다 좌상단 → 우상단 → 좌하단 → 우하단 → 빈칸',
       tool_up: '위쪽 문',
@@ -2181,7 +2182,7 @@
       toolErase: '지우개: 누른 칸의 문을 지웁니다',
       undoTitle: '실행 취소 (Ctrl+Z)',
       redo: '다시 실행',
-      submit: '답안 제출',
+      submit: '제출',
       restart: '재시작',
       toolTitle: '도구',
       toolToggle: '도구 펼치기/접기',
@@ -2225,7 +2226,6 @@
       sizeTitle: 'Puzzle size',
       recordsTitle: 'Records',
       loadingTitle: 'Generating puzzle…',
-      loadingBody: 'Placing numbers and verifying the puzzle.',
       toolCycleDoor: 'Door cycle: each click goes Up → Down → Left → Right → Empty',
       toolCycleMark: 'Mark cycle (pencil): each click goes Top-left → Top-right → Bottom-left → Bottom-right → Empty',
       tool_up: 'Door facing up',
@@ -2279,7 +2279,6 @@
       sizeTitle: "パズルのサイズ",
       recordsTitle: "記録",
       loadingTitle: "パズルを生成中…",
-      loadingBody: "数字を配置し、パズルを検証しています。",
       toolCycleDoor: "ドア切替：クリックごとに 上 → 下 → 左 → 右 → 空白",
       toolCycleMark: "メモ切替（鉛筆）：クリックごとに 左上 → 右上 → 左下 → 右下 → 空白",
       tool_up: "上向きのドア",
@@ -2299,7 +2298,7 @@
       toolErase: "消しゴム：クリックしたマスのドアを消します",
       undoTitle: "元に戻す (Ctrl+Z)",
       redo: "やり直す",
-      submit: "解答を提出",
+      submit: "提出",
       restart: "やり直し",
       toolTitle: "ツール",
       toolToggle: "ツールの表示／非表示",
@@ -2333,7 +2332,6 @@
       sizeTitle: "谜题大小",
       recordsTitle: "记录",
       loadingTitle: "正在生成谜题…",
-      loadingBody: "正在放置数字并验证谜题。",
       toolCycleDoor: "门循环：每次点击 上 → 下 → 左 → 右 → 空白",
       toolCycleMark: "标记循环（铅笔）：每次点击 左上 → 右上 → 左下 → 右下 → 空白",
       tool_up: "朝上的门",
@@ -2353,7 +2351,7 @@
       toolErase: "橡皮擦：擦除所点格子中的门",
       undoTitle: "撤销 (Ctrl+Z)",
       redo: "重做",
-      submit: "提交答案",
+      submit: "提交",
       restart: "重新开始",
       toolTitle: "工具",
       toolToggle: "显示／隐藏工具",
@@ -2387,7 +2385,6 @@
       sizeTitle: "謎題大小",
       recordsTitle: "紀錄",
       loadingTitle: "正在產生謎題…",
-      loadingBody: "正在放置數字並驗證謎題。",
       toolCycleDoor: "門循環：每次點擊 上 → 下 → 左 → 右 → 空白",
       toolCycleMark: "標記循環（鉛筆）：每次點擊 左上 → 右上 → 左下 → 右下 → 空白",
       tool_up: "朝上的門",
@@ -2407,7 +2404,7 @@
       toolErase: "橡皮擦：擦除所點格子中的門",
       undoTitle: "復原 (Ctrl+Z)",
       redo: "重做",
-      submit: "提交答案",
+      submit: "提交",
       restart: "重新開始",
       toolTitle: "工具",
       toolToggle: "顯示／隱藏工具",
@@ -2441,7 +2438,6 @@
       sizeTitle: "Tamaño del puzle",
       recordsTitle: "Récords",
       loadingTitle: "Generando puzle…",
-      loadingBody: "Colocando números y verificando el puzle.",
       toolCycleDoor: "Ciclo de puerta: cada clic pasa Arriba → Abajo → Izquierda → Derecha → Vacía",
       toolCycleMark: "Ciclo de marca (lápiz): cada clic pasa Arriba izq. → Arriba der. → Abajo izq. → Abajo der. → Vacía",
       tool_up: "Puerta hacia arriba",
@@ -2495,7 +2491,6 @@
       sizeTitle: "Taille du puzzle",
       recordsTitle: "Records",
       loadingTitle: "Génération du puzzle…",
-      loadingBody: "Placement des nombres et vérification du puzzle.",
       toolCycleDoor: "Cycle de porte : chaque clic passe Haut → Bas → Gauche → Droite → Vide",
       toolCycleMark: "Cycle de marque (crayon) : chaque clic passe Haut gauche → Haut droite → Bas gauche → Bas droite → Vide",
       tool_up: "Porte vers le haut",
@@ -2549,7 +2544,6 @@
       sizeTitle: "Rätselgröße",
       recordsTitle: "Rekorde",
       loadingTitle: "Rätsel wird erstellt…",
-      loadingBody: "Zahlen werden gesetzt und das Rätsel wird geprüft.",
       toolCycleDoor: "Tür-Wechsel: jeder Klick Oben → Unten → Links → Rechts → Leer",
       toolCycleMark: "Markierungs-Wechsel (Stift): jeder Klick Oben links → Oben rechts → Unten links → Unten rechts → Leer",
       tool_up: "Tür nach oben",
@@ -2603,7 +2597,6 @@
       sizeTitle: "Tamanho do quebra-cabeça",
       recordsTitle: "Recordes",
       loadingTitle: "Gerando quebra-cabeça…",
-      loadingBody: "Colocando números e verificando o quebra-cabeça.",
       toolCycleDoor: "Ciclo de porta: cada clique vai Cima → Baixo → Esquerda → Direita → Vazia",
       toolCycleMark: "Ciclo de marca (lápis): cada clique vai Sup. esquerda → Sup. direita → Inf. esquerda → Inf. direita → Vazia",
       tool_up: "Porta para cima",
@@ -2657,7 +2650,6 @@
       sizeTitle: "Размер головоломки",
       recordsTitle: "Рекорды",
       loadingTitle: "Создание головоломки…",
-      loadingBody: "Расставляем числа и проверяем головоломку.",
       toolCycleDoor: "Смена двери: каждый клик Вверх → Вниз → Влево → Вправо → Пусто",
       toolCycleMark: "Смена отметки (карандаш): каждый клик Сверху слева → Сверху справа → Снизу слева → Снизу справа → Пусто",
       tool_up: "Дверь вверх",
@@ -2711,7 +2703,6 @@
       sizeTitle: "Dimensione del puzzle",
       recordsTitle: "Record",
       loadingTitle: "Generazione del puzzle…",
-      loadingBody: "Posiziono i numeri e verifico il puzzle.",
       toolCycleDoor: "Ciclo porta: ogni clic Su → Giù → Sinistra → Destra → Vuota",
       toolCycleMark: "Ciclo segno (matita): ogni clic In alto a sin. → In alto a des. → In basso a sin. → In basso a des. → Vuota",
       tool_up: "Porta verso l’alto",
@@ -2765,7 +2756,6 @@
       sizeTitle: "Kích thước câu đố",
       recordsTitle: "Kỷ lục",
       loadingTitle: "Đang tạo câu đố…",
-      loadingBody: "Đang đặt số và kiểm tra câu đố.",
       toolCycleDoor: "Đổi cửa: mỗi lần nhấn Lên → Xuống → Trái → Phải → Trống",
       toolCycleMark: "Đổi dấu (bút chì): mỗi lần nhấn Trên trái → Trên phải → Dưới trái → Dưới phải → Trống",
       tool_up: "Cửa hướng lên",
@@ -2785,7 +2775,7 @@
       toolErase: "Cục tẩy: xóa cửa trong ô được nhấn",
       undoTitle: "Hoàn tác (Ctrl+Z)",
       redo: "Làm lại",
-      submit: "Nộp bài",
+      submit: "Nộp",
       restart: "Chơi lại",
       toolTitle: "Công cụ",
       toolToggle: "Hiện/ẩn công cụ",
@@ -2819,7 +2809,6 @@
       sizeTitle: "Ukuran teka-teki",
       recordsTitle: "Rekor",
       loadingTitle: "Membuat teka-teki…",
-      loadingBody: "Menempatkan angka dan memeriksa teka-teki.",
       toolCycleDoor: "Ganti pintu: setiap klik Atas → Bawah → Kiri → Kanan → Kosong",
       toolCycleMark: "Ganti tanda (pensil): setiap klik Kiri atas → Kanan atas → Kiri bawah → Kanan bawah → Kosong",
       tool_up: "Pintu menghadap atas",
@@ -2839,7 +2828,7 @@
       toolErase: "Penghapus: menghapus pintu di kotak yang diklik",
       undoTitle: "Urungkan (Ctrl+Z)",
       redo: "Ulangi",
-      submit: "Kirim jawaban",
+      submit: "Kirim",
       restart: "Mulai ulang",
       toolTitle: "Alat",
       toolToggle: "Tampilkan/sembunyikan alat",
@@ -2873,7 +2862,6 @@
       sizeTitle: "ขนาดปริศนา",
       recordsTitle: "สถิติ",
       loadingTitle: "กำลังสร้างปริศนา…",
-      loadingBody: "กำลังวางตัวเลขและตรวจสอบปริศนา",
       toolCycleDoor: "สลับประตู: แต่ละคลิก บน → ล่าง → ซ้าย → ขวา → ว่าง",
       toolCycleMark: "สลับเครื่องหมาย (ดินสอ): แต่ละคลิก บนซ้าย → บนขวา → ล่างซ้าย → ล่างขวา → ว่าง",
       tool_up: "ประตูหันขึ้น",
@@ -2893,7 +2881,7 @@
       toolErase: "ยางลบ: ลบประตูในช่องที่คลิก",
       undoTitle: "เลิกทำ (Ctrl+Z)",
       redo: "ทำซ้ำ",
-      submit: "ส่งคำตอบ",
+      submit: "ส่ง",
       restart: "เริ่มใหม่",
       toolTitle: "เครื่องมือ",
       toolToggle: "แสดง/ซ่อนเครื่องมือ",
