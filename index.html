@@ -400,9 +400,10 @@
     color:var(--ink);
     min-width:120px;
   }
-  .title-door{ height:.84em; width:auto; flex-shrink:0; }
+  .title-door{ height:.84em; width:auto; flex-shrink:0; touch-action:manipulation; } /* rapid taps knock instead of zooming */
   .title-door path, .title-door rect{ fill:var(--title-door, var(--ink)); }
   .title-door circle{ fill:var(--paper); }
+  .title-door.broken{ visibility:hidden; }
   header.top h1{
     display:flex;
     align-items:center;
@@ -895,7 +896,7 @@
 
 <div class="page">
   <header class="top">
-    <h1><svg class="title-door" viewBox="0 0 24 30" aria-hidden="true" onclick="playCreak()"><path d="M4 28V3a3 3 0 0 1 3-3h10a3 3 0 0 1 3 3v25z"/><rect x="0" y="27.5" width="24" height="2.5" rx="1"/><circle cx="15.5" cy="14.5" r="1.6"/></svg>Room Puzzle</h1>
+    <h1><svg class="title-door" viewBox="0 0 24 30" aria-hidden="true" onclick="knockDoor()"><path d="M4 28V3a3 3 0 0 1 3-3h10a3 3 0 0 1 3 3v25z"/><rect x="0" y="27.5" width="24" height="2.5" rx="1"/><circle cx="15.5" cy="14.5" r="1.6"/></svg>Room Puzzle</h1>
     <button id="settingsBtn" class="icon-round-btn settings-btn" onclick="toggleSettings()" data-i18n-title="settingsOpen" aria-haspopup="dialog">
       <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
     </button>
@@ -3122,44 +3123,94 @@
 
   function playClick(){ playSound(scheduleClick); }
 
-  // The title's door: a slow hinge creak (끼이익). A hinge squeals by stick-slip — a train of
-  // tiny ticks whose rate wanders as the door swings — so this builds that tick train into a
-  // buffer (rate rising, then easing off, with jitter) and rings it through a few narrow
-  // resonances, which is what turns the ticks into a woody, metallic squeak.
-  function scheduleCreak(ctx, dest, t){
-    const length = 1.3;
-    const rate = ctx.sampleRate;
-    const buf = ctx.createBuffer(1, Math.ceil(rate * length), rate);
+  // The title's door: a knock on a thick wooden door (똑똑). Each knock is a knuckle's click —
+  // a very short noise burst, kept low so it doesn't sound sharp — ringing the door panel's
+  // few low resonances; the second knock follows after an unhurried pause, a little softer.
+  function scheduleKnockHit(ctx, dest, t, gain){
+    const len = Math.ceil(ctx.sampleRate * 0.03);
+    const buf = ctx.createBuffer(1, len, ctx.sampleRate);
     const data = buf.getChannelData(0);
-    let pos = 0;
-    while(pos < data.length){
-      const x = pos / data.length;                                   // 0 → 1 through the swing
-      const pitch = 55 + 95 * Math.sin(Math.PI * Math.min(1, x * 1.25)) * (1 - 0.35 * x);
-      const env = Math.min(1, x / 0.06) * Math.min(1, (1 - x) / 0.35);
-      const amp = env * (0.6 + 0.4 * Math.random());
-      for(let k = 0; k < 24 && pos + k < data.length; k++) data[pos + k] += amp * Math.exp(-k / 5) * (k % 2 ? -1 : 1);
-      pos += Math.max(1, Math.round(rate / pitch * (0.85 + 0.3 * Math.random())));
-    }
+    for(let i = 0; i < len; i++) data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (ctx.sampleRate * 0.003));
     const src = ctx.createBufferSource();
     src.buffer = buf;
-    const out = ctx.createGain();
-    out.gain.value = 26; // narrow resonances keep only a sliver of the ticks' energy
-    [[720, 7, 1], [1380, 9, 0.8], [2450, 12, 0.45]].forEach(([freq, q, level]) => {
-      const band = ctx.createBiquadFilter();
-      band.type = 'bandpass';
-      band.frequency.setValueAtTime(freq * 0.92, t);
-      band.frequency.linearRampToValueAtTime(freq * 1.06, t + length * 0.6); // the squeal bends up a little
-      band.frequency.linearRampToValueAtTime(freq, t + length);
-      band.Q.value = q;
-      const g = ctx.createGain();
-      g.gain.value = level;
-      src.connect(band).connect(g).connect(out);
-    });
-    out.connect(dest);
+    const click = ctx.createBiquadFilter();
+    click.type = 'bandpass';
+    click.frequency.value = 650;
+    click.Q.value = 0.8;
+    const clickGain = ctx.createGain();
+    clickGain.gain.value = gain * 0.55;
+    src.connect(click).connect(clickGain).connect(dest);
     src.start(t);
-    src.stop(t + length);
+    // the panel's body: a low thump plus two fainter wooden overtones
+    [[115, 0.06, 1], [260, 0.035, 0.5], [540, 0.015, 0.18]].forEach(([freq, decay, level]) => {
+      const osc = ctx.createOscillator();
+      osc.frequency.setValueAtTime(freq * 1.06, t);
+      osc.frequency.exponentialRampToValueAtTime(freq, t + 0.025);
+      const g = ctx.createGain();
+      g.gain.setValueAtTime(0.0001, t);
+      g.gain.exponentialRampToValueAtTime(gain * level, t + 0.003);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + decay * 4);
+      osc.connect(g).connect(dest);
+      osc.start(t);
+      osc.stop(t + decay * 4 + 0.02);
+    });
   }
-  function playCreak(){ playSound(scheduleCreak); }
+  function scheduleKnock(ctx, dest, t){
+    scheduleKnockHit(ctx, dest, t, 0.95);
+    scheduleKnockHit(ctx, dest, t + 0.22, 0.8);
+  }
+  function playKnock(){ playSound(scheduleKnock); }
+
+  function scheduleDecayingNoise(ctx, dest, t, {freq, q = 1, decay, gain}){
+    const len = Math.ceil(ctx.sampleRate * decay * 6);
+    const buf = ctx.createBuffer(1, len, ctx.sampleRate);
+    const data = buf.getChannelData(0);
+    for(let i = 0; i < len; i++) data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (ctx.sampleRate * decay));
+    const src = ctx.createBufferSource();
+    src.buffer = buf;
+    const filter = ctx.createBiquadFilter();
+    filter.type = 'bandpass';
+    filter.frequency.value = freq;
+    filter.Q.value = q;
+    const g = ctx.createGain();
+    g.gain.value = gain;
+    src.connect(filter).connect(g).connect(dest);
+    src.start(t);
+  }
+  function scheduleDoorBreak(ctx, dest, t){
+    scheduleDecayingNoise(ctx, dest, t, {freq: 1300, q: 0.7, decay: 0.02, gain: 1.1});
+    const osc = ctx.createOscillator();
+    osc.frequency.setValueAtTime(110, t);
+    osc.frequency.exponentialRampToValueAtTime(66, t + 0.32);
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(0.9, t + 0.004);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + 0.32);
+    osc.connect(g).connect(dest);
+    osc.start(t);
+    osc.stop(t + 0.34);
+    for(let i = 0; i < 22; i++){
+      const x = Math.pow(Math.random(), 1.8);
+      scheduleDecayingNoise(ctx, dest, t + 0.01 + x * 0.45, {
+        freq: 2200 * (0.6 + 0.8 * Math.random()), q: 2,
+        decay: 0.002 + 0.003 * Math.random(),
+        gain: 0.35 * (1 - 0.7 * x) * (0.5 + Math.random())
+      });
+    }
+  }
+  const DOOR_BREAK_KNOCKS = 8;
+  const DOOR_BREAK_WINDOW_MS = 1000;
+  let doorKnocks = [];
+  function knockDoor(){
+    const door = document.querySelector('.title-door');
+    if(door.classList.contains('broken')) return;
+    const now = performance.now();
+    doorKnocks = doorKnocks.filter(at => now - at < DOOR_BREAK_WINDOW_MS);
+    doorKnocks.push(now);
+    if(doorKnocks.length < DOOR_BREAK_KNOCKS){ playKnock(); return; }
+    door.classList.add('broken');
+    playSound(scheduleDoorBreak);
+  }
   // played on submit, just after the submit button's own click
   function playResult(correct){ playSound(correct ? scheduleCorrect : scheduleIncorrect, 0.12); }
 
