@@ -33,8 +33,7 @@
     --correct:#1E5BD8;
     --correct-soft:#E7EEFC;
     --fixed:#5C5C5C;
-    /* the board itself stays black-on-white in both modes, so a half-block's "black part"
-       is always literally black */
+    /* the board is black-on-white here; dark mode inverts it (black grid, white doors) */
     --board-paper:#FFFFFF;
     --board-ink:#111111;
     --board-line:#BDBDBD;
@@ -59,12 +58,13 @@
       --danger-soft:#3A1A1A;
       --correct:#6EA0FF;
       --correct-soft:#15213A;
-      --fixed:#6A6A6A;
-      --board-paper:#EDEDED;
-      --board-line:#8A8A8A;
-      --board-hover:#D0D0D0;
-      --board-mark:#B3B3B3;
-      --board-frame:#8A8A8A;
+      --fixed:#7A7A7A;
+      --board-paper:#111111;
+      --board-ink:#D9D9D9;
+      --board-line:#3C3C3C;
+      --board-hover:#262626;
+      --board-mark:#A6A6A6;
+      --board-frame:#6A6A6A;
     }
   }
   :root[data-theme="dark"]{
@@ -82,12 +82,13 @@
     --danger-soft:#3A1A1A;
     --correct:#6EA0FF;
     --correct-soft:#15213A;
-    --fixed:#6A6A6A;
-    --board-paper:#EDEDED;
-    --board-line:#8A8A8A;
-    --board-hover:#D0D0D0;
-    --board-mark:#B3B3B3;
-    --board-frame:#8A8A8A;
+    --fixed:#7A7A7A;
+    --board-paper:#111111;
+    --board-ink:#D9D9D9;
+    --board-line:#3C3C3C;
+    --board-hover:#262626;
+    --board-mark:#A6A6A6;
+    --board-frame:#6A6A6A;
   }
   /* rococo: pastel pink, ivory and gold, with a gilded double frame round the board */
   :root[data-theme="rococo"]{
@@ -740,8 +741,8 @@
     background:var(--knob, var(--fixed)); /* same colour as a room cell */
     transform:translate(-50%,-50%);
   }
-  /* the black & white themes keep plain white knobs */
-  :root:not([data-theme]), :root[data-theme="light"], :root[data-theme="dark"]{ --knob:#FFFFFF; }
+  /* the black & white themes punch the knob out in the board's own paper colour */
+  :root:not([data-theme]), :root[data-theme="light"], :root[data-theme="dark"]{ --knob:var(--board-paper); }
   .fill-up::after{ left:78%; top:50%; height:34%; }
   .fill-down::after{ left:22%; top:50%; height:34%; }
   .fill-left::after{ left:50%; top:22%; width:34%; }
