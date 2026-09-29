@@ -440,6 +440,7 @@
     gap:6px;
   }
   .legend li::marker{ color:var(--ink); font-weight:600; }
+  .legend li.shortcut-line{ margin-top:8px; }
   /* ---- start screen ---- */
   .start-card{
     border-bottom:1px solid var(--line);
@@ -2172,13 +2173,16 @@
         '<li><strong>룸의 숫자값</strong>은 상하좌우로 <strong>맞닿은 문의 면적</strong>과 같아야 한다.</li>' +
         '<li>모든 <strong>문</strong>은 반드시 하나 이상의 <strong>룸과 닿아있어야</strong> 한다.</li>' +
         '<li>모든 <strong>문은 다른 문과 닿을 수 없다.</strong></li>' +
-        '<li>모든 빈칸에는 문이 들어가야 한다.</li>',
+        '<li>모든 빈칸에는 문이 들어가야 한다.</li>' +
+        '<li>회색으로 된 칸은 풀이를 위한 표기용 칸으로, \'문\'이 아니다.</li>',
       controlsTitle: '조작법',
       controlsBody:
         '<li>빈칸을 클릭하면 <strong>위 → 아래 → 왼쪽 → 오른쪽 → 빈칸</strong> 순서로 문의 방향이 바뀐다.</li>' +
-        '<li>상단의 문 선택 도구를 이용해 특정 방향의 문을 놓을 수 있다. 지우개를 누르면 선택한 칸의 문을 지울 수 있다.</li>' +
-        '<li>칸을 <strong>우클릭 또는 길게 클릭하면 잠긴다.</strong> 잠긴 칸은 배치가 바뀌지 않는다. 다시 잠금을 시도하면 잠금이 풀린다.</li>' +
-        '<li>회색으로 된 칸은 풀이를 위한 표기용 칸으로, \'문\'이 아니다.</li>',
+        '<li><strong>메모</strong> 도구 <strong>두 종</strong>을 선택하여 칸에 <strong>풀이용 메모</strong>를 남길 수 있다.</li>' +
+        '<li><strong>자물쇠</strong> 도구를 선택하여 칸을 <strong>잠글</strong> 수 있다. <strong>우클릭 또는 길게 클릭</strong>하여 잠그는 것도 가능하다.</li>' +
+        '<li><strong>지우개</strong>를 누르면 선택한 칸의 문을 지울 수 있다.</li>' +
+        '<li><strong>도구창을 열어</strong> 더 다양한 종류의 도구를 선택할 수 있다.</li>' +
+        '<li class="shortcut-line"><strong>단축키: 문 - D&nbsp;&nbsp;&nbsp;메모1 - F&nbsp;&nbsp;&nbsp;메모2 - G&nbsp;&nbsp;&nbsp;잠금 - L&nbsp;&nbsp;&nbsp;지우개 - E</strong></li>',
       modeTitle: '모드',
       modePlain: '문고리 없음',
       modeKnob: '문고리 있음',
@@ -2237,13 +2241,16 @@
         '<li><strong>A room\'s number</strong> must equal the total <strong>door area touching it</strong> above, below, left, and right.</li>' +
         '<li>Every <strong>door</strong> must <strong>touch at least one room</strong>.</li>' +
         '<li><strong>Doors cannot touch other doors.</strong></li>' +
-        '<li>Every empty cell must contain a door.</li>',
+        '<li>Every empty cell must contain a door.</li>' +
+        '<li>Gray marks are notes for solving, not doors.</li>',
       controlsTitle: 'How to play',
       controlsBody:
         '<li>Click an empty cell to cycle the door direction: <strong>Up → Down → Left → Right → Empty</strong>.</li>' +
-        '<li>Use the door tools at the top to place a door facing a specific direction. Pick the eraser to clear the door in a cell you click.</li>' +
-        '<li><strong>Right-click or long-press a cell to lock it.</strong> A locked cell can\'t be changed. Lock it again to unlock.</li>' +
-        '<li>Gray marks are notes for solving, not doors.</li>',
+        '<li>Pick one of the <strong>two note</strong> tools to leave <strong>solving notes</strong> in cells.</li>' +
+        '<li>Pick the <strong>lock</strong> tool to <strong>lock</strong> cells. You can also lock a cell by <strong>right-clicking or long-pressing</strong> it.</li>' +
+        '<li>Pick the <strong>eraser</strong> to clear the door in a cell you click.</li>' +
+        '<li><strong>Open the tool panel</strong> for more kinds of tools.</li>' +
+        '<li class="shortcut-line"><strong>Shortcuts: Door - D&nbsp;&nbsp;&nbsp;Note 1 - F&nbsp;&nbsp;&nbsp;Note 2 - G&nbsp;&nbsp;&nbsp;Lock - L&nbsp;&nbsp;&nbsp;Eraser - E</strong></li>',
       modeTitle: 'Mode',
       modePlain: 'No doorknobs',
       modeKnob: 'With doorknobs',
@@ -2296,9 +2303,9 @@
       themeCyber: "サイバーパンク",
       themeIvory: "モダン",
       rulesTitle: "ルール",
-      rulesBody: "<li>数字が書かれたマスは<strong>「ルーム」</strong>、置くことのできる黒い半マスは<strong>「ドア」</strong>です。</li><li>ルームの配置は変えられません。</li><li><strong>ルームの数字</strong>は、上下左右に<strong>接しているドアの面積</strong>の合計と同じでなければなりません。</li><li>すべての<strong>ドア</strong>は、必ず1つ以上の<strong>ルームに接していなければなりません</strong>。</li><li><strong>ドア同士は接することができません。</strong></li><li>すべての空きマスにドアを置かなければなりません。</li>",
+      rulesBody: "<li>数字が書かれたマスは<strong>「ルーム」</strong>、置くことのできる黒い半マスは<strong>「ドア」</strong>です。</li><li>ルームの配置は変えられません。</li><li><strong>ルームの数字</strong>は、上下左右に<strong>接しているドアの面積</strong>の合計と同じでなければなりません。</li><li>すべての<strong>ドア</strong>は、必ず1つ以上の<strong>ルームに接していなければなりません</strong>。</li><li><strong>ドア同士は接することができません。</strong></li><li>すべての空きマスにドアを置かなければなりません。</li><li>グレーのマスは解答用のメモで、「ドア」ではありません。</li>",
       controlsTitle: "操作方法",
-      controlsBody: "<li>空きマスをクリックすると、<strong>上 → 下 → 左 → 右 → 空白</strong>の順にドアの向きが変わります。</li><li>上部のドアツールで特定の向きのドアを置けます。消しゴムを選ぶと、クリックしたマスのドアを消せます。</li><li>マスを<strong>右クリックまたは長押しするとロックされます。</strong>ロックしたマスは変わりません。もう一度ロックすると解除されます。</li><li>グレーのマスは解答用のメモで、「ドア」ではありません。</li>",
+      controlsBody: "<li>空きマスをクリックすると、<strong>上 → 下 → 左 → 右 → 空白</strong>の順にドアの向きが変わります。</li><li><strong>2種類</strong>の<strong>メモ</strong>ツールで、マスに<strong>解答用のメモ</strong>を残せます。</li><li><strong>鍵</strong>ツールでマスを<strong>ロック</strong>できます。<strong>右クリックまたは長押し</strong>でもロックできます。</li><li><strong>消しゴム</strong>を選ぶと、クリックしたマスのドアを消せます。</li><li><strong>ツール欄を開く</strong>と、さらに多くのツールを選べます。</li><li class=\"shortcut-line\"><strong>ショートカット：ドア - D&nbsp;&nbsp;&nbsp;メモ1 - F&nbsp;&nbsp;&nbsp;メモ2 - G&nbsp;&nbsp;&nbsp;ロック - L&nbsp;&nbsp;&nbsp;消しゴム - E</strong></li>",
       modeTitle: "モード",
       modePlain: "ドアノブなし",
       modeKnob: "ドアノブあり",
@@ -2351,9 +2358,9 @@
       themeCyber: "赛博朋克",
       themeIvory: "现代",
       rulesTitle: "规则",
-      rulesBody: "<li>写有数字的格子是<strong>“房间”</strong>，可以放置的黑色半格是<strong>“门”</strong>。</li><li>房间的位置不能改变。</li><li><strong>房间的数字</strong>必须等于其上下左右<strong>相邻门的面积</strong>之和。</li><li>每一扇<strong>门</strong>都必须<strong>至少与一个房间相邻</strong>。</li><li><strong>门与门不能相邻。</strong></li><li>所有空格都必须放入门。</li>",
+      rulesBody: "<li>写有数字的格子是<strong>“房间”</strong>，可以放置的黑色半格是<strong>“门”</strong>。</li><li>房间的位置不能改变。</li><li><strong>房间的数字</strong>必须等于其上下左右<strong>相邻门的面积</strong>之和。</li><li>每一扇<strong>门</strong>都必须<strong>至少与一个房间相邻</strong>。</li><li><strong>门与门不能相邻。</strong></li><li>所有空格都必须放入门。</li><li>灰色的格子是解题用的标记，不是“门”。</li>",
       controlsTitle: "操作方法",
-      controlsBody: "<li>点击空格，门的方向会按<strong>上 → 下 → 左 → 右 → 空白</strong>的顺序切换。</li><li>使用上方的门工具可以放置指定方向的门。选择橡皮擦后，点击格子即可擦除其中的门。</li><li><strong>右键点击或长按格子即可锁定。</strong>锁定的格子不会被更改。再次锁定即可解锁。</li><li>灰色的格子是解题用的标记，不是“门”。</li>",
+      controlsBody: "<li>点击空格，门的方向会按<strong>上 → 下 → 左 → 右 → 空白</strong>的顺序切换。</li><li>选择<strong>两种标记</strong>工具之一，可在格子中留下<strong>解题标记</strong>。</li><li>选择<strong>锁</strong>工具可以<strong>锁定</strong>格子。也可以<strong>右键点击或长按</strong>格子来锁定。</li><li>选择<strong>橡皮擦</strong>后，点击格子即可擦除其中的门。</li><li><strong>展开工具栏</strong>可以选择更多种类的工具。</li><li class=\"shortcut-line\"><strong>快捷键：门 - D&nbsp;&nbsp;&nbsp;标记1 - F&nbsp;&nbsp;&nbsp;标记2 - G&nbsp;&nbsp;&nbsp;锁定 - L&nbsp;&nbsp;&nbsp;橡皮擦 - E</strong></li>",
       modeTitle: "模式",
       modePlain: "无门把手",
       modeKnob: "有门把手",
@@ -2406,9 +2413,9 @@
       themeCyber: "賽博龐克",
       themeIvory: "現代",
       rulesTitle: "規則",
-      rulesBody: "<li>寫有數字的格子是<strong>「房間」</strong>，可以放置的黑色半格是<strong>「門」</strong>。</li><li>房間的位置不能改變。</li><li><strong>房間的數字</strong>必須等於其上下左右<strong>相鄰門的面積</strong>總和。</li><li>每一扇<strong>門</strong>都必須<strong>至少與一個房間相鄰</strong>。</li><li><strong>門與門不能相鄰。</strong></li><li>所有空格都必須放入門。</li>",
+      rulesBody: "<li>寫有數字的格子是<strong>「房間」</strong>，可以放置的黑色半格是<strong>「門」</strong>。</li><li>房間的位置不能改變。</li><li><strong>房間的數字</strong>必須等於其上下左右<strong>相鄰門的面積</strong>總和。</li><li>每一扇<strong>門</strong>都必須<strong>至少與一個房間相鄰</strong>。</li><li><strong>門與門不能相鄰。</strong></li><li>所有空格都必須放入門。</li><li>灰色的格子是解題用的標記，不是「門」。</li>",
       controlsTitle: "操作方式",
-      controlsBody: "<li>點擊空格，門的方向會依<strong>上 → 下 → 左 → 右 → 空白</strong>的順序切換。</li><li>使用上方的門工具可以放置指定方向的門。選擇橡皮擦後，點擊格子即可擦除其中的門。</li><li><strong>右鍵點擊或長按格子即可鎖定。</strong>鎖定的格子不會被更改。再次鎖定即可解鎖。</li><li>灰色的格子是解題用的標記，不是「門」。</li>",
+      controlsBody: "<li>點擊空格，門的方向會依<strong>上 → 下 → 左 → 右 → 空白</strong>的順序切換。</li><li>選擇<strong>兩種標記</strong>工具之一，可在格子中留下<strong>解題標記</strong>。</li><li>選擇<strong>鎖</strong>工具可以<strong>鎖定</strong>格子。也可以<strong>右鍵點擊或長按</strong>格子來鎖定。</li><li>選擇<strong>橡皮擦</strong>後，點擊格子即可擦除其中的門。</li><li><strong>展開工具列</strong>可以選擇更多種類的工具。</li><li class=\"shortcut-line\"><strong>快速鍵：門 - D&nbsp;&nbsp;&nbsp;標記1 - F&nbsp;&nbsp;&nbsp;標記2 - G&nbsp;&nbsp;&nbsp;鎖定 - L&nbsp;&nbsp;&nbsp;橡皮擦 - E</strong></li>",
       modeTitle: "模式",
       modePlain: "無門把",
       modeKnob: "有門把",
@@ -2461,9 +2468,9 @@
       themeCyber: "Ciberpunk",
       themeIvory: "Moderno",
       rulesTitle: "Reglas",
-      rulesBody: "<li>Una casilla con número es una <strong>Habitación</strong>; una media casilla negra que colocas es una <strong>Puerta</strong>.</li><li>Las habitaciones son fijas y no se pueden cambiar.</li><li><strong>El número de una habitación</strong> debe ser igual al <strong>área total de puertas que la tocan</strong> arriba, abajo, a la izquierda y a la derecha.</li><li>Cada <strong>puerta</strong> debe <strong>tocar al menos una habitación</strong>.</li><li><strong>Las puertas no pueden tocar otras puertas.</strong></li><li>Todas las casillas vacías deben contener una puerta.</li>",
+      rulesBody: "<li>Una casilla con número es una <strong>Habitación</strong>; una media casilla negra que colocas es una <strong>Puerta</strong>.</li><li>Las habitaciones son fijas y no se pueden cambiar.</li><li><strong>El número de una habitación</strong> debe ser igual al <strong>área total de puertas que la tocan</strong> arriba, abajo, a la izquierda y a la derecha.</li><li>Cada <strong>puerta</strong> debe <strong>tocar al menos una habitación</strong>.</li><li><strong>Las puertas no pueden tocar otras puertas.</strong></li><li>Todas las casillas vacías deben contener una puerta.</li><li>Las marcas grises son notas para resolver, no puertas.</li>",
       controlsTitle: "Cómo jugar",
-      controlsBody: "<li>Haz clic en una casilla vacía para cambiar la dirección de la puerta: <strong>Arriba → Abajo → Izquierda → Derecha → Vacía</strong>.</li><li>Usa las herramientas de puerta de arriba para colocar una puerta en una dirección concreta. Elige el borrador para quitar la puerta de la casilla que pulses.</li><li><strong>Haz clic derecho o mantén pulsada una casilla para bloquearla.</strong> Una casilla bloqueada no se puede cambiar. Bloquéala de nuevo para desbloquearla.</li><li>Las marcas grises son notas para resolver, no puertas.</li>",
+      controlsBody: "<li>Haz clic en una casilla vacía para cambiar la dirección de la puerta: <strong>Arriba → Abajo → Izquierda → Derecha → Vacía</strong>.</li><li>Elige una de las <strong>dos</strong> herramientas de <strong>notas</strong> para dejar <strong>notas de resolución</strong> en las casillas.</li><li>Elige la herramienta de <strong>candado</strong> para <strong>bloquear</strong> casillas. También puedes bloquear una casilla con <strong>clic derecho o manteniéndola pulsada</strong>.</li><li>Elige el <strong>borrador</strong> para quitar la puerta de la casilla que pulses.</li><li><strong>Abre el panel de herramientas</strong> para elegir más tipos de herramientas.</li><li class=\"shortcut-line\"><strong>Atajos: Puerta - D&nbsp;&nbsp;&nbsp;Nota 1 - F&nbsp;&nbsp;&nbsp;Nota 2 - G&nbsp;&nbsp;&nbsp;Bloquear - L&nbsp;&nbsp;&nbsp;Borrador - E</strong></li>",
       modeTitle: "Modo",
       modePlain: "Sin pomos",
       modeKnob: "Con pomos",
@@ -2516,9 +2523,9 @@
       themeCyber: "Cyberpunk",
       themeIvory: "Moderne",
       rulesTitle: "Règles",
-      rulesBody: "<li>Une case avec un nombre est une <strong>Pièce</strong> ; une demi-case noire que vous placez est une <strong>Porte</strong>.</li><li>Les pièces sont fixes et ne peuvent pas être modifiées.</li><li><strong>Le nombre d’une pièce</strong> doit être égal à la <strong>surface totale des portes qui la touchent</strong> en haut, en bas, à gauche et à droite.</li><li>Chaque <strong>porte</strong> doit <strong>toucher au moins une pièce</strong>.</li><li><strong>Les portes ne peuvent pas se toucher entre elles.</strong></li><li>Chaque case vide doit contenir une porte.</li>",
+      rulesBody: "<li>Une case avec un nombre est une <strong>Pièce</strong> ; une demi-case noire que vous placez est une <strong>Porte</strong>.</li><li>Les pièces sont fixes et ne peuvent pas être modifiées.</li><li><strong>Le nombre d’une pièce</strong> doit être égal à la <strong>surface totale des portes qui la touchent</strong> en haut, en bas, à gauche et à droite.</li><li>Chaque <strong>porte</strong> doit <strong>toucher au moins une pièce</strong>.</li><li><strong>Les portes ne peuvent pas se toucher entre elles.</strong></li><li>Chaque case vide doit contenir une porte.</li><li>Les marques grises sont des notes pour résoudre, pas des portes.</li>",
       controlsTitle: "Comment jouer",
-      controlsBody: "<li>Cliquez sur une case vide pour changer l’orientation de la porte : <strong>Haut → Bas → Gauche → Droite → Vide</strong>.</li><li>Utilisez les outils de porte en haut pour placer une porte dans une direction précise. Choisissez la gomme pour effacer la porte de la case cliquée.</li><li><strong>Faites un clic droit ou un appui long sur une case pour la verrouiller.</strong> Une case verrouillée ne peut pas être modifiée. Verrouillez-la à nouveau pour la déverrouiller.</li><li>Les marques grises sont des notes pour résoudre, pas des portes.</li>",
+      controlsBody: "<li>Cliquez sur une case vide pour changer l’orientation de la porte : <strong>Haut → Bas → Gauche → Droite → Vide</strong>.</li><li>Choisissez l’un des <strong>deux</strong> outils de <strong>notes</strong> pour laisser des <strong>notes de résolution</strong> dans les cases.</li><li>Choisissez l’outil <strong>cadenas</strong> pour <strong>verrouiller</strong> des cases. Vous pouvez aussi verrouiller une case par un <strong>clic droit ou un appui long</strong>.</li><li>Choisissez la <strong>gomme</strong> pour effacer la porte de la case cliquée.</li><li><strong>Ouvrez le panneau d’outils</strong> pour choisir parmi plus d’outils.</li><li class=\"shortcut-line\"><strong>Raccourcis : Porte - D&nbsp;&nbsp;&nbsp;Note 1 - F&nbsp;&nbsp;&nbsp;Note 2 - G&nbsp;&nbsp;&nbsp;Verrou - L&nbsp;&nbsp;&nbsp;Gomme - E</strong></li>",
       modeTitle: "Mode",
       modePlain: "Sans poignées",
       modeKnob: "Avec poignées",
@@ -2571,9 +2578,9 @@
       themeCyber: "Cyberpunk",
       themeIvory: "Modern",
       rulesTitle: "Regeln",
-      rulesBody: "<li>Ein Feld mit einer Zahl ist ein <strong>Raum</strong>; ein schwarzes Halbfeld, das du setzt, ist eine <strong>Tür</strong>.</li><li>Räume sind fest und können nicht verändert werden.</li><li><strong>Die Zahl eines Raums</strong> muss der <strong>Gesamtfläche der angrenzenden Türen</strong> oben, unten, links und rechts entsprechen.</li><li>Jede <strong>Tür</strong> muss <strong>mindestens einen Raum berühren</strong>.</li><li><strong>Türen dürfen andere Türen nicht berühren.</strong></li><li>Jedes leere Feld muss eine Tür enthalten.</li>",
+      rulesBody: "<li>Ein Feld mit einer Zahl ist ein <strong>Raum</strong>; ein schwarzes Halbfeld, das du setzt, ist eine <strong>Tür</strong>.</li><li>Räume sind fest und können nicht verändert werden.</li><li><strong>Die Zahl eines Raums</strong> muss der <strong>Gesamtfläche der angrenzenden Türen</strong> oben, unten, links und rechts entsprechen.</li><li>Jede <strong>Tür</strong> muss <strong>mindestens einen Raum berühren</strong>.</li><li><strong>Türen dürfen andere Türen nicht berühren.</strong></li><li>Jedes leere Feld muss eine Tür enthalten.</li><li>Graue Markierungen sind Notizen zum Lösen, keine Türen.</li>",
       controlsTitle: "Spielanleitung",
-      controlsBody: "<li>Klicke auf ein leeres Feld, um die Türrichtung zu wechseln: <strong>Oben → Unten → Links → Rechts → Leer</strong>.</li><li>Mit den Türwerkzeugen oben setzt du eine Tür in eine bestimmte Richtung. Wähle den Radierer, um die Tür im angeklickten Feld zu löschen.</li><li><strong>Rechtsklick oder langes Drücken sperrt ein Feld.</strong> Ein gesperrtes Feld kann nicht verändert werden. Erneutes Sperren hebt die Sperre auf.</li><li>Graue Markierungen sind Notizen zum Lösen, keine Türen.</li>",
+      controlsBody: "<li>Klicke auf ein leeres Feld, um die Türrichtung zu wechseln: <strong>Oben → Unten → Links → Rechts → Leer</strong>.</li><li>Mit den <strong>zwei Notizwerkzeugen</strong> hinterlässt du <strong>Lösungsnotizen</strong> in Feldern.</li><li>Mit dem <strong>Schloss</strong>-Werkzeug kannst du Felder <strong>sperren</strong>. Auch <strong>Rechtsklick oder langes Drücken</strong> sperrt ein Feld.</li><li>Wähle den <strong>Radierer</strong>, um die Tür im angeklickten Feld zu löschen.</li><li><strong>Öffne die Werkzeugleiste</strong>, um weitere Werkzeuge zu wählen.</li><li class=\"shortcut-line\"><strong>Tastenkürzel: Tür - D&nbsp;&nbsp;&nbsp;Notiz 1 - F&nbsp;&nbsp;&nbsp;Notiz 2 - G&nbsp;&nbsp;&nbsp;Sperren - L&nbsp;&nbsp;&nbsp;Radierer - E</strong></li>",
       modeTitle: "Modus",
       modePlain: "Ohne Türknäufe",
       modeKnob: "Mit Türknäufen",
@@ -2626,9 +2633,9 @@
       themeCyber: "Cyberpunk",
       themeIvory: "Moderno",
       rulesTitle: "Regras",
-      rulesBody: "<li>Uma casa com número é um <strong>Quarto</strong>; uma meia casa preta que você coloca é uma <strong>Porta</strong>.</li><li>Os quartos são fixos e não podem ser alterados.</li><li><strong>O número de um quarto</strong> deve ser igual à <strong>área total de portas que o tocam</strong> acima, abaixo, à esquerda e à direita.</li><li>Toda <strong>porta</strong> deve <strong>tocar pelo menos um quarto</strong>.</li><li><strong>Portas não podem tocar outras portas.</strong></li><li>Toda casa vazia deve conter uma porta.</li>",
+      rulesBody: "<li>Uma casa com número é um <strong>Quarto</strong>; uma meia casa preta que você coloca é uma <strong>Porta</strong>.</li><li>Os quartos são fixos e não podem ser alterados.</li><li><strong>O número de um quarto</strong> deve ser igual à <strong>área total de portas que o tocam</strong> acima, abaixo, à esquerda e à direita.</li><li>Toda <strong>porta</strong> deve <strong>tocar pelo menos um quarto</strong>.</li><li><strong>Portas não podem tocar outras portas.</strong></li><li>Toda casa vazia deve conter uma porta.</li><li>As marcas cinzas são anotações para resolver, não portas.</li>",
       controlsTitle: "Como jogar",
-      controlsBody: "<li>Clique em uma casa vazia para alternar a direção da porta: <strong>Cima → Baixo → Esquerda → Direita → Vazia</strong>.</li><li>Use as ferramentas de porta no topo para colocar uma porta numa direção específica. Escolha a borracha para apagar a porta da casa clicada.</li><li><strong>Clique com o botão direito ou pressione e segure uma casa para bloqueá-la.</strong> Uma casa bloqueada não pode ser alterada. Bloqueie de novo para desbloquear.</li><li>As marcas cinzas são anotações para resolver, não portas.</li>",
+      controlsBody: "<li>Clique em uma casa vazia para alternar a direção da porta: <strong>Cima → Baixo → Esquerda → Direita → Vazia</strong>.</li><li>Escolha uma das <strong>duas</strong> ferramentas de <strong>anotação</strong> para deixar <strong>anotações de resolução</strong> nas casas.</li><li>Escolha a ferramenta de <strong>cadeado</strong> para <strong>bloquear</strong> casas. Também dá para bloquear com <strong>clique direito ou pressionando e segurando</strong> a casa.</li><li>Escolha a <strong>borracha</strong> para apagar a porta da casa clicada.</li><li><strong>Abra o painel de ferramentas</strong> para escolher mais tipos de ferramentas.</li><li class=\"shortcut-line\"><strong>Atalhos: Porta - D&nbsp;&nbsp;&nbsp;Anotação 1 - F&nbsp;&nbsp;&nbsp;Anotação 2 - G&nbsp;&nbsp;&nbsp;Bloquear - L&nbsp;&nbsp;&nbsp;Borracha - E</strong></li>",
       modeTitle: "Modo",
       modePlain: "Sem maçanetas",
       modeKnob: "Com maçanetas",
@@ -2681,9 +2688,9 @@
       themeCyber: "Киберпанк",
       themeIvory: "Модерн",
       rulesTitle: "Правила",
-      rulesBody: "<li>Клетка с числом — это <strong>Комната</strong>; чёрная полуклетка, которую вы ставите, — это <strong>Дверь</strong>.</li><li>Комнаты зафиксированы, их нельзя изменить.</li><li><strong>Число комнаты</strong> должно быть равно <strong>общей площади дверей, касающихся её</strong> сверху, снизу, слева и справа.</li><li>Каждая <strong>дверь</strong> должна <strong>касаться хотя бы одной комнаты</strong>.</li><li><strong>Двери не могут касаться друг друга.</strong></li><li>В каждой пустой клетке должна быть дверь.</li>",
+      rulesBody: "<li>Клетка с числом — это <strong>Комната</strong>; чёрная полуклетка, которую вы ставите, — это <strong>Дверь</strong>.</li><li>Комнаты зафиксированы, их нельзя изменить.</li><li><strong>Число комнаты</strong> должно быть равно <strong>общей площади дверей, касающихся её</strong> сверху, снизу, слева и справа.</li><li>Каждая <strong>дверь</strong> должна <strong>касаться хотя бы одной комнаты</strong>.</li><li><strong>Двери не могут касаться друг друга.</strong></li><li>В каждой пустой клетке должна быть дверь.</li><li>Серые отметки — это заметки для решения, а не двери.</li>",
       controlsTitle: "Как играть",
-      controlsBody: "<li>Нажмите на пустую клетку, чтобы менять направление двери: <strong>Вверх → Вниз → Влево → Вправо → Пусто</strong>.</li><li>Инструменты дверей вверху ставят дверь в нужном направлении. Выберите ластик, чтобы стереть дверь в нажатой клетке.</li><li><strong>Правый клик или долгое нажатие блокирует клетку.</strong> Заблокированную клетку нельзя изменить. Повторная блокировка снимает её.</li><li>Серые отметки — это заметки для решения, а не двери.</li>",
+      controlsBody: "<li>Нажмите на пустую клетку, чтобы менять направление двери: <strong>Вверх → Вниз → Влево → Вправо → Пусто</strong>.</li><li>Выберите один из <strong>двух</strong> инструментов <strong>заметок</strong>, чтобы оставлять в клетках <strong>заметки для решения</strong>.</li><li>Выберите инструмент <strong>замок</strong>, чтобы <strong>блокировать</strong> клетки. Заблокировать клетку можно и <strong>правым кликом или долгим нажатием</strong>.</li><li>Выберите <strong>ластик</strong>, чтобы стереть дверь в нажатой клетке.</li><li><strong>Откройте панель инструментов</strong>, чтобы выбрать больше инструментов.</li><li class=\"shortcut-line\"><strong>Горячие клавиши: Дверь - D&nbsp;&nbsp;&nbsp;Заметка 1 - F&nbsp;&nbsp;&nbsp;Заметка 2 - G&nbsp;&nbsp;&nbsp;Замок - L&nbsp;&nbsp;&nbsp;Ластик - E</strong></li>",
       modeTitle: "Режим",
       modePlain: "Без ручек",
       modeKnob: "С ручками",
@@ -2736,9 +2743,9 @@
       themeCyber: "Cyberpunk",
       themeIvory: "Moderno",
       rulesTitle: "Regole",
-      rulesBody: "<li>Una casella con un numero è una <strong>Stanza</strong>; una mezza casella nera che posizioni è una <strong>Porta</strong>.</li><li>Le stanze sono fisse e non si possono modificare.</li><li><strong>Il numero di una stanza</strong> deve essere uguale all’<strong>area totale delle porte che la toccano</strong> sopra, sotto, a sinistra e a destra.</li><li>Ogni <strong>porta</strong> deve <strong>toccare almeno una stanza</strong>.</li><li><strong>Le porte non possono toccare altre porte.</strong></li><li>Ogni casella vuota deve contenere una porta.</li>",
+      rulesBody: "<li>Una casella con un numero è una <strong>Stanza</strong>; una mezza casella nera che posizioni è una <strong>Porta</strong>.</li><li>Le stanze sono fisse e non si possono modificare.</li><li><strong>Il numero di una stanza</strong> deve essere uguale all’<strong>area totale delle porte che la toccano</strong> sopra, sotto, a sinistra e a destra.</li><li>Ogni <strong>porta</strong> deve <strong>toccare almeno una stanza</strong>.</li><li><strong>Le porte non possono toccare altre porte.</strong></li><li>Ogni casella vuota deve contenere una porta.</li><li>I segni grigi sono appunti per la risoluzione, non porte.</li>",
       controlsTitle: "Come si gioca",
-      controlsBody: "<li>Fai clic su una casella vuota per cambiare la direzione della porta: <strong>Su → Giù → Sinistra → Destra → Vuota</strong>.</li><li>Usa gli strumenti porta in alto per posizionare una porta in una direzione precisa. Scegli la gomma per cancellare la porta nella casella cliccata.</li><li><strong>Fai clic destro o tieni premuta una casella per bloccarla.</strong> Una casella bloccata non si può modificare. Bloccala di nuovo per sbloccarla.</li><li>I segni grigi sono appunti per la risoluzione, non porte.</li>",
+      controlsBody: "<li>Fai clic su una casella vuota per cambiare la direzione della porta: <strong>Su → Giù → Sinistra → Destra → Vuota</strong>.</li><li>Scegli uno dei <strong>due</strong> strumenti <strong>appunti</strong> per lasciare <strong>appunti di risoluzione</strong> nelle caselle.</li><li>Scegli lo strumento <strong>lucchetto</strong> per <strong>bloccare</strong> le caselle. Puoi bloccare una casella anche con <strong>clic destro o tenendola premuta</strong>.</li><li>Scegli la <strong>gomma</strong> per cancellare la porta nella casella cliccata.</li><li><strong>Apri il pannello strumenti</strong> per scegliere altri tipi di strumenti.</li><li class=\"shortcut-line\"><strong>Scorciatoie: Porta - D&nbsp;&nbsp;&nbsp;Appunto 1 - F&nbsp;&nbsp;&nbsp;Appunto 2 - G&nbsp;&nbsp;&nbsp;Blocco - L&nbsp;&nbsp;&nbsp;Gomma - E</strong></li>",
       modeTitle: "Modalità",
       modePlain: "Senza pomelli",
       modeKnob: "Con pomelli",
@@ -2791,9 +2798,9 @@
       themeCyber: "Cyberpunk",
       themeIvory: "Hiện đại",
       rulesTitle: "Luật chơi",
-      rulesBody: "<li>Ô có số là <strong>Phòng</strong>; nửa ô màu đen bạn đặt vào là <strong>Cửa</strong>.</li><li>Vị trí các phòng cố định, không thể thay đổi.</li><li><strong>Số của một phòng</strong> phải bằng <strong>tổng diện tích cửa chạm vào nó</strong> ở trên, dưới, trái và phải.</li><li>Mỗi <strong>cửa</strong> phải <strong>chạm vào ít nhất một phòng</strong>.</li><li><strong>Các cửa không được chạm vào nhau.</strong></li><li>Mọi ô trống đều phải có cửa.</li>",
+      rulesBody: "<li>Ô có số là <strong>Phòng</strong>; nửa ô màu đen bạn đặt vào là <strong>Cửa</strong>.</li><li>Vị trí các phòng cố định, không thể thay đổi.</li><li><strong>Số của một phòng</strong> phải bằng <strong>tổng diện tích cửa chạm vào nó</strong> ở trên, dưới, trái và phải.</li><li>Mỗi <strong>cửa</strong> phải <strong>chạm vào ít nhất một phòng</strong>.</li><li><strong>Các cửa không được chạm vào nhau.</strong></li><li>Mọi ô trống đều phải có cửa.</li><li>Các dấu màu xám là ghi chú để giải, không phải cửa.</li>",
       controlsTitle: "Cách chơi",
-      controlsBody: "<li>Nhấn vào ô trống để đổi hướng cửa: <strong>Lên → Xuống → Trái → Phải → Trống</strong>.</li><li>Dùng các công cụ cửa ở trên để đặt cửa theo hướng cụ thể. Chọn cục tẩy để xóa cửa trong ô bạn nhấn.</li><li><strong>Nhấp chuột phải hoặc nhấn giữ một ô để khóa.</strong> Ô đã khóa không thể thay đổi. Khóa lại lần nữa để mở khóa.</li><li>Các dấu màu xám là ghi chú để giải, không phải cửa.</li>",
+      controlsBody: "<li>Nhấn vào ô trống để đổi hướng cửa: <strong>Lên → Xuống → Trái → Phải → Trống</strong>.</li><li>Chọn một trong <strong>hai</strong> công cụ <strong>ghi chú</strong> để để lại <strong>ghi chú giải đố</strong> trong ô.</li><li>Chọn công cụ <strong>khóa</strong> để <strong>khóa</strong> ô. Bạn cũng có thể khóa ô bằng cách <strong>nhấp chuột phải hoặc nhấn giữ</strong>.</li><li>Chọn <strong>cục tẩy</strong> để xóa cửa trong ô bạn nhấn.</li><li><strong>Mở bảng công cụ</strong> để chọn thêm nhiều loại công cụ.</li><li class=\"shortcut-line\"><strong>Phím tắt: Cửa - D&nbsp;&nbsp;&nbsp;Ghi chú 1 - F&nbsp;&nbsp;&nbsp;Ghi chú 2 - G&nbsp;&nbsp;&nbsp;Khóa - L&nbsp;&nbsp;&nbsp;Tẩy - E</strong></li>",
       modeTitle: "Chế độ",
       modePlain: "Không tay nắm",
       modeKnob: "Có tay nắm",
@@ -2846,9 +2853,9 @@
       themeCyber: "Cyberpunk",
       themeIvory: "Modern",
       rulesTitle: "Aturan",
-      rulesBody: "<li>Kotak bernomor adalah <strong>Ruangan</strong>; setengah kotak hitam yang kamu pasang adalah <strong>Pintu</strong>.</li><li>Posisi ruangan tetap dan tidak bisa diubah.</li><li><strong>Angka sebuah ruangan</strong> harus sama dengan <strong>total luas pintu yang menyentuhnya</strong> di atas, bawah, kiri, dan kanan.</li><li>Setiap <strong>pintu</strong> harus <strong>menyentuh setidaknya satu ruangan</strong>.</li><li><strong>Pintu tidak boleh menyentuh pintu lain.</strong></li><li>Setiap kotak kosong harus berisi pintu.</li>",
+      rulesBody: "<li>Kotak bernomor adalah <strong>Ruangan</strong>; setengah kotak hitam yang kamu pasang adalah <strong>Pintu</strong>.</li><li>Posisi ruangan tetap dan tidak bisa diubah.</li><li><strong>Angka sebuah ruangan</strong> harus sama dengan <strong>total luas pintu yang menyentuhnya</strong> di atas, bawah, kiri, dan kanan.</li><li>Setiap <strong>pintu</strong> harus <strong>menyentuh setidaknya satu ruangan</strong>.</li><li><strong>Pintu tidak boleh menyentuh pintu lain.</strong></li><li>Setiap kotak kosong harus berisi pintu.</li><li>Tanda abu-abu adalah catatan untuk menyelesaikan, bukan pintu.</li>",
       controlsTitle: "Cara bermain",
-      controlsBody: "<li>Klik kotak kosong untuk mengganti arah pintu: <strong>Atas → Bawah → Kiri → Kanan → Kosong</strong>.</li><li>Gunakan alat pintu di atas untuk memasang pintu ke arah tertentu. Pilih penghapus untuk menghapus pintu di kotak yang diklik.</li><li><strong>Klik kanan atau tekan lama sebuah kotak untuk menguncinya.</strong> Kotak yang terkunci tidak bisa diubah. Kunci lagi untuk membukanya.</li><li>Tanda abu-abu adalah catatan untuk menyelesaikan, bukan pintu.</li>",
+      controlsBody: "<li>Klik kotak kosong untuk mengganti arah pintu: <strong>Atas → Bawah → Kiri → Kanan → Kosong</strong>.</li><li>Pilih salah satu dari <strong>dua</strong> alat <strong>catatan</strong> untuk meninggalkan <strong>catatan penyelesaian</strong> di kotak.</li><li>Pilih alat <strong>gembok</strong> untuk <strong>mengunci</strong> kotak. Kamu juga bisa mengunci kotak dengan <strong>klik kanan atau tekan lama</strong>.</li><li>Pilih <strong>penghapus</strong> untuk menghapus pintu di kotak yang diklik.</li><li><strong>Buka panel alat</strong> untuk memilih lebih banyak jenis alat.</li><li class=\"shortcut-line\"><strong>Pintasan: Pintu - D&nbsp;&nbsp;&nbsp;Catatan 1 - F&nbsp;&nbsp;&nbsp;Catatan 2 - G&nbsp;&nbsp;&nbsp;Kunci - L&nbsp;&nbsp;&nbsp;Penghapus - E</strong></li>",
       modeTitle: "Mode",
       modePlain: "Tanpa gagang pintu",
       modeKnob: "Dengan gagang pintu",
@@ -2901,9 +2908,9 @@
       themeCyber: "ไซเบอร์พังก์",
       themeIvory: "โมเดิร์น",
       rulesTitle: "กติกา",
-      rulesBody: "<li>ช่องที่มีตัวเลขคือ <strong>ห้อง</strong> ส่วนครึ่งช่องสีดำที่คุณวางคือ <strong>ประตู</strong></li><li>ตำแหน่งของห้องคงที่และเปลี่ยนไม่ได้</li><li><strong>ตัวเลขของห้อง</strong>ต้องเท่ากับ<strong>พื้นที่รวมของประตูที่แตะห้องนั้น</strong>ทั้งด้านบน ล่าง ซ้าย และขวา</li><li><strong>ประตู</strong>ทุกบานต้อง<strong>แตะห้องอย่างน้อยหนึ่งห้อง</strong></li><li><strong>ประตูแตะกับประตูอื่นไม่ได้</strong></li><li>ทุกช่องว่างต้องมีประตู</li>",
+      rulesBody: "<li>ช่องที่มีตัวเลขคือ <strong>ห้อง</strong> ส่วนครึ่งช่องสีดำที่คุณวางคือ <strong>ประตู</strong></li><li>ตำแหน่งของห้องคงที่และเปลี่ยนไม่ได้</li><li><strong>ตัวเลขของห้อง</strong>ต้องเท่ากับ<strong>พื้นที่รวมของประตูที่แตะห้องนั้น</strong>ทั้งด้านบน ล่าง ซ้าย และขวา</li><li><strong>ประตู</strong>ทุกบานต้อง<strong>แตะห้องอย่างน้อยหนึ่งห้อง</strong></li><li><strong>ประตูแตะกับประตูอื่นไม่ได้</strong></li><li>ทุกช่องว่างต้องมีประตู</li><li>เครื่องหมายสีเทาเป็นโน้ตสำหรับช่วยแก้ ไม่ใช่ประตู</li>",
       controlsTitle: "วิธีเล่น",
-      controlsBody: "<li>คลิกช่องว่างเพื่อเปลี่ยนทิศประตู: <strong>บน → ล่าง → ซ้าย → ขวา → ว่าง</strong></li><li>ใช้เครื่องมือประตูด้านบนเพื่อวางประตูในทิศที่ต้องการ เลือกยางลบเพื่อลบประตูในช่องที่คลิก</li><li><strong>คลิกขวาหรือกดค้างที่ช่องเพื่อล็อก</strong> ช่องที่ล็อกแล้วจะเปลี่ยนไม่ได้ ล็อกซ้ำอีกครั้งเพื่อปลดล็อก</li><li>เครื่องหมายสีเทาเป็นโน้ตสำหรับช่วยแก้ ไม่ใช่ประตู</li>",
+      controlsBody: "<li>คลิกช่องว่างเพื่อเปลี่ยนทิศประตู: <strong>บน → ล่าง → ซ้าย → ขวา → ว่าง</strong></li><li>เลือกเครื่องมือ<strong>โน้ต 2 แบบ</strong>เพื่อจด<strong>โน้ตช่วยแก้</strong>ไว้ในช่อง</li><li>เลือกเครื่องมือ<strong>แม่กุญแจ</strong>เพื่อ<strong>ล็อก</strong>ช่อง หรือ<strong>คลิกขวาหรือกดค้าง</strong>ที่ช่องเพื่อล็อกก็ได้</li><li>เลือก<strong>ยางลบ</strong>เพื่อลบประตูในช่องที่คลิก</li><li><strong>เปิดแผงเครื่องมือ</strong>เพื่อเลือกเครื่องมือได้หลากหลายขึ้น</li><li class=\"shortcut-line\"><strong>ปุ่มลัด: ประตู - D&nbsp;&nbsp;&nbsp;โน้ต 1 - F&nbsp;&nbsp;&nbsp;โน้ต 2 - G&nbsp;&nbsp;&nbsp;ล็อก - L&nbsp;&nbsp;&nbsp;ยางลบ - E</strong></li>",
       modeTitle: "โหมด",
       modePlain: "ไม่มีลูกบิด",
       modeKnob: "มีลูกบิด",
@@ -2953,7 +2960,9 @@
     document.querySelectorAll('[data-i18n]').forEach(el => { el.innerHTML = t(el.dataset.i18n); });
     renderRules();
     document.querySelectorAll('[data-i18n-title]').forEach(el => {
-      el.title = t(el.dataset.i18nTitle);
+      const shortcut = el.classList.contains('tool-btn')
+        && TOOL_SHORTCUT_LABELS[el.id === 'lockModeBtn' ? 'lock' : el.dataset.dir];
+      el.title = t(el.dataset.i18nTitle) + (shortcut ? ' [' + shortcut + ']' : '');
       el.setAttribute('aria-label', el.title);
     });
   }
@@ -3460,6 +3469,58 @@
     e.preventDefault();
     undo();
   });
+
+  // Tool shortcuts: a letter picks its row's cycle tool, and holding the letter while
+  // pressing 1-4 picks that row's specific tool. Keys are matched by e.code so they work
+  // whatever the keyboard layout or IME (e.g. Korean input) is.
+  const TOOL_KEYS = {
+    KeyD: ['cycle-door', 'up', 'down', 'left', 'right'],
+    KeyF: ['cycle-mark', 'q-tl', 'q-tr', 'q-bl', 'q-br'],
+    KeyG: ['cycle-strip', 's-up', 's-down', 's-left', 's-right']
+  };
+  // shortcut labels shown in the tool buttons' tooltips, by tool (data-dir) or 'lock'
+  const TOOL_SHORTCUT_LABELS = {erase: 'E', lock: 'L'};
+  Object.entries(TOOL_KEYS).forEach(([code, tools]) => {
+    const letter = code.slice(3);
+    tools.forEach((tool, k) => { TOOL_SHORTCUT_LABELS[tool] = k ? letter + ' + ' + k : letter; });
+  });
+  let heldToolKey = null;
+
+  // a shortcut picking a tool hidden by the folded palette unfolds it first
+  function selectToolByKey(tool){
+    const btn = document.querySelector(`.tool-btn[data-dir="${tool}"]`);
+    if(toolsCollapsed && btn && !btn.classList.contains('compact-keep')) toggleToolsCollapsed();
+    selectTool(tool);
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if(e.ctrlKey || e.metaKey || e.altKey) return;
+    if(settingsOpen() || state.phase !== 'game' || state.viewMode !== 'play') return;
+    if(e.target.closest && e.target.closest('input, textarea, select')) return;
+    const digit = /^(Digit|Numpad)([1-4])$/.exec(e.code);
+    if(digit){
+      if(!heldToolKey) return;
+      e.preventDefault();
+      selectToolByKey(TOOL_KEYS[heldToolKey][Number(digit[2])]);
+      return;
+    }
+    if(e.repeat) return;
+    if(TOOL_KEYS[e.code]){
+      heldToolKey = e.code;
+      selectToolByKey(TOOL_KEYS[e.code][0]);
+    } else if(e.code === 'KeyE'){
+      selectTool('erase');
+    } else if(e.code === 'KeyL'){
+      toggleLockMode();
+    } else {
+      return;
+    }
+    e.preventDefault();
+  });
+  document.addEventListener('keyup', (e) => {
+    if(e.code === heldToolKey) heldToolKey = null;
+  });
+  window.addEventListener('blur', () => { heldToolKey = null; });
 
   // ---- solve timer: runs from the moment the puzzle appears until it's submitted ----
   const timer = {start: 0, elapsed: 0, running: false, tick: null};
