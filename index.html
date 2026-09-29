@@ -632,13 +632,6 @@
   }
   .tool-swatch .fill{ position:absolute; background:var(--board-ink); }
   .tool-btn.active .tool-swatch{ border-color:var(--accent-strong); }
-  .tool-hint{
-    white-space:pre-line;
-    line-height:1.6;
-    font-size:11.5px;
-    color:var(--muted);
-    flex-basis:100%;
-  }
 
   .board-wrap{
     display:flex;
@@ -887,7 +880,6 @@
     .tool-rows{ gap:6px; }
     .tool-buttons{ gap:6px; }
     .tool-btn{ width:52px; height:48px; }
-    .tool-hint{ font-size:11px; }
 
     .board{ --board-w:calc(100vw - 24px); width:var(--board-w); max-width:480px; }
     .board-frame.knob{ --kb-w:calc(min(100vw - 24px, 480px) - var(--clue-w)); }
@@ -998,7 +990,7 @@
   </section>
 
   <section id="startScreen" class="start-card">
-    <h2 data-i18n="sizeTitle">퍼즐 크기 선택</h2>
+    <h2 data-i18n="sizeTitle">퍼즐 크기</h2>
     <div class="size-grid">
       <button class="size-btn" data-size="5" onclick="startGame(5)">5×5</button>
       <button class="size-btn" data-size="7" onclick="startGame(7)">7×7</button>
@@ -1028,7 +1020,7 @@
     <div id="toolPalette" class="tool-palette">
       <h2 class="tool-title">
         <button id="toolToggleBtn" class="tool-toggle" onclick="toggleToolsCollapsed()" aria-expanded="true" data-i18n-title="toolToggle">
-          <span data-i18n="toolTitle">도구 선택</span>
+          <span data-i18n="toolTitle">도구</span>
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
         </button>
       </h2>
@@ -1093,7 +1085,6 @@
           </button>
         </div>
       </div>
-      <span id="toolHint" class="tool-hint" data-i18n="toolHint"></span>
     </div>
     <div id="solveTimer" class="solve-timer" aria-live="off">
       <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2.5"/><path d="M9.5 2.5h5"/></svg>
@@ -2167,7 +2158,7 @@
       modePlain: '문고리 없음',
       modeKnob: '문고리 있음',
       ruleKnob: '<li><strong>가로행 옆과 세로열 위의 숫자</strong>는 각 줄에 있는 <strong>문고리의 수</strong>를 의미한다.</li>',
-      sizeTitle: '퍼즐 크기 선택',
+      sizeTitle: '퍼즐 크기',
       recordsTitle: '기록',
       loadingTitle: '퍼즐 생성 중…',
       loadingBody: '숫자 배치와 유일해 검증을 진행하고 있어요.',
@@ -2188,12 +2179,11 @@
       tool_s_right: '오른쪽 줄 표시 (1/4칸, 답안에 포함되지 않음)',
       toolLock: '잠금 모드: 켜면 누른 칸이 잠기거나 풀립니다',
       toolErase: '지우개: 누른 칸의 문을 지웁니다',
-      toolHint: '클릭 시 문 방향: 위 → 아래 → 왼쪽 → 오른쪽 → 빈칸\n우클릭 or 길게 클릭: 잠금',
       undoTitle: '실행 취소 (Ctrl+Z)',
       redo: '다시 실행',
       submit: '답안 제출',
       restart: '재시작',
-      toolTitle: '도구 선택',
+      toolTitle: '도구',
       toolToggle: '도구 펼치기/접기',
       resultCorrect: '정답!',
       resultIncorrect: '오답'
@@ -2232,7 +2222,7 @@
       modePlain: 'No doorknobs',
       modeKnob: 'With doorknobs',
       ruleKnob: '<li><strong>The numbers beside each row and above each column</strong> give the <strong>number of doorknobs</strong> in that line.</li>',
-      sizeTitle: 'Choose puzzle size',
+      sizeTitle: 'Puzzle size',
       recordsTitle: 'Records',
       loadingTitle: 'Generating puzzle…',
       loadingBody: 'Placing numbers and verifying the puzzle.',
@@ -2253,7 +2243,6 @@
       tool_s_right: 'Right strip mark (quarter cell, not part of the answer)',
       toolLock: 'Lock mode: tap a cell to lock or unlock it',
       toolErase: 'Eraser: clears the door in a clicked cell',
-      toolHint: 'Click to set door: Up → Down → Left → Right → Empty\nRight-click or long-press: lock',
       undoTitle: 'Undo (Ctrl+Z)',
       redo: 'Redo',
       submit: 'Submit',
@@ -2287,7 +2276,7 @@
       modePlain: "ドアノブなし",
       modeKnob: "ドアノブあり",
       ruleKnob: "<li><strong>各行の横と各列の上の数字</strong>は、その行・列にある<strong>ドアノブの数</strong>を表します。</li>",
-      sizeTitle: "パズルのサイズを選択",
+      sizeTitle: "パズルのサイズ",
       recordsTitle: "記録",
       loadingTitle: "パズルを生成中…",
       loadingBody: "数字を配置し、パズルを検証しています。",
@@ -2308,12 +2297,11 @@
       tool_s_right: "右の線メモ（1/4マス、解答に含まれません）",
       toolLock: "ロックモード：タップしたマスをロック／解除",
       toolErase: "消しゴム：クリックしたマスのドアを消します",
-      toolHint: "クリックでドアの向き：上 → 下 → 左 → 右 → 空白\n右クリックまたは長押し：ロック",
       undoTitle: "元に戻す (Ctrl+Z)",
       redo: "やり直す",
       submit: "解答を提出",
       restart: "やり直し",
-      toolTitle: "ツール選択",
+      toolTitle: "ツール",
       toolToggle: "ツールの表示／非表示",
       resultCorrect: "正解！",
       resultIncorrect: "不正解"
@@ -2342,7 +2330,7 @@
       modePlain: "无门把手",
       modeKnob: "有门把手",
       ruleKnob: "<li><strong>每行旁边和每列上方的数字</strong>表示该行或该列中<strong>门把手的数量</strong>。</li>",
-      sizeTitle: "选择谜题大小",
+      sizeTitle: "谜题大小",
       recordsTitle: "记录",
       loadingTitle: "正在生成谜题…",
       loadingBody: "正在放置数字并验证谜题。",
@@ -2363,12 +2351,11 @@
       tool_s_right: "右侧条形标记（1/4格，不计入答案）",
       toolLock: "锁定模式：点击格子以锁定或解锁",
       toolErase: "橡皮擦：擦除所点格子中的门",
-      toolHint: "点击设置门方向：上 → 下 → 左 → 右 → 空白\n右键或长按：锁定",
       undoTitle: "撤销 (Ctrl+Z)",
       redo: "重做",
       submit: "提交答案",
       restart: "重新开始",
-      toolTitle: "选择工具",
+      toolTitle: "工具",
       toolToggle: "显示／隐藏工具",
       resultCorrect: "正确！",
       resultIncorrect: "错误"
@@ -2397,7 +2384,7 @@
       modePlain: "無門把",
       modeKnob: "有門把",
       ruleKnob: "<li><strong>每列旁邊與每欄上方的數字</strong>表示該列或該欄中<strong>門把的數量</strong>。</li>",
-      sizeTitle: "選擇謎題大小",
+      sizeTitle: "謎題大小",
       recordsTitle: "紀錄",
       loadingTitle: "正在產生謎題…",
       loadingBody: "正在放置數字並驗證謎題。",
@@ -2418,12 +2405,11 @@
       tool_s_right: "右側條狀標記（1/4格，不計入答案）",
       toolLock: "鎖定模式：點擊格子以鎖定或解鎖",
       toolErase: "橡皮擦：擦除所點格子中的門",
-      toolHint: "點擊設定門方向：上 → 下 → 左 → 右 → 空白\n右鍵或長按：鎖定",
       undoTitle: "復原 (Ctrl+Z)",
       redo: "重做",
       submit: "提交答案",
       restart: "重新開始",
-      toolTitle: "選擇工具",
+      toolTitle: "工具",
       toolToggle: "顯示／隱藏工具",
       resultCorrect: "正確！",
       resultIncorrect: "錯誤"
@@ -2452,7 +2438,7 @@
       modePlain: "Sin pomos",
       modeKnob: "Con pomos",
       ruleKnob: "<li><strong>Los números junto a cada fila y encima de cada columna</strong> indican el <strong>número de pomos</strong> en esa línea.</li>",
-      sizeTitle: "Elige el tamaño del puzle",
+      sizeTitle: "Tamaño del puzle",
       recordsTitle: "Récords",
       loadingTitle: "Generando puzle…",
       loadingBody: "Colocando números y verificando el puzle.",
@@ -2473,7 +2459,6 @@
       tool_s_right: "Franja derecha (cuarto de casilla, no cuenta en la respuesta)",
       toolLock: "Modo bloqueo: toca una casilla para bloquearla o desbloquearla",
       toolErase: "Borrador: quita la puerta de la casilla que pulses",
-      toolHint: "Clic para la puerta: Arriba → Abajo → Izquierda → Derecha → Vacía\nClic derecho o mantener pulsado: bloquear",
       undoTitle: "Deshacer (Ctrl+Z)",
       redo: "Rehacer",
       submit: "Enviar",
@@ -2507,7 +2492,7 @@
       modePlain: "Sans poignées",
       modeKnob: "Avec poignées",
       ruleKnob: "<li><strong>Les nombres à côté de chaque ligne et au-dessus de chaque colonne</strong> indiquent le <strong>nombre de poignées</strong> sur cette ligne.</li>",
-      sizeTitle: "Choisissez la taille du puzzle",
+      sizeTitle: "Taille du puzzle",
       recordsTitle: "Records",
       loadingTitle: "Génération du puzzle…",
       loadingBody: "Placement des nombres et vérification du puzzle.",
@@ -2528,7 +2513,6 @@
       tool_s_right: "Bande de droite (quart de case, hors réponse)",
       toolLock: "Mode verrou : touchez une case pour la verrouiller ou la déverrouiller",
       toolErase: "Gomme : efface la porte de la case cliquée",
-      toolHint: "Clic pour la porte : Haut → Bas → Gauche → Droite → Vide\nClic droit ou appui long : verrouiller",
       undoTitle: "Annuler (Ctrl+Z)",
       redo: "Rétablir",
       submit: "Valider",
@@ -2562,7 +2546,7 @@
       modePlain: "Ohne Türknäufe",
       modeKnob: "Mit Türknäufen",
       ruleKnob: "<li><strong>Die Zahlen neben jeder Zeile und über jeder Spalte</strong> geben die <strong>Anzahl der Türknäufe</strong> in dieser Linie an.</li>",
-      sizeTitle: "Rätselgröße wählen",
+      sizeTitle: "Rätselgröße",
       recordsTitle: "Rekorde",
       loadingTitle: "Rätsel wird erstellt…",
       loadingBody: "Zahlen werden gesetzt und das Rätsel wird geprüft.",
@@ -2583,7 +2567,6 @@
       tool_s_right: "Streifen rechts (Viertelfeld, zählt nicht zur Lösung)",
       toolLock: "Sperrmodus: Feld antippen zum Sperren oder Entsperren",
       toolErase: "Radierer: löscht die Tür im angeklickten Feld",
-      toolHint: "Klick für Türrichtung: Oben → Unten → Links → Rechts → Leer\nRechtsklick oder langes Drücken: sperren",
       undoTitle: "Rückgängig (Strg+Z)",
       redo: "Wiederholen",
       submit: "Abgeben",
@@ -2617,7 +2600,7 @@
       modePlain: "Sem maçanetas",
       modeKnob: "Com maçanetas",
       ruleKnob: "<li><strong>Os números ao lado de cada linha e acima de cada coluna</strong> indicam o <strong>número de maçanetas</strong> naquela linha.</li>",
-      sizeTitle: "Escolha o tamanho do quebra-cabeça",
+      sizeTitle: "Tamanho do quebra-cabeça",
       recordsTitle: "Recordes",
       loadingTitle: "Gerando quebra-cabeça…",
       loadingBody: "Colocando números e verificando o quebra-cabeça.",
@@ -2638,7 +2621,6 @@
       tool_s_right: "Faixa direita (um quarto de casa, não conta na resposta)",
       toolLock: "Modo bloqueio: toque numa casa para bloquear ou desbloquear",
       toolErase: "Borracha: apaga a porta da casa clicada",
-      toolHint: "Clique para a porta: Cima → Baixo → Esquerda → Direita → Vazia\nBotão direito ou pressionar e segurar: bloquear",
       undoTitle: "Desfazer (Ctrl+Z)",
       redo: "Refazer",
       submit: "Enviar",
@@ -2672,7 +2654,7 @@
       modePlain: "Без ручек",
       modeKnob: "С ручками",
       ruleKnob: "<li><strong>Числа сбоку от каждой строки и над каждым столбцом</strong> показывают <strong>количество дверных ручек</strong> в этой линии.</li>",
-      sizeTitle: "Выберите размер головоломки",
+      sizeTitle: "Размер головоломки",
       recordsTitle: "Рекорды",
       loadingTitle: "Создание головоломки…",
       loadingBody: "Расставляем числа и проверяем головоломку.",
@@ -2693,7 +2675,6 @@
       tool_s_right: "Правая полоса (четверть клетки, не входит в ответ)",
       toolLock: "Режим блокировки: нажмите на клетку, чтобы заблокировать или разблокировать",
       toolErase: "Ластик: стирает дверь в нажатой клетке",
-      toolHint: "Клик — направление двери: Вверх → Вниз → Влево → Вправо → Пусто\nПравый клик или долгое нажатие: блокировка",
       undoTitle: "Отменить (Ctrl+Z)",
       redo: "Повторить",
       submit: "Проверить",
@@ -2727,7 +2708,7 @@
       modePlain: "Senza pomelli",
       modeKnob: "Con pomelli",
       ruleKnob: "<li><strong>I numeri accanto a ogni riga e sopra ogni colonna</strong> indicano il <strong>numero di pomelli</strong> in quella linea.</li>",
-      sizeTitle: "Scegli la dimensione del puzzle",
+      sizeTitle: "Dimensione del puzzle",
       recordsTitle: "Record",
       loadingTitle: "Generazione del puzzle…",
       loadingBody: "Posiziono i numeri e verifico il puzzle.",
@@ -2748,7 +2729,6 @@
       tool_s_right: "Striscia a destra (quarto di casella, non conta nella risposta)",
       toolLock: "Modalità blocco: tocca una casella per bloccarla o sbloccarla",
       toolErase: "Gomma: cancella la porta nella casella cliccata",
-      toolHint: "Clic per la porta: Su → Giù → Sinistra → Destra → Vuota\nClic destro o pressione prolungata: blocca",
       undoTitle: "Annulla (Ctrl+Z)",
       redo: "Ripeti",
       submit: "Invia",
@@ -2782,7 +2762,7 @@
       modePlain: "Không tay nắm",
       modeKnob: "Có tay nắm",
       ruleKnob: "<li><strong>Các số bên cạnh mỗi hàng và phía trên mỗi cột</strong> cho biết <strong>số tay nắm cửa</strong> trên đường đó.</li>",
-      sizeTitle: "Chọn kích thước câu đố",
+      sizeTitle: "Kích thước câu đố",
       recordsTitle: "Kỷ lục",
       loadingTitle: "Đang tạo câu đố…",
       loadingBody: "Đang đặt số và kiểm tra câu đố.",
@@ -2803,7 +2783,6 @@
       tool_s_right: "Dải phải (1/4 ô, không tính vào đáp án)",
       toolLock: "Chế độ khóa: chạm vào ô để khóa hoặc mở khóa",
       toolErase: "Cục tẩy: xóa cửa trong ô được nhấn",
-      toolHint: "Nhấn để đặt cửa: Lên → Xuống → Trái → Phải → Trống\nNhấp phải hoặc nhấn giữ: khóa",
       undoTitle: "Hoàn tác (Ctrl+Z)",
       redo: "Làm lại",
       submit: "Nộp bài",
@@ -2837,7 +2816,7 @@
       modePlain: "Tanpa gagang pintu",
       modeKnob: "Dengan gagang pintu",
       ruleKnob: "<li><strong>Angka di samping setiap baris dan di atas setiap kolom</strong> menunjukkan <strong>jumlah gagang pintu</strong> pada garis tersebut.</li>",
-      sizeTitle: "Pilih ukuran teka-teki",
+      sizeTitle: "Ukuran teka-teki",
       recordsTitle: "Rekor",
       loadingTitle: "Membuat teka-teki…",
       loadingBody: "Menempatkan angka dan memeriksa teka-teki.",
@@ -2858,7 +2837,6 @@
       tool_s_right: "Strip kanan (1/4 kotak, tidak dihitung dalam jawaban)",
       toolLock: "Mode kunci: ketuk kotak untuk mengunci atau membuka",
       toolErase: "Penghapus: menghapus pintu di kotak yang diklik",
-      toolHint: "Klik untuk arah pintu: Atas → Bawah → Kiri → Kanan → Kosong\nKlik kanan atau tekan lama: kunci",
       undoTitle: "Urungkan (Ctrl+Z)",
       redo: "Ulangi",
       submit: "Kirim jawaban",
@@ -2892,7 +2870,7 @@
       modePlain: "ไม่มีลูกบิด",
       modeKnob: "มีลูกบิด",
       ruleKnob: "<li><strong>ตัวเลขข้างแต่ละแถวและเหนือแต่ละคอลัมน์</strong>บอก<strong>จำนวนลูกบิดประตู</strong>ในแนวนั้น</li>",
-      sizeTitle: "เลือกขนาดปริศนา",
+      sizeTitle: "ขนาดปริศนา",
       recordsTitle: "สถิติ",
       loadingTitle: "กำลังสร้างปริศนา…",
       loadingBody: "กำลังวางตัวเลขและตรวจสอบปริศนา",
@@ -2913,7 +2891,6 @@
       tool_s_right: "แถบขวา (1/4 ช่อง ไม่นับในคำตอบ)",
       toolLock: "โหมดล็อก: แตะช่องเพื่อล็อกหรือปลดล็อก",
       toolErase: "ยางลบ: ลบประตูในช่องที่คลิก",
-      toolHint: "คลิกเพื่อเปลี่ยนทิศประตู: บน → ล่าง → ซ้าย → ขวา → ว่าง\nคลิกขวาหรือกดค้าง: ล็อก",
       undoTitle: "เลิกทำ (Ctrl+Z)",
       redo: "ทำซ้ำ",
       submit: "ส่งคำตอบ",
