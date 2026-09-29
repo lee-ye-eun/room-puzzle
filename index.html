@@ -3183,11 +3183,39 @@
   // Each special theme loops its own track; switching themes restarts from the beginning.
   // Browsers only allow audio after a user gesture, so a theme restored from a previous
   // visit starts playing on the first tap/click anywhere on the page.
-  const BGM_TRACKS = {med: 'audio/bgm-med.mp3', rococo: 'audio/bgm-rococo.mp3', cyber: 'audio/bgm-cyber.mp3'};
+  // The tracks ship scrambled (tools/encode-audio.mjs), since the licence forbids leaving the
+  // raw audio easy to download; each is fetched once, unscrambled and played from a blob URL.
+  const BGM_TRACKS = {med: 'audio/bgm-med.dat', rococo: 'audio/bgm-rococo.dat', cyber: 'audio/bgm-cyber.dat'};
   const bgm = new Audio();
   bgm.loop = true;
   bgm.preload = 'none';
   let bgmTrack = null;
+  const bgmUrls = {};    // track -> blob URL, once unscrambled
+  const bgmLoading = {}; // track -> promise while it's being fetched
+
+  // same keystream as tools/encode-audio.mjs; XOR is its own inverse
+  function unscrambleBgm(bytes){
+    let s = 0x5EED1234;
+    for(let i = 0; i < bytes.length; i++){
+      s ^= s << 13; s ^= s >>> 17; s ^= s << 5;
+      bytes[i] ^= s & 0xFF;
+    }
+    return bytes;
+  }
+
+  // A failed fetch is forgotten so the next attempt (the next gesture) tries again.
+  function loadBgm(track){
+    if(!bgmLoading[track]){
+      bgmLoading[track] = fetch(track)
+        .then(res => { if(!res.ok) throw new Error(res.status); return res.arrayBuffer(); })
+        .then(buf => {
+          const blob = new Blob([unscrambleBgm(new Uint8Array(buf))], {type: 'audio/mpeg'});
+          bgmUrls[track] = URL.createObjectURL(blob);
+        })
+        .catch(e => { delete bgmLoading[track]; throw e; });
+    }
+    return bgmLoading[track];
+  }
 
   function bgmVolume(){
     const v = volumes.bgm / SOUND_MAX;
@@ -3195,15 +3223,22 @@
   }
 
   function startBgm(fromStart){
-    const src = BGM_TRACKS[currentTheme()] || null;
-    if(!src){
+    const track = BGM_TRACKS[currentTheme()] || null;
+    if(!track){
       bgm.pause();
       bgmTrack = null;
       return;
     }
-    if(src !== bgmTrack){
-      bgm.src = src;
-      bgmTrack = src;
+    if(!bgmUrls[track]){
+      // not unscrambled yet: stop the old track, and come back once this one is ready
+      // (if its theme is still on). A play blocked by then waits for the next gesture.
+      bgm.pause();
+      loadBgm(track).then(() => { if(BGM_TRACKS[currentTheme()] === track) startBgm(false); }, () => {});
+      return;
+    }
+    if(track !== bgmTrack){
+      bgm.src = bgmUrls[track];
+      bgmTrack = track;
     } else if(fromStart){
       bgm.currentTime = 0;
     }
@@ -3221,6 +3256,8 @@
       if(BGM_TRACKS[currentTheme()] && bgm.paused && volumes.bgm > 0 && !document.hidden) startBgm(false);
     }, true);
   });
+  // fetch a restored theme's track up front, so the first gesture can start it right away
+  if(BGM_TRACKS[currentTheme()]) loadBgm(BGM_TRACKS[currentTheme()]).catch(() => {});
   // pause while the tab is in the background, pick up where it left off on return
   document.addEventListener('visibilitychange', () => {
     if(document.hidden) bgm.pause();
