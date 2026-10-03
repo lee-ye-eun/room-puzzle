@@ -1130,8 +1130,8 @@
       </div>
     </div>
     <div id="submitActions" class="actions">
+      <button id="restartBtn" class="btn danger-outline" onclick="restart()" data-i18n="restart">재시작</button>
       <button id="submitBtn" class="btn" onclick="submitAnswer()" data-i18n="submit">제출</button>
-      <button id="restartBtn" class="btn danger-outline" onclick="restart()" hidden data-i18n="restart">재시작</button>
     </div>
   </section>
 
@@ -4148,7 +4148,6 @@
 
     const submitted = state.submittedState !== null;
     document.getElementById('submitBtn').hidden = submitted;
-    document.getElementById('restartBtn').hidden = !submitted;
 
     const resultBanner = document.getElementById('resultBanner');
     resultBanner.hidden = !submitted;
