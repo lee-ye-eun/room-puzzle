@@ -110,9 +110,19 @@ Plain **HTML · CSS · JavaScript**, with no build tools or external libraries.
 
 ```
 .
-├── index.html          # the game (HTML, CSS and JS in one file)
+├── index.html          # page markup
+├── css/style.css       # styles (all six themes)
+├── js/
+│   ├── theme.js        # applies the saved theme before the first paint
+│   ├── generator.js    # puzzle generator (no DOM)
+│   ├── i18n.js         # UI text in 14 languages and the language switch
+│   ├── audio.js        # volume, sound effects, theme BGM
+│   ├── settings.js     # settings popup (theme, volume, language)
+│   └── game.js         # game screen: state, controls, grading, records, rendering
 ├── audio/              # theme BGM (bgm-med / bgm-rococo / bgm-cyber, encrypted .dat)
-├── tools/              # BGM encryption script (encode-audio.mjs)
+├── tools/
+│   ├── encode-audio.mjs     # BGM encryption script
+│   └── check-generator.mjs  # generator check: node tools/check-generator.mjs
 └── docs/images/        # README screenshots
 ```
 

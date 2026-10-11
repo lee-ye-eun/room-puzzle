@@ -110,9 +110,19 @@
 
 ```
 .
-├── index.html          # 게임 본체 (HTML·CSS·JS 단일 파일)
+├── index.html          # 페이지 마크업
+├── css/style.css       # 스타일 (테마 6종 포함)
+├── js/
+│   ├── theme.js        # 저장된 테마를 첫 화면 전에 적용
+│   ├── generator.js    # 퍼즐 생성기 (DOM 없음)
+│   ├── i18n.js         # 14개 언어 문구와 언어 전환
+│   ├── audio.js        # 볼륨, 효과음, 테마 BGM
+│   ├── settings.js     # 설정 창 (테마·볼륨·언어)
+│   └── game.js         # 게임 화면: 상태·조작·채점·기록·렌더링
 ├── audio/              # 테마별 BGM (bgm-med / bgm-rococo / bgm-cyber, 암호화된 .dat)
-├── tools/              # BGM 암호화 스크립트 (encode-audio.mjs)
+├── tools/
+│   ├── encode-audio.mjs     # BGM 암호화 스크립트
+│   └── check-generator.mjs  # 생성기 검증: node tools/check-generator.mjs
 └── docs/images/        # README 스크린샷
 ```
 
