@@ -110,9 +110,19 @@
 
 ```
 .
-├── index.html          # ゲーム本体（HTML・CSS・JSの単一ファイル）
+├── index.html          # ページのマークアップ
+├── css/style.css       # スタイル（6種のテーマを含む）
+├── js/
+│   ├── theme.js        # 保存したテーマを最初の描画前に適用
+│   ├── generator.js    # パズル生成（DOMなし）
+│   ├── i18n.js         # 14言語のテキストと言語切り替え
+│   ├── audio.js        # 音量・効果音・テーマBGM
+│   ├── settings.js     # 設定画面（テーマ・音量・言語）
+│   └── game.js         # ゲーム画面：状態・操作・採点・記録・描画
 ├── audio/              # テーマ別BGM（bgm-med / bgm-rococo / bgm-cyber、暗号化済みの .dat）
-├── tools/              # BGM暗号化スクリプト（encode-audio.mjs）
+├── tools/
+│   ├── encode-audio.mjs     # BGM暗号化スクリプト
+│   └── check-generator.mjs  # 生成の検証：node tools/check-generator.mjs
 └── docs/images/        # README用スクリーンショット
 ```
 
