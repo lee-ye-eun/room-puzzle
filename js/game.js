@@ -265,9 +265,103 @@ function setMode(value){
   render();
 }
 
-// rule 7 only exists in knob mode
+// Small example boards drawn under some rules, built from the board's own cell classes so
+// they follow the theme. Each board is rows of cell specs: '' = no cell, a number = room,
+// a door orientation = door; a spec object adds {bad} (drawn as a violation) or {val}
+// (a small label in the door's white half). `ok` puts a ✓ / ✗ under the board.
+const RULE_FIGURES = {
+  0: [{rows: [[2]]}, {rows: [['up', 'down', 'left', 'right']]}],
+  2: [{rows: [
+    ['', {d: 'down', val: '1'}, ''],
+    [{d: 'up', val: '0.5'}, 2, {d: 'down', val: '0.5'}],
+    ['', {d: 'down', val: '0'}, '']
+  ]}],
+  3: [{ok: true, rows: [['right', 2, 'left']]}, {ok: false, rows: [[{d: 'left', bad: true}, 1, 'left']]}],
+  4: [{ok: false, rows: [[{d: 'right', bad: true}, {d: 'left', bad: true}]]},
+      {ok: false, rows: [[{d: 'up', bad: true}, {d: 'up', bad: true}]]},
+      {ok: true, rows: [['up', 'down']]},
+      {ok: true, rows: [['left', 'left']]}],
+  knob: [{knob: true, rows: [['right', 3, 'left'], [1, 'up', 1]]}]
+};
+
+function miniBoard(fig){
+  const rows = fig.rows.map(r => r.map(s => typeof s === 'string' && s ? {d: s} : s));
+  const wrap = document.createElement('div');
+  wrap.className = 'rule-example';
+  const board = document.createElement('div');
+  board.className = 'mini-board' + (fig.knob ? ' with-knob' : '');
+  board.style.gridTemplateColumns = `repeat(${rows[0].length}, 1fr)`;
+  rows.flat().forEach(s => {
+    const div = document.createElement('div');
+    if(s === '') div.className = 'mini-gap';
+    else if(typeof s === 'number'){
+      div.className = 'cell fixed-number';
+      div.textContent = s;
+    } else {
+      div.className = 'cell player' + (s.bad ? ' violation' : '');
+      const fill = document.createElement('span');
+      fill.className = 'fill fill-' + s.d;
+      div.appendChild(fill);
+      if(s.val){
+        const val = document.createElement('span');
+        val.className = 'mini-val mini-val-' + s.d;
+        val.textContent = s.val;
+        div.appendChild(val);
+      }
+    }
+    board.appendChild(div);
+  });
+  if(fig.knob){
+    // the knob clue strips around the board, read off the example itself
+    const n = rows.length, m = rows[0].length;
+    const rowCount = new Array(2 * n).fill(0), colCount = new Array(2 * m).fill(0);
+    rows.forEach((r, i) => r.forEach((s, j) => {
+      const q = s && KNOB_QUARTER[s.d];
+      if(!q) return;
+      rowCount[2 * i + q[0]]++;
+      colCount[2 * j + q[1]]++;
+    }));
+    const frame = document.createElement('div');
+    frame.className = 'mini-knob-frame';
+    frame.style.setProperty('--rows', n);
+    frame.style.setProperty('--cols', m);
+    [['mini-col-clues', colCount], ['mini-row-clues', rowCount]].forEach(([cls, counts]) => {
+      const strip = document.createElement('div');
+      strip.className = 'mini-clues ' + cls;
+      counts.forEach((c, k) => {
+        const span = document.createElement('span');
+        span.className = Math.floor(k / 2) % 2 ? 'band' : '';
+        span.textContent = c;
+        strip.appendChild(span);
+      });
+      frame.appendChild(strip);
+    });
+    frame.appendChild(board);
+    wrap.appendChild(frame);
+  } else wrap.appendChild(board);
+  if(fig.ok !== undefined){
+    const mark = document.createElement('span');
+    mark.className = 'rule-verdict ' + (fig.ok ? 'ok' : 'bad');
+    mark.textContent = fig.ok ? '✓' : '✗';
+    wrap.appendChild(mark);
+  }
+  return wrap;
+}
+
+// rule 8 only exists in knob mode
 function renderRules(){
-  document.getElementById('rulesList').innerHTML = t('rulesBody') + (mode === 'knob' ? t('ruleKnob') : '');
+  const list = document.getElementById('rulesList');
+  list.innerHTML = t('rulesBody') + (mode === 'knob' ? t('ruleKnob') : '');
+  const items = list.children;
+  Object.entries(RULE_FIGURES).forEach(([key, figs]) => {
+    const li = key === 'knob' ? (mode === 'knob' ? items[items.length - 1] : null) : items[key];
+    if(!li) return;
+    const row = document.createElement('div');
+    row.className = 'rule-figure';
+    row.setAttribute('aria-hidden', 'true');
+    figs.forEach(fig => row.appendChild(miniBoard(fig)));
+    li.appendChild(row);
+  });
 }
 
 // Which quarter of its cell a door's knob sits in, as [half-row, half-column] (0 = top/left):

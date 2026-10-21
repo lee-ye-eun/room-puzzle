@@ -115,6 +115,7 @@ Plain **HTML · CSS · JavaScript**, with no build tools or external libraries.
 ├── js/
 │   ├── theme.js        # applies the saved theme before the first paint
 │   ├── generator.js    # puzzle generator (no DOM)
+│   ├── solver.js       # automatic solver (no DOM, needs generator.js)
 │   ├── i18n.js         # UI text in 14 languages and the language switch
 │   ├── audio.js        # volume, sound effects, theme BGM
 │   ├── settings.js     # settings popup (theme, volume, language)
@@ -122,7 +123,8 @@ Plain **HTML · CSS · JavaScript**, with no build tools or external libraries.
 ├── audio/              # theme BGM (bgm-med / bgm-rococo / bgm-cyber, encrypted .dat)
 ├── tools/
 │   ├── encode-audio.mjs     # BGM encryption script
-│   └── check-generator.mjs  # generator check: node tools/check-generator.mjs
+│   ├── check-generator.mjs  # generator check: node tools/check-generator.mjs
+│   └── check-solver.mjs     # solver check and uniqueness stats: node tools/check-solver.mjs
 └── docs/images/        # README screenshots
 ```
 

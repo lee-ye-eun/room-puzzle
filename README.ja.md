@@ -115,6 +115,7 @@
 ├── js/
 │   ├── theme.js        # 保存したテーマを最初の描画前に適用
 │   ├── generator.js    # パズル生成（DOMなし）
+│   ├── solver.js       # 自動ソルバー（DOMなし、generator.jsが必要）
 │   ├── i18n.js         # 14言語のテキストと言語切り替え
 │   ├── audio.js        # 音量・効果音・テーマBGM
 │   ├── settings.js     # 設定画面（テーマ・音量・言語）
@@ -122,7 +123,8 @@
 ├── audio/              # テーマ別BGM（bgm-med / bgm-rococo / bgm-cyber、暗号化済みの .dat）
 ├── tools/
 │   ├── encode-audio.mjs     # BGM暗号化スクリプト
-│   └── check-generator.mjs  # 生成の検証：node tools/check-generator.mjs
+│   ├── check-generator.mjs  # 生成の検証：node tools/check-generator.mjs
+│   └── check-solver.mjs     # ソルバーの検証と唯一解の統計：node tools/check-solver.mjs
 └── docs/images/        # README用スクリーンショット
 ```
 

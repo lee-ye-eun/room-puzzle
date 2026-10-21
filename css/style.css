@@ -433,6 +433,69 @@ header.top h1{
 }
 .legend li::marker{ color:var(--ink); font-weight:600; }
 .legend li.shortcut-line{ margin-top:8px; }
+/* example boards under some rules, drawn with the board's own cell classes */
+.rule-figure{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:flex-start;
+  gap:14px;
+  margin:8px 0 4px;
+}
+.rule-example{ display:flex; flex-direction:column; align-items:center; gap:4px; }
+.mini-board{
+  --mini:26px;
+  display:grid;
+  grid-auto-rows:var(--mini);
+  grid-template-columns:repeat(1, var(--mini));
+  gap:1px;
+  padding:1px;
+}
+.mini-board > *{ width:var(--mini); }
+.mini-board .cell{
+  font-size:13px;
+  cursor:default;
+  outline:1px solid var(--board-line);
+}
+.mini-board .cell.player{ box-shadow:none; }
+.mini-board .cell.player.violation{ box-shadow:inset 0 0 0 2px var(--danger); }
+.mini-gap{ background:transparent; }
+/* a door's share of a room, written in the door's white half */
+.mini-val{
+  position:absolute;
+  font-family:var(--font-mono);
+  font-size:10px;
+  font-weight:600;
+  line-height:1;
+  color:var(--muted);
+}
+.mini-val-up{ bottom:2px; left:50%; transform:translateX(-50%); }
+.mini-val-down{ top:2px; left:50%; transform:translateX(-50%); }
+.mini-val-left{ right:3px; top:50%; transform:translateY(-50%); }
+.mini-val-right{ left:3px; top:50%; transform:translateY(-50%); }
+.rule-verdict{ font-weight:700; font-size:13px; line-height:1; }
+.rule-verdict.ok{ color:var(--correct); }
+.rule-verdict.bad{ color:var(--danger); }
+/* knob example: half-line clue strips above and left of the board, like the real frame */
+.mini-knob-frame{
+  display:grid;
+  grid-template-columns:auto auto;
+  grid-template-rows:auto auto;
+  gap:3px;
+}
+.mini-clues{
+  display:grid;
+  font-family:var(--font-mono);
+  font-size:9.5px;
+  font-weight:600;
+  color:var(--ink);
+}
+.mini-clues span{ display:flex; align-items:center; justify-content:center; }
+.mini-clues .band{ background:var(--line-soft); }
+.mini-col-clues{ grid-column:2; grid-row:1; padding:0 1px; grid-template-columns:repeat(calc(var(--cols) * 2), 13.5px); }
+.mini-col-clues span{ padding:2px 0; }
+.mini-row-clues{ grid-column:1; grid-row:2; padding:1px 0; grid-template-rows:repeat(calc(var(--rows) * 2), 13.5px); }
+.mini-row-clues span{ padding:0 3px; }
+.mini-knob-frame .mini-board{ grid-column:2; grid-row:2; }
 /* ---- start screen ---- */
 .start-card{
   border-bottom:1px solid var(--line);
