@@ -800,10 +800,9 @@ function generatePuzzle(n){
   // that pass's own comment). A generous cap here trades a little loading-screen time for
   // making an outright failure practically impossible.
   //
-  // NOTE: this build has no independent uniqueness solver. Verified empirically to leave
-  // only a small residual chance (roughly 1-3 cells per puzzle) of a genuine
-  // multi-orientation tie slipping through; a solver variant closed that gap but made
-  // larger boards (13×13+) take tens of seconds per puzzle, so it was dropped.
+  // NOTE: this doesn't check uniqueness itself. Plain boards can still have a few cells
+  // with a genuine multi-orientation tie; knob mode re-checks every board with solver.js
+  // (generateUniqueKnobPuzzle / js/gen-worker.js) and regenerates until it's unique.
   for(let attempt = 0; attempt < MAX_GENERATE_ATTEMPTS; attempt++){
     const puzzle = generatePuzzleAttempt(n);
     if(puzzle) return puzzle;

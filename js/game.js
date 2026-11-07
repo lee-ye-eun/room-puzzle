@@ -364,23 +364,7 @@ function renderRules(){
   });
 }
 
-// Which quarter of its cell a door's knob sits in, as [half-row, half-column] (0 = top/left):
-// up → top-right, down → bottom-left, left → top-left, right → bottom-right.
-const KNOB_QUARTER = {up: [0, 1], down: [1, 0], left: [0, 0], right: [1, 1]};
-
-// Knob counts per half-row (rows[2r + h]) and per half-column (cols[2c + h]) for a board
-// whose cells hold door orientations; anything else (rooms, blanks, marks) has no knob.
-function knobCounts(n, doors){
-  const rows = new Array(2 * n).fill(0);
-  const cols = new Array(2 * n).fill(0);
-  doors.forEach((d, i) => {
-    const q = KNOB_QUARTER[d];
-    if(!q) return;
-    rows[2 * Math.floor(i / n) + q[0]]++;
-    cols[2 * (i % n) + q[1]]++;
-  });
-  return {rows, cols};
-}
+// KNOB_QUARTER and knobCounts() live in solver.js, shared with the unique-puzzle generator.
 
 // Puts state back to an empty round on the given puzzle (null = no puzzle, the start screen).
 function resetRound(size, puzzle){
@@ -406,23 +390,68 @@ function startGame(size){
   if(state.phase !== 'start') return;
   state.phase = 'loading';
   render();
-  // the short delay lets the loading screen paint before generation blocks the page
-  setTimeout(() => {
-    let puzzle;
-    try {
-      puzzle = generatePuzzle(size);
-    } catch(e){
-      console.error(e);
-      state.phase = 'start';
-      render();
-      alert(t('generateFailed'));
-      return;
-    }
+  function begin(puzzle){
     state.phase = 'game';
     resetRound(size, puzzle);
     render();
     startTimer();
-  }, 30);
+  }
+  function fail(e){
+    console.error(e);
+    state.phase = 'start';
+    render();
+    alert(t('generateFailed'));
+  }
+  // Knob mode only accepts boards with a single solution, and generation time varies a
+  // lot, so two workers race and the first single-solution board wins — on 15×15 ~2.1 s
+  // avg vs ~3.6 s for one at a time (tools/bench-knob-parallel.mjs). Falls back to the
+  // in-page path if workers can't start (e.g. index.html opened straight from disk).
+  if(mode === 'knob'){
+    raceKnobWorkers(size).then(begin, e => {
+      console.warn('worker generation unavailable, generating in page', e);
+      setTimeout(() => generateInPage(), 30);
+    });
+    return;
+  }
+  // the short delay lets the loading screen paint before generation blocks the page
+  setTimeout(() => generateInPage(), 30);
+
+  function generateInPage(){
+    let puzzle;
+    try {
+      // knob mode only accepts boards whose rooms + knob clues have a single solution
+      puzzle = mode === 'knob' ? generateUniqueKnobPuzzle(size).puzzle : generatePuzzle(size);
+    } catch(e){ fail(e); return; }
+    begin(puzzle);
+  }
+}
+
+// Starts two workers that each generate until they have a single-solution knob board;
+// resolves with the first one's puzzle and stops the other. Rejects if a worker can't be
+// created or errors before any board is found.
+function raceKnobWorkers(size){
+  return new Promise((resolve, reject) => {
+    const workers = [];
+    let done = false, failed = 0;
+    const stop = () => workers.forEach(w => w.terminate());
+    function onFail(e){
+      if(done) return;
+      if(++failed < workers.length) return; // the other worker may still succeed
+      done = true; stop(); reject(e);
+    }
+    try {
+      for(let k = 0; k < 2; k++) workers.push(new Worker('js/gen-worker.js'));
+    } catch(e){ stop(); reject(e); return; }
+    workers.forEach(w => {
+      w.onmessage = ({data}) => {
+        if(data.error){ onFail(new Error(data.error)); return; }
+        if(done || !data.unique) return;
+        done = true; stop(); resolve(data.puzzle);
+      };
+      w.onerror = ev => { ev.preventDefault(); onFail(new Error(ev.message || 'worker error')); };
+      w.postMessage({size, loop: true});
+    });
+  });
 }
 
 // The rules / how-to-play cards stay open or closed the way the player last left them.
