@@ -13,6 +13,24 @@
 //   - knob (optional): every half-row / half-column holds as many knobs as its clue says
 // Contributions are counted in halves (0 / 1 / 2) so all sums stay integers.
 
+// Which quarter of its cell a door's knob sits in, as [half-row, half-column] (0 = top/left):
+// up → top-right, down → bottom-left, left → top-left, right → bottom-right.
+const KNOB_QUARTER = {up: [0, 1], down: [1, 0], left: [0, 0], right: [1, 1]};
+
+// Knob counts per half-row (rows[2r + h]) and per half-column (cols[2c + h]) for a board
+// whose cells hold door orientations; anything else (rooms, blanks, marks) has no knob.
+function knobCounts(n, doors){
+  const rows = new Array(2 * n).fill(0);
+  const cols = new Array(2 * n).fill(0);
+  doors.forEach((d, i) => {
+    const q = KNOB_QUARTER[d];
+    if(!q) return;
+    rows[2 * Math.floor(i / n) + q[0]]++;
+    cols[2 * (i % n) + q[1]]++;
+  });
+  return {rows, cols};
+}
+
 const BIT = {up: 1, down: 2, left: 4, right: 8};
 const FULL_DOMAIN = 15;
 
@@ -20,7 +38,7 @@ const FULL_DOMAIN = 15;
 const BIT_COUNT = Array.from({length: 16}, (_, m) => ORIENTATIONS.filter(o => m & BIT[o]).length);
 const SINGLE_ORIENTATION = Array.from({length: 16}, (_, m) => BIT_COUNT[m] === 1 ? ORIENTATIONS.find(o => m & BIT[o]) : null);
 
-// Orientations whose knob (see KNOB_QUARTER in game.js) sits in the top half-row of the
+// Orientations whose knob (see KNOB_QUARTER below) sits in the top half-row of the
 // cell, and in the left half-column. The rest sit in the bottom / right halves.
 const KNOB_TOP = BIT.up | BIT.left;
 const KNOB_LEFT = BIT.down | BIT.left;
@@ -278,4 +296,17 @@ function solvePuzzle(puzzle, options = {}){
     if(g === pick.length) break;
   }
   return result;
+}
+
+// Knob mode: keeps generating until the rooms plus the knob clues read off the answer
+// have exactly one solution, so the player never hits an ambiguous board. Returns
+// {puzzle, knobClues, tries}. Throws after `maxTries` non-unique boards in a row.
+const MAX_UNIQUE_TRIES = 200;
+function generateUniqueKnobPuzzle(n, maxTries = MAX_UNIQUE_TRIES){
+  for(let tries = 1; tries <= maxTries; tries++){
+    const puzzle = generatePuzzle(n);
+    const knobClues = knobCounts(n, puzzle.cells.map(c => c.answer));
+    if(solvePuzzle(puzzle, {knobClues, limit: 2}).count === 1) return {puzzle, knobClues, tries};
+  }
+  throw new Error(`No unique knob puzzle in ${maxTries} tries (${n}×${n})`);
 }
