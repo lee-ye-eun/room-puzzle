@@ -14,13 +14,11 @@ No installation needed — play it right in your browser.
 ## Rules
 
 1. A cell with a number is a **Room**; a black half-cell you place is a **Door**.
-2. Rooms are fixed and cannot be moved.
-3. **A room's number** must equal the total **door area touching it** above, below, left, and right.
-4. Every door must **touch at least one room**.
-5. **Doors cannot touch other doors.**
-6. Every empty cell must contain a door.
-7. Gray marks are notes for solving, not doors.
-8. **The numbers beside each row and above each column** give the **number of doorknobs** in that line.
+2. **A room's number** must equal the total **door area touching it** above, below, left, and right.
+3. Every door must **touch at least one room**.
+4. **Doors cannot touch other doors.**
+5. Every empty cell must contain a door.
+6. **The numbers beside each row and above each column** give the **number of doorknobs** in that line.
 
 ### Example
 

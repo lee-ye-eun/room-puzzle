@@ -253,13 +253,13 @@ function renderRecords(){
 // (a small label in the door's white half). `ok` puts a ✓ / ✗ under the board.
 const RULE_FIGURES = {
   0: [{rows: [[2]]}, {rows: [['up', 'down', 'left', 'right']]}],
-  2: [{rows: [
+  1: [{rows: [
     ['', {d: 'down', val: '1'}, ''],
     [{d: 'up', val: '0.5'}, 2, {d: 'down', val: '0.5'}],
     ['', {d: 'down', val: '0'}, '']
   ]}],
-  3: [{ok: true, rows: [['right', 2, 'left']]}, {ok: false, rows: [[{d: 'left', bad: true}, 1, 'left']]}],
-  4: [{ok: false, rows: [[{d: 'right', bad: true}, {d: 'left', bad: true}]]},
+  2: [{ok: true, rows: [['right', 2, 'left']]}, {ok: false, rows: [[{d: 'left', bad: true}, 1, 'left']]}],
+  3: [{ok: false, rows: [[{d: 'right', bad: true}, {d: 'left', bad: true}]]},
       {ok: false, rows: [[{d: 'up', bad: true}, {d: 'up', bad: true}]]},
       {ok: true, rows: [['up', 'down']]},
       {ok: true, rows: [['left', 'left']]}],
@@ -528,7 +528,7 @@ function handleCellRightClick(index){
 // fixed cells) count as known; every other neighbor could still be 0, 0.5 or 1. Those
 // unknowns are forced only when the room needs all of them fully attached (remaining ==
 // count) or none of them (remaining == 0) — a forced 0.5 is never filled. Door overlap
-// (rule 3) is deliberately ignored. Filled doors are locked, since they're now certain.
+// (rule 4) is deliberately ignored. Filled doors are locked, since they're now certain.
 function autoFillRoom(index){
   const cells = state.puzzle.cells;
   let remaining = cells[index].value;
