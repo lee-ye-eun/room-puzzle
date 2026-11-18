@@ -6,10 +6,10 @@
 // (up/down/left/right). Constraint propagation shrinks the domains until nothing changes,
 // and only when it gets stuck does the search guess (the cell with the fewest options
 // first) and recurse. Rules, as constraints:
-//   - room: the contributions of its neighboring doors add up to its number (rule 3)
-//   - wall: a door's black half reaches at least one room (rule 4) — fixed by where the
+//   - room: the contributions of its neighboring doors add up to its number (rule 2)
+//   - wall: a door's black half reaches at least one room (rule 3) — fixed by where the
 //     rooms are, so it's applied once to the initial domains
-//   - touch: two neighboring doors' black halves never touch (rule 5)
+//   - touch: two neighboring doors' black halves never touch (rule 4)
 //   - knob (optional): every half-row / half-column holds as many knobs as its clue says
 // Contributions are counted in halves (0 / 1 / 2) so all sums stay integers.
 
