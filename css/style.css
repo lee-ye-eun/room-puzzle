@@ -560,23 +560,6 @@ header.top h1{
   transition:border-color .15s, background .15s;
 }
 
-/* mode picker: a top-half door cell, without / with a doorknob */
-.mode-swatch{
-  position:relative;
-  width:32px;
-  height:32px;
-  border:1px solid var(--line);
-  border-radius:4px;
-  background:var(--board-paper);
-  overflow:hidden;
-}
-.mode-swatch .fill{ position:absolute; background:var(--board-ink); }
-.mode-btn[aria-checked="true"]{
-  border-color:var(--accent);
-  background:var(--accent-soft);
-  box-shadow:0 0 0 2px var(--accent) inset;
-}
-
 /* ---- game screen ---- */
 .result-banner{
   text-align:center;
