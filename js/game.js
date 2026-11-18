@@ -68,7 +68,7 @@ let state = {
                           // any new edit
   submissionCorrect: null, // set by submitAnswer(): true/false once submitted, null before
   violations: new Set(),   // set by submitAnswer(): indices of cells that break a rule
-  knobClues: null,         // knob mode only: {rows, cols} knob counts per half-line, from the answer
+  knobClues: null,         // {rows, cols} knob counts per half-line, from the answer
   knobViolations: new Set(), // set by submitAnswer(): 'r3' / 'c7' half-lines whose knob count is off
   knobDone: new Set(),       // knob clues the player clicked to grey out, same 'r3' / 'c7' keys
   roomDone: new Set()        // indices of rooms the player clicked to fade their number
@@ -189,10 +189,10 @@ function stopTimer(){
   timer.tick = null;
 }
 
-// ---- my records: clear count + fastest RECORD_KEEP times per mode and size, kept in this browser ----
-// Stored as {v:2, modes:{plain:{sizes:{"5":{clears, times:[ms, fastest first]}}}, knob:{…}}};
-// a time pushed past RECORD_KEEP is dropped for good. Records saved before modes existed
-// ({v:1, sizes}) were all plain-mode clears, so they carry over as the plain records.
+// ---- my records: clear count + fastest RECORD_KEEP times per size, kept in this browser ----
+// Stored as {v:3, sizes:{"5":{clears, times:[ms, fastest first]}}}; a time pushed past
+// RECORD_KEEP is dropped for good. While there were two modes ({v:2, modes:{plain, knob}})
+// only the knob records carry over; plain-mode clears ({v:1} or modes.plain) are dropped.
 // Storage failures (private windows etc.) never break play.
 const RECORDS_KEY = 'roomPuzzle.records';
 const RECORD_SIZES = [5, 7, 9, 15];
@@ -200,32 +200,30 @@ const RECORD_KEEP = 5;
 function loadRecords(){
   let saved = null;
   try { saved = JSON.parse(localStorage.getItem(RECORDS_KEY)); } catch(e){}
-  const savedModes = saved && saved.modes ? saved.modes : {plain: saved};
-  const records = {v: 2, modes: {}};
-  MODES.forEach(m => {
-    const sizes = {};
-    RECORD_SIZES.forEach(size => {
-      const s = savedModes[m] && savedModes[m].sizes && savedModes[m].sizes[size];
-      sizes[size] = {
-        clears: s && Number.isFinite(s.clears) ? s.clears : 0,
-        times: s && Array.isArray(s.times) ? s.times.filter(Number.isFinite).slice(0, RECORD_KEEP) : []
-      };
-    });
-    records.modes[m] = {sizes};
+  const savedSizes = !saved ? null
+    : saved.v === 3 ? saved.sizes
+    : saved.modes && saved.modes.knob ? saved.modes.knob.sizes
+    : null;
+  const records = {v: 3, sizes: {}};
+  RECORD_SIZES.forEach(size => {
+    const s = savedSizes && savedSizes[size];
+    records.sizes[size] = {
+      clears: s && Number.isFinite(s.clears) ? s.clears : 0,
+      times: s && Array.isArray(s.times) ? s.times.filter(Number.isFinite).slice(0, RECORD_KEEP) : []
+    };
   });
   return records;
 }
-function recordClear(recordMode, size, ms){
+function recordClear(size, ms){
   const records = loadRecords();
-  const entry = records.modes[recordMode] && records.modes[recordMode].sizes[size];
+  const entry = records.sizes[size];
   if(!entry) return;
   entry.clears += 1;
   entry.times = entry.times.concat(ms).sort((a, b) => a - b).slice(0, RECORD_KEEP);
   try { localStorage.setItem(RECORDS_KEY, JSON.stringify(records)); } catch(e){}
 }
-// shows the records of the mode currently picked on the start screen
 function renderRecords(){
-  const records = loadRecords().modes[mode];
+  const records = loadRecords();
   const head = document.getElementById('recordsHead');
   const clears = document.getElementById('recordsClears');
   const times = document.getElementById('recordsTimes');
@@ -247,22 +245,6 @@ function renderRecords(){
     });
     times.appendChild(list);
   });
-}
-
-// ---- mode: plain doors, or doors with knobs plus per-line knob-count clues ----
-// Picked on the start screen and remembered; the puzzle itself is generated the same way
-// in both, knob mode only reads the clues off the generated answer.
-const MODE_KEY = 'roomPuzzle.mode';
-const MODES = ['plain', 'knob'];
-let mode = 'plain';
-try { const saved = localStorage.getItem(MODE_KEY); if(MODES.includes(saved)) mode = saved; } catch(e){}
-
-function setMode(value){
-  if(state.phase !== 'start') return;
-  mode = MODES.includes(value) ? value : 'plain';
-  try { localStorage.setItem(MODE_KEY, mode); } catch(e){}
-  renderRules();
-  render();
 }
 
 // Small example boards drawn under some rules, built from the board's own cell classes so
@@ -348,13 +330,13 @@ function miniBoard(fig){
   return wrap;
 }
 
-// rule 8 only exists in knob mode
+// the knob rule is the list's last item
 function renderRules(){
   const list = document.getElementById('rulesList');
-  list.innerHTML = t('rulesBody') + (mode === 'knob' ? t('ruleKnob') : '');
+  list.innerHTML = t('rulesBody') + t('ruleKnob');
   const items = list.children;
   Object.entries(RULE_FIGURES).forEach(([key, figs]) => {
-    const li = key === 'knob' ? (mode === 'knob' ? items[items.length - 1] : null) : items[key];
+    const li = key === 'knob' ? items[items.length - 1] : items[key];
     if(!li) return;
     const row = document.createElement('div');
     row.className = 'rule-figure';
@@ -370,7 +352,7 @@ function renderRules(){
 function resetRound(size, puzzle){
   state.size = size;
   state.puzzle = puzzle;
-  state.knobClues = puzzle && mode === 'knob' ? knobCounts(size, puzzle.cells.map(c => c.answer)) : null;
+  state.knobClues = puzzle ? knobCounts(size, puzzle.cells.map(c => c.answer)) : null;
   state.playerState = puzzle ? puzzle.cells.map(c => c.type === 'player' ? 'blank' : null) : [];
   state.lockedCells = puzzle ? puzzle.cells.map(() => false) : [];
   state.submittedState = null;
@@ -402,25 +384,21 @@ function startGame(size){
     render();
     alert(t('generateFailed'));
   }
-  // Knob mode only accepts boards with a single solution, and generation time varies a
+  // Only boards with a single solution are accepted, and generation time varies a
   // lot, so two workers race and the first single-solution board wins — on 15×15 ~2.1 s
   // avg vs ~3.6 s for one at a time (tools/bench-knob-parallel.mjs). Falls back to the
   // in-page path if workers can't start (e.g. index.html opened straight from disk).
-  if(mode === 'knob'){
-    raceKnobWorkers(size).then(begin, e => {
-      console.warn('worker generation unavailable, generating in page', e);
-      setTimeout(() => generateInPage(), 30);
-    });
-    return;
-  }
-  // the short delay lets the loading screen paint before generation blocks the page
-  setTimeout(() => generateInPage(), 30);
+  raceKnobWorkers(size).then(begin, e => {
+    console.warn('worker generation unavailable, generating in page', e);
+    // the short delay lets the loading screen paint before generation blocks the page
+    setTimeout(() => generateInPage(), 30);
+  });
 
   function generateInPage(){
     let puzzle;
     try {
-      // knob mode only accepts boards whose rooms + knob clues have a single solution
-      puzzle = mode === 'knob' ? generateUniqueKnobPuzzle(size).puzzle : generatePuzzle(size);
+      // only boards whose rooms + knob clues have a single solution
+      puzzle = generateUniqueKnobPuzzle(size).puzzle;
     } catch(e){ fail(e); return; }
     begin(puzzle);
   }
@@ -626,7 +604,7 @@ function findViolations(){
   return bad;
 }
 
-// Knob mode's rule 7: every half-line's knob count must match its clue.
+// The knob rule: every half-line's knob count must match its clue.
 function findKnobViolations(){
   const bad = new Set();
   if(!state.knobClues) return bad;
@@ -649,7 +627,7 @@ function submitAnswer(){
   const wasRunning = timer.running; // a puzzle's clear is only recorded once
   stopTimer();
   renderTimer();
-  if(state.submissionCorrect && wasRunning) recordClear(state.knobClues ? 'knob' : 'plain', state.size, Math.round(timer.elapsed));
+  if(state.submissionCorrect && wasRunning) recordClear(state.size, Math.round(timer.elapsed));
   playResult(state.submissionCorrect);
   render();
 }
@@ -891,10 +869,6 @@ function render(){
   const loadingScreen = document.getElementById('loadingScreen');
   const gameScreen = document.getElementById('gameScreen');
 
-  document.getElementById('modeSection').hidden = state.phase !== 'start';
-  document.querySelectorAll('.mode-btn').forEach(btn => {
-    btn.setAttribute('aria-checked', String(btn.dataset.mode === mode));
-  });
   const knob = state.phase === 'game' && !!state.knobClues;
   if(knob) document.documentElement.dataset.knob = '';
   else delete document.documentElement.dataset.knob;

@@ -20,6 +20,7 @@ No installation needed — play it right in your browser.
 5. **Doors cannot touch other doors.**
 6. Every empty cell must contain a door.
 7. Gray marks are notes for solving, not doors.
+8. **The numbers beside each row and above each column** give the **number of doorknobs** in that line.
 
 ### Example
 
@@ -37,9 +38,9 @@ It counts **1** if it covers the whole side facing the room, **0.5** if it cover
 </tr>
 </table>
 
-### Doorknob mode
+### Doorknobs
 
-<img src="docs/images/knob.png" width="360" align="right" alt="Doorknob mode">
+<img src="docs/images/knob.png" width="360" align="right" alt="Doorknobs">
 
 Every door gets a knob at one end of its black part.
 **The numbers beside each row and above each column** give the **number of doorknobs** in that line.
@@ -89,10 +90,10 @@ The room **3** above it no longer gets enough area, and the flipped door now tou
 ## Features
 
 - **Puzzle sizes**: 5×5 · 7×7 · 9×9 · 15×15
-- **Modes**: Standard / Doorknob
+- **Unique solutions**: every puzzle has exactly one solution, so it can be solved by logic alone
 - **Tools**: directional doors, quarter-cell and strip notes, cell lock, eraser, undo/redo
 - **Checking**: shows Correct! / Incorrect, and highlights rule-breaking cells in red
-- **Records**: solve timer, clear count and top 5 times per mode and size
+- **Records**: solve timer, clear count and top 5 times per size
 - **6 themes**: Default · Dark · Modern · Mediterranean · Rococo · Cyberpunk
 - **Sound**: themed BGM (Mediterranean, Rococo, Cyberpunk) and sound effects
 - **14 languages**: 한국어, English, 日本語, 简体中文, 繁體中文, Español, Français, Deutsch, Português, Русский, Italiano, Tiếng Việt, Bahasa Indonesia, ไทย
