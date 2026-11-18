@@ -67,9 +67,10 @@ let state = {
   future: [],            // snapshots popped off `history` by undo, for redo — cleared by
                           // any new edit
   submissionCorrect: null, // set by submitAnswer(): true/false once submitted, null before
-  violations: new Set(),   // set by submitAnswer(): indices of cells that break a rule
+  violations: new Set(),   // set by submitAnswer(): indices of placed doors that differ from the answer
+  continued: false,        // the player kept solving after a wrong submission; a later clear is
+                           // recorded as a red time and isn't counted as a clear
   knobClues: null,         // {rows, cols} knob counts per half-line, from the answer
-  knobViolations: new Set(), // set by submitAnswer(): 'r3' / 'c7' half-lines whose knob count is off
   knobDone: new Set(),       // knob clues the player clicked to grey out, same 'r3' / 'c7' keys
   roomDone: new Set()        // indices of rooms the player clicked to fade their number
 };
@@ -182,6 +183,13 @@ function startTimer(){
   timer.tick = setInterval(renderTimer, 250);
   renderTimer();
 }
+function resumeTimer(){
+  if(timer.running) return;
+  timer.start = performance.now() - timer.elapsed;
+  timer.running = true;
+  timer.tick = setInterval(renderTimer, 250);
+  renderTimer();
+}
 function stopTimer(){
   if(timer.running) timer.elapsed = performance.now() - timer.start;
   timer.running = false;
@@ -190,7 +198,9 @@ function stopTimer(){
 }
 
 // ---- my records: clear count + fastest RECORD_KEEP times per size, kept in this browser ----
-// Stored as {v:3, sizes:{"5":{clears, times:[ms, fastest first]}}}; a time pushed past
+// Stored as {v:3, sizes:{"5":{clears, times:[ms | {ms, continued:true}, fastest first]}}}.
+// A clear reached by continuing after a wrong submission keeps its time (shown in red) but
+// doesn't add to `clears`. A time pushed past
 // RECORD_KEEP is dropped for good. While there were two modes ({v:2, modes:{plain, knob}})
 // only the knob records carry over; plain-mode clears ({v:1} or modes.plain) are dropped.
 // Storage failures (private windows etc.) never break play.
@@ -209,17 +219,24 @@ function loadRecords(){
     const s = savedSizes && savedSizes[size];
     records.sizes[size] = {
       clears: s && Number.isFinite(s.clears) ? s.clears : 0,
-      times: s && Array.isArray(s.times) ? s.times.filter(Number.isFinite).slice(0, RECORD_KEEP) : []
+      times: s && Array.isArray(s.times) ? s.times.map(readTime).filter(Boolean).slice(0, RECORD_KEEP) : []
     };
   });
   return records;
 }
-function recordClear(size, ms){
+// a saved time is a plain ms number, or {ms, continued: true}
+function readTime(x){
+  if(Number.isFinite(x)) return {ms: x, continued: false};
+  if(x && Number.isFinite(x.ms)) return {ms: x.ms, continued: !!x.continued};
+  return null;
+}
+function recordClear(size, ms, continued){
   const records = loadRecords();
   const entry = records.sizes[size];
   if(!entry) return;
-  entry.clears += 1;
-  entry.times = entry.times.concat(ms).sort((a, b) => a - b).slice(0, RECORD_KEEP);
+  if(!continued) entry.clears += 1;
+  entry.times = entry.times.concat({ms, continued}).sort((a, b) => a.ms - b.ms).slice(0, RECORD_KEEP)
+    .map(x => x.continued ? x : x.ms);
   try { localStorage.setItem(RECORDS_KEY, JSON.stringify(records)); } catch(e){}
 }
 function renderRecords(){
@@ -238,8 +255,9 @@ function renderRecords(){
     count.textContent = entry.clears;
     clears.appendChild(count);
     const list = document.createElement('td');
-    entry.times.forEach((ms, i) => {
+    entry.times.forEach(({ms, continued}, i) => {
       const p = document.createElement('p');
+      if(continued) p.className = 'continued';
       p.textContent = (i + 1) + '. ' + formatElapsed(ms);
       list.appendChild(p);
     });
@@ -363,7 +381,7 @@ function resetRound(size, puzzle){
   state.future = [];
   state.submissionCorrect = null;
   state.violations = new Set();
-  state.knobViolations = new Set();
+  state.continued = false;
   state.knobDone = new Set();
   state.roomDone = new Set();
 }
@@ -571,64 +589,45 @@ function handleRoomClick(index){
   render();
 }
 
-// Judges the player's CURRENT placement against the three rules directly — not against
-// puzzle.cells' own stored answer — so an alternate valid placement (the puzzle turning out
-// non-unique) is still graded correct. Reuses the exact same rule checks the generator
-// itself relies on (contribution/isWallTouching/hasRuleThreeViolation), applied to
-// whatever the player actually placed. Returns the indices of every cell at fault: a blank
-// player cell, a number cell whose neighbors don't sum to its value (rule 1), a half-block
-// whose black half touches no number cell (rule 2), and both half-blocks of every pair
-// whose black halves touch (rule 3). An empty set means the placement is correct.
-function findViolations(){
-  const n = state.size;
-  const total = n * n;
-  const cells = state.puzzle.cells;
-  // quarter marks are solving notes only, so a marked cell is graded as blank
-  const kind = cells.map((c, i) => c.type !== 'player' ? 'number' : isMark(state.playerState[i]) ? 'blank' : state.playerState[i]);
-  const color = cells.map((c, i) => c.type === 'player' && kind[i] !== 'blank' ? 'blue' : 'green');
+// Every puzzle has a single solution, so the placement is graded against the stored answer.
+// Returns the player cells holding a door that differs from the answer; empty cells and
+// cells holding only notes aren't marked, but still leave the answer incorrect.
+const DOORS = ['up', 'down', 'left', 'right'];
+function findWrongDoors(placement){
   const bad = new Set();
-
-  for(let i = 0; i < total; i++){
-    if(cells[i].type === 'number'){
-      let sum = 0;
-      neighborsOf(n, i).forEach(({idx: j, dir}) => {
-        if(kind[j] !== 'blank') sum += contribution(kind[j], dir);
-      });
-      if(Math.abs(sum - cells[i].value) > 1e-9) bad.add(i); // rule 1
-    } else if(cells[i].type === 'player'){
-      if(kind[i] === 'blank') bad.add(i); // must be fully filled in
-      else if(!isWallTouching(n, i, kind)) bad.add(i); // rule 2
-      else if(hasRuleThreeViolation(n, i, color, kind)) bad.add(i); // rule 3
-    }
-  }
-  return bad;
-}
-
-// The knob rule: every half-line's knob count must match its clue.
-function findKnobViolations(){
-  const bad = new Set();
-  if(!state.knobClues) return bad;
-  const got = knobCounts(state.size, state.playerState);
-  ['rows', 'cols'].forEach(key => {
-    state.knobClues[key].forEach((want, k) => {
-      if(got[key][k] !== want) bad.add(key[0] + k);
-    });
+  state.puzzle.cells.forEach((c, i) => {
+    if(c.type === 'player' && DOORS.includes(placement[i]) && placement[i] !== c.answer) bad.add(i);
   });
   return bad;
+}
+function isSolved(placement){
+  return state.puzzle.cells.every((c, i) => c.type !== 'player' || placement[i] === c.answer);
 }
 
 function submitAnswer(){
   if(state.phase !== 'game' || state.viewMode !== 'play') return;
   state.submittedState = state.playerState.slice();
   state.viewMode = 'result';
-  state.violations = findViolations();
-  state.knobViolations = findKnobViolations();
-  state.submissionCorrect = state.violations.size === 0 && state.knobViolations.size === 0;
+  state.submissionCorrect = isSolved(state.submittedState);
+  state.violations = state.submissionCorrect ? new Set() : findWrongDoors(state.submittedState);
   const wasRunning = timer.running; // a puzzle's clear is only recorded once
   stopTimer();
   renderTimer();
-  if(state.submissionCorrect && wasRunning) recordClear(state.size, Math.round(timer.elapsed));
+  if(state.submissionCorrect && wasRunning) recordClear(state.size, Math.round(timer.elapsed), state.continued);
   playResult(state.submissionCorrect);
+  render();
+}
+
+// After a wrong submission: back to solving the same board with the timer running on from
+// where it stopped. The round is marked as continued, so its clear is recorded but not counted.
+function continueSolving(){
+  if(state.phase !== 'game' || state.viewMode !== 'result' || state.submissionCorrect) return;
+  state.continued = true;
+  state.viewMode = 'play';
+  state.submittedState = null;
+  state.submissionCorrect = null;
+  state.violations = new Set();
+  resumeTimer();
   render();
 }
 
@@ -854,8 +853,7 @@ function renderKnobClues(){
     state.knobClues[key].forEach((count, k) => {
       const span = document.createElement('span');
       span.className = 'knob-clue' + (Math.floor(k / 2) % 2 ? ' band' : '')
-        + (state.knobDone.has(key[0] + k) ? ' done' : '')
-        + (state.knobViolations.has(key[0] + k) ? ' violation' : '');
+        + (state.knobDone.has(key[0] + k) ? ' done' : '');
       span.textContent = count;
       span.onclick = () => toggleKnobDone(key[0] + k);
       strip.appendChild(span);
@@ -883,6 +881,7 @@ function render(){
 
   const submitted = state.submittedState !== null;
   document.getElementById('submitBtn').hidden = submitted;
+  document.getElementById('continueBtn').hidden = !submitted || state.submissionCorrect;
 
   const resultBanner = document.getElementById('resultBanner');
   resultBanner.hidden = !submitted;
@@ -919,8 +918,7 @@ function render(){
     div.dataset.index = i;
 
     if(cell.type === 'number'){
-      div.className = 'cell fixed-number' + (state.roomDone.has(i) ? ' done' : '')
-        + (state.violations.has(i) ? ' violation' : '');
+      div.className = 'cell fixed-number' + (state.roomDone.has(i) ? ' done' : '');
       div.textContent = cell.value;
     } else if(cell.type === 'full'){
       div.className = 'cell fixed-full';

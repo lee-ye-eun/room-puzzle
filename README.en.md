@@ -78,10 +78,11 @@ A letter key alone picks that row's cycle tool; hold the letter and press a numb
 
 <img src="docs/images/incorrect.png" width="300" align="right" alt="Incorrect submission">
 
-When you submit, you'll see Correct! or Incorrect. If it's incorrect, **cells that break a rule turn red**.
+When you submit, you'll see Correct! or Incorrect. If it's incorrect, **doors placed differently from the answer turn red**.
+In the example on the right, the door in the middle was flipped left-to-right before submitting.
 
-In the example on the right, one door was flipped upside down before submitting.
-The room **3** above it no longer gets enough area, and the flipped door now touches its neighboring door, so they're all marked red.
+After an incorrect submission, **Continue** lets you keep solving the same board, with the timer picking up where it stopped.
+A time finished this way is listed in **red** in your records and doesn't add to the clear count.
 
 <br clear="right">
 
@@ -90,8 +91,8 @@ The room **3** above it no longer gets enough area, and the flipped door now tou
 - **Puzzle sizes**: 5×5 · 7×7 · 9×9 · 15×15
 - **Unique solutions**: every puzzle has exactly one solution, so it can be solved by logic alone
 - **Tools**: directional doors, quarter-cell and strip notes, cell lock, eraser, undo/redo
-- **Checking**: shows Correct! / Incorrect, and highlights rule-breaking cells in red
-- **Records**: solve timer, clear count and top 5 times per size
+- **Checking**: shows Correct! / Incorrect, highlights wrong doors in red, and lets you continue solving
+- **Records**: solve timer, clear count and top 5 times per size (times finished after Continue are red and not counted as clears)
 - **6 themes**: Default · Dark · Modern · Mediterranean · Rococo · Cyberpunk
 - **Sound**: themed BGM (Mediterranean, Rococo, Cyberpunk) and sound effects
 - **14 languages**: 한국어, English, 日本語, 简体中文, 繁體中文, Español, Français, Deutsch, Português, Русский, Italiano, Tiếng Việt, Bahasa Indonesia, ไทย
