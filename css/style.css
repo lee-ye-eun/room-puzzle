@@ -541,6 +541,8 @@ header.top h1{
 .records-table .clear-count{ font-size:16px; font-weight:600; }
 .records-table .best-times p{ margin:0 0 4px; font-size:12px; font-variant-numeric:tabular-nums; }
 .records-table .best-times p:last-child{ margin-bottom:0; }
+/* a clear reached by continuing after a wrong submission: listed, but not counted */
+.records-table .best-times p.continued{ color:var(--danger); }
 .size-btn{
   font-family:var(--font-mono);
   font-size:15px;
@@ -741,13 +743,7 @@ header.top h1{
   z-index:3;
 }
 .cell .fill{ position:absolute; background:var(--board-ink); }
-/* After an incorrect submission: cells that break a rule (not cells that merely differ from
-   the generator's own answer) are marked red. */
-.cell.fixed-number.violation{
-  color:#fff;
-  background:var(--danger);
-  box-shadow:inset 0 0 0 3px var(--danger-soft);
-}
+/* After an incorrect submission: placed doors that differ from the answer are marked red. */
 .cell.player.violation{
   background:var(--danger-soft);
   box-shadow:inset 0 0 0 2px var(--danger);
@@ -821,7 +817,6 @@ header.top h1{
 /* a clue the player has ticked off (click to toggle) greys out */
 .knob-clue{ cursor:pointer; }
 .knob-clue.done{ color:var(--board-mark); }
-.knob-clue.violation{ color:var(--danger); }
 
 .actions{
   display:flex;
